@@ -1,0 +1,837 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Demo jQuery — Eventos comunes (sitio completo)</title>
+
+  <!-- Bootstrap 4 para diseño rápido -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+
+  <style>
+    /* Menú fijo arriba */
+    .menu {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 999;
+    }
+
+    /* Espacio para que el contenido no quede debajo del menú */
+    .contenido { padding-top: 80px; }
+
+    /* Secciones bien separadas */
+    section {
+      padding: 60px 0;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+      background: #fff;
+    }
+    section:nth-child(even) { background: #f8f9fa; }
+
+    /* Caja “hover” */
+    .hover-box {
+      border: 2px dashed rgba(0,0,0,.25);
+      border-radius: 10px;
+      padding: 18px;
+      background: #fff;
+      transition: transform .12s ease-in-out;
+    }
+
+    /* Panel de log */
+    .log {
+      height: 220px;
+      overflow: auto;
+      background: #0b1020;
+      color: #d7e0ff;
+      border-radius: 10px;
+      padding: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13px;
+      border: 1px solid rgba(255,255,255,.1);
+    }
+    .log .muted { color: rgba(215,224,255,.65); }
+    .kbd {
+      border: 1px solid rgba(0,0,0,.2);
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #fff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+    }
+
+    /* Imagen demo */
+    .img-demo {
+      max-width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.12);
+    }
+
+    /* Botón arriba */
+    #btnTop { position: fixed; right: 18px; bottom: 18px; display: none; z-index: 9999; }
+  </style>
+</head>
+
+<body>
+
+  <!-- MENU -->
+  <nav class="menu bg-dark">
+    <div class="container py-3 d-flex flex-wrap align-items-center">
+      <span class="text-white font-weight-bold mr-3">Eventos jQuery</span>
+
+      <!-- Botones de navegación por secciones (scroll suave) -->
+      <button class="btn btn-sm btn-outline-light mr-2 mb-2 js-ir" data-ir="#click">click</button>
+      <button class="btn btn-sm btn-outline-light mr-2 mb-2 js-ir" data-ir="#dblclick">dblclick</button>
+      <button class="btn btn-sm btn-outline-light mr-2 mb-2 js-ir" data-ir="#hover">mouseenter / mouseleave</button>
+      <button class="btn btn-sm btn-outline-light mr-2 mb-2 js-ir" data-ir="#keys">keydown / keyup / keypress</button>
+      <button class="btn btn-sm btn-outline-light mr-2 mb-2 js-ir" data-ir="#change">change</button>
+      <button class="btn btn-sm btn-outline-light mr-2 mb-2 js-ir" data-ir="#submit">submit</button>
+      <button class="btn btn-sm btn-outline-light mr-2 mb-2 js-ir" data-ir="#load">load</button>
+      <button class="btn btn-sm btn-outline-warning mr-2 mb-2 js-ir" data-ir="#otros">otros</button>
+      <button class="btn btn-sm btn-outline-info mb-2 js-ir" data-ir="#log">log</button>
+    </div>
+  </nav>
+
+  <div class="contenido">
+
+    <!-- INTRO -->
+    <section id="intro">
+      <div class="container">
+        <h1 class="mb-2">Sitio demo: eventos comunes con jQuery</h1>
+        <p class="text-muted mb-3">
+          Esta página está diseñada para una Clase 1–2: cada sección demuestra un evento distinto con un ejemplo simple.
+          Abajo tienes un “Log” que va registrando todo lo que haces.
+        </p>
+
+        <div class="alert alert-info mb-0">
+          Consejo pedagógico: prueba cada sección y mira el Log. Eso te ayuda a entender “qué evento se dispara” y “cuándo”.
+        </div>
+      </div>
+    </section>
+
+    <!-- CLICK -->
+    <section id="click">
+      <div class="container">
+        <h2>Evento: <span class="kbd">click</span></h2>
+        <p class="text-muted">
+          Ocurre cuando haces clic en un elemento (botón, div, imagen, etc.). Es el evento más usado para ejecutar acciones.
+        </p>
+
+        <div class="row">
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Ejemplo</h5>
+                <p>Haz clic y cambiaremos el texto del mensaje:</p>
+
+                <button id="btnClick" class="btn btn-primary">Hacer click</button>
+                <button id="btnClickReset" class="btn btn-outline-secondary ml-2">Reset</button>
+
+                <div class="mt-3 alert alert-secondary" id="clickMsg">
+                  Aún no has hecho click.
+                </div>
+
+                <p class="mb-0 text-muted">
+                  Utilidad: abrir modales, enviar acciones, marcar tareas, navegar, activar menús.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Idea práctica</h5>
+                <p class="mb-0">
+                  En un e-commerce, un <span class="kbd">click</span> agrega un producto al carrito, cambia cantidad o aplica un cupón.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DBLCLICK -->
+    <section id="dblclick">
+      <div class="container">
+        <h2>Evento: <span class="kbd">dblclick</span></h2>
+        <p class="text-muted">
+          Ocurre cuando haces doble clic. Se usa para acciones “más intencionales” (para evitar clics accidentales).
+        </p>
+
+        <div class="card">
+          <div class="card-body">
+            <h5>Ejemplo</h5>
+            <p>Doble clic sobre la tarjeta para “confirmar”:</p>
+
+            <div id="dblBox" class="hover-box">
+              <h5 class="mb-1">Doble clic aquí</h5>
+              <p class="mb-0 text-muted">Simula una acción que quieres evitar por accidente.</p>
+            </div>
+
+            <div class="mt-3 alert alert-warning mb-0" id="dblMsg">
+              Aún no has hecho doble clic.
+            </div>
+
+            <div class="mt-3 text-muted">
+              Utilidad: renombrar archivo, editar un campo, confirmar una acción, abrir detalle avanzado.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MOUSEENTER / MOUSELEAVE -->
+    <section id="hover">
+      <div class="container">
+        <h2>Eventos: <span class="kbd">mouseenter</span> y <span class="kbd">mouseleave</span></h2>
+        <p class="text-muted">
+          Se disparan cuando el cursor entra o sale de un elemento. Útiles para mostrar ayuda contextual o efectos visuales.
+        </p>
+
+        <div class="row">
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Ejemplo</h5>
+                <p>Pasa el mouse por la caja:</p>
+
+                <div id="hoverBox" class="hover-box">
+                  <strong>Zona hover</strong>
+                  <div class="text-muted">Entra/sale con el cursor.</div>
+                </div>
+
+                <div class="mt-3 alert alert-info mb-0" id="hoverMsg">
+                  Esperando interacción con el mouse...
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Utilidades típicas</h5>
+                <ul class="mb-0">
+                  <li>Mostrar tooltips (ayuda) cuando el usuario pasa el mouse.</li>
+                  <li>Resaltar tarjetas o botones para mejorar UX.</li>
+                  <li>Mostrar un menú desplegable (aunque hoy se prefiere click en móviles).</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KEYDOWN / KEYUP / KEYPRESS -->
+    <section id="keys">
+      <div class="container">
+        <h2>Eventos: <span class="kbd">keydown</span>, <span class="kbd">keyup</span> y <span class="kbd">keypress</span></h2>
+        <p class="text-muted">
+          Se usan cuando el usuario interactúa con el teclado. En general:
+          <span class="kbd">keydown</span> ocurre al presionar, <span class="kbd">keyup</span> al soltar.
+          <span class="kbd">keypress</span> es más antiguo y hoy se usa menos.
+        </p>
+
+        <div class="row">
+          <div class="col-lg-7 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Ejemplo</h5>
+                <p>Escribe en el input y mira el log y el contador:</p>
+
+                <input id="keyInput" class="form-control" placeholder="Escribe aquí y prueba teclas (Enter, Backspace, etc.)">
+
+                <div class="mt-3">
+                  <span class="badge badge-primary">keydown: <span id="countDown">0</span></span>
+                  <span class="badge badge-success ml-2">keyup: <span id="countUp">0</span></span>
+                  <span class="badge badge-secondary ml-2">keypress: <span id="countPress">0</span></span>
+                </div>
+
+                <div class="mt-3 alert alert-secondary mb-0" id="keyMsg">
+                  Consejo: prueba <span class="kbd">Enter</span> y mira qué evento se registra.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-5 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Utilidades típicas</h5>
+                <ul class="mb-0">
+                  <li>Atajos: <span class="kbd">Ctrl + S</span> para guardar.</li>
+                  <li>Validación en tiempo real (ej: email).</li>
+                  <li>Buscar mientras escribes (autocomplete).</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-warning">
+          Nota: <span class="kbd">keypress</span> está “de salida” en muchas guías modernas; para la mayoría de casos usa
+          <span class="kbd">keydown</span> / <span class="kbd">keyup</span>.
+        </div>
+      </div>
+    </section>
+
+    <!-- CHANGE -->
+    <section id="change">
+      <div class="container">
+        <h2>Evento: <span class="kbd">change</span></h2>
+        <p class="text-muted">
+          Ocurre cuando cambia el valor de un input, select o checkbox. Muy útil para formularios.
+        </p>
+
+        <div class="row">
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Ejemplo (select)</h5>
+                <p>Elige una opción:</p>
+
+                <select id="selRuta" class="form-control">
+                  <option value="">Selecciona una ruta…</option>
+                  <option value="frontend">Frontend</option>
+                  <option value="backend">Backend</option>
+                  <option value="fullstack">Full-Stack</option>
+                </select>
+
+                <div class="mt-3 alert alert-info mb-0" id="changeMsg">
+                  Aún no has cambiado la selección.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Ejemplo (checkbox)</h5>
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" id="chkAcepto">
+                  <label class="custom-control-label" for="chkAcepto">
+                    Acepto los términos del curso (demo)
+                  </label>
+                </div>
+
+                <div class="mt-3 alert alert-secondary mb-0" id="checkMsg">
+                  Estado: no aceptado.
+                </div>
+
+                <p class="mt-3 text-muted mb-0">
+                  Utilidad: habilitar/deshabilitar botones, cambiar precios, mostrar campos extra según selección.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUBMIT -->
+    <section id="submit">
+      <div class="container">
+        <h2>Evento: <span class="kbd">submit</span></h2>
+        <p class="text-muted">
+          Ocurre cuando se envía un formulario. Normalmente el navegador recarga la página, pero con jQuery puedes
+          prevenirlo y validar antes (o enviar por AJAX).
+        </p>
+
+        <div class="row">
+          <div class="col-lg-7 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Ejemplo</h5>
+                <p>Formulario simple (demo):</p>
+
+                <form id="frmRegistro">
+                  <div class="form-group">
+                    <label>Nombre</label>
+                    <input id="frmNombre" class="form-control" placeholder="Tu nombre">
+                  </div>
+
+                  <div class="form-group">
+                    <label>Email</label>
+                    <input id="frmEmail" type="email" class="form-control" placeholder="tucorreo@ejemplo.com">
+                  </div>
+
+                  <button id="btnEnviar" class="btn btn-primary" type="submit" disabled>
+                    Enviar registro
+                  </button>
+
+                  <small class="d-block mt-2 text-muted">
+                    El botón se habilita cuando aceptas términos (mira sección change).
+                  </small>
+                </form>
+
+                <div class="mt-3 alert alert-success d-none" id="submitOk">
+                  Formulario enviado (demo). No recargamos la página porque usamos preventDefault().
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-5 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Utilidades típicas</h5>
+                <ul class="mb-0">
+                  <li>Validar campos antes de enviar.</li>
+                  <li>Mostrar mensajes de éxito o error sin recargar.</li>
+                  <li>Enviar datos por AJAX al servidor.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOAD -->
+    <section id="load">
+      <div class="container">
+        <h2>Evento: <span class="kbd">load</span></h2>
+        <p class="text-muted">
+          Ocurre cuando un recurso termina de cargar (ej: una imagen). Útil si quieres mostrar un “cargando…” hasta que esté lista.
+        </p>
+
+        <div class="row">
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Ejemplo</h5>
+                <p class="mb-2">La imagen dispara <span class="kbd">load</span> cuando termina:</p>
+
+                <div class="alert alert-warning" id="loadMsg">Estado: esperando carga de imagen...</div>
+
+                <!-- Imagen simple (data URI SVG), no depende de internet -->
+                <img
+                  id="imgDemo"
+                  class="img-demo"
+                  alt="Imagen demo"
+                  src="data:image/svg+xml;utf8,
+                    <svg xmlns='http://www.w3.org/2000/svg' width='1200' height='600'>
+                      <defs>
+                        <linearGradient id='g' x1='0' x2='1'>
+                          <stop offset='0' stop-color='%233b82f6'/>
+                          <stop offset='1' stop-color='%23a855f7'/>
+                        </linearGradient>
+                      </defs>
+                      <rect width='1200' height='600' fill='url(%23g)'/>
+                      <text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle'
+                        font-family='Arial' font-size='56' fill='white'>
+                        Imagen lista (load)
+                      </text>
+                    </svg>
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Utilidades típicas</h5>
+                <ul class="mb-0">
+                  <li>Ocultar un spinner cuando una imagen/video termina de cargar.</li>
+                  <li>Calcular tamaños reales después de cargar (ej: galerías).</li>
+                  <li>Mostrar “Listo para imprimir” cuando recursos están listos.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-info mb-0">
+          Nota: en jQuery también existe <span class="kbd">$(document).ready()</span> para correr código cuando el DOM está listo.
+          Eso NO es “load de imagen”, es “DOM listo”.
+        </div>
+      </div>
+    </section>
+
+    <!-- OTROS EVENTOS -->
+    <section id="otros">
+      <div class="container">
+        <h2>Otros eventos útiles (extra)</h2>
+        <p class="text-muted">
+          Aquí tienes más eventos comunes, cada uno con un ejemplo simple.
+        </p>
+
+        <div class="row">
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5><span class="kbd">focus</span> y <span class="kbd">blur</span></h5>
+                <p class="text-muted mb-2">Se activan cuando un input recibe foco o lo pierde.</p>
+
+                <input id="focusInput" class="form-control" placeholder="Haz click aquí (focus) y luego afuera (blur)">
+                <div class="mt-3 alert alert-secondary mb-0" id="focusMsg">
+                  Estado: esperando focus/blur...
+                </div>
+
+                <p class="mt-3 mb-0">
+                  Utilidad: resaltar campos, mostrar ayuda, validar cuando el usuario termina.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5><span class="kbd">input</span></h5>
+                <p class="text-muted mb-2">Se dispara cada vez que cambia el texto (mejor para “buscar mientras escribes”).</p>
+
+                <input id="inputLive" class="form-control" placeholder="Escribe y verás el texto en vivo">
+                <div class="mt-3 alert alert-info mb-0">
+                  Vista previa: <span id="inputPreview" class="font-weight-bold">(vacío)</span>
+                </div>
+
+                <p class="mt-3 mb-0">
+                  Utilidad: buscador en vivo, filtros, validación instantánea.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5><span class="kbd">scroll</span></h5>
+                <p class="text-muted mb-2">Se dispara cuando se hace scroll. (Ej: mostrar botón “Arriba”).</p>
+
+                <div class="alert alert-warning mb-0">
+                  Baja la página: el botón “Arriba” aparecerá cuando pases cierta altura.
+                </div>
+
+                <p class="mt-3 mb-0">
+                  Utilidad: “back to top”, menús que cambian, lazy-loading, indicadores de progreso.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5><span class="kbd">resize</span></h5>
+                <p class="text-muted mb-2">Se dispara cuando cambias el tamaño de la ventana.</p>
+
+                <div class="alert alert-secondary mb-0" id="resizeMsg">
+                  Cambia el tamaño de la ventana para ver el evento.
+                </div>
+
+                <p class="mt-3 mb-0">
+                  Utilidad: recalcular layouts, adaptar componentes, reacomodar menús.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOG -->
+    <section id="log">
+      <div class="container">
+        <h2>Log de eventos (para entender qué ocurre)</h2>
+        <p class="text-muted">
+          Aquí se registra cada evento. Esto es muy útil en clases para ver exactamente “qué se disparó”.
+        </p>
+
+        <div class="row">
+          <div class="col-lg-8 mb-3">
+            <div class="log" id="logBox"></div>
+          </div>
+          <div class="col-lg-4 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Controles</h5>
+                <button id="btnClearLog" class="btn btn-outline-danger btn-sm">Limpiar log</button>
+                <button id="btnDemoLog" class="btn btn-outline-primary btn-sm ml-2">Agregar ejemplo</button>
+                <div class="mt-3 text-muted">
+                  Tip: mientras practicas, intenta adivinar qué evento se disparará antes de hacerlo.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-info mb-0">
+          Este sitio es intencionalmente “largo” para que practiques eventos como scroll y navegación por secciones.
+        </div>
+      </div>
+    </section>
+
+    <footer class="py-4 bg-light">
+      <div class="container text-center text-muted">
+        <small>Demo de eventos jQuery — Sitio educativo</small>
+      </div>
+    </footer>
+
+  </div>
+
+  <button id="btnTop" class="btn btn-dark">Arriba</button>
+
+  <!-- jQuery (único requisito para los eventos) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script>
+    /*
+      =========================================================
+      UTILIDAD: LOG (para que el alumno vea qué evento se disparó)
+      =========================================================
+    */
+    function log(msg) {
+      var ahora = new Date();
+      var t = ahora.toLocaleTimeString();
+
+      $("#logBox").prepend(
+        "<div><span class='muted'>[" + t + "]</span> " + msg + "</div>"
+      );
+    }
+
+    /*
+      =========================================================
+      0) NAVEGACIÓN DEL MENÚ: scroll suave a secciones
+      =========================================================
+      - Click en botones con .js-ir
+      - data-ir tiene el id destino (ej: #click)
+      - animate mueve la página suavemente
+    */
+    $(".js-ir").on("click", function () {
+      var destino = $(this).data("ir");
+      var $seccion = $(destino);
+      if ($seccion.length === 0) return;
+
+      var alturaMenu = $(".menu").outerHeight() || 0;
+      var posFinal = $seccion.offset().top - alturaMenu;
+
+      $("html, body").stop().animate({ scrollTop: posFinal }, 500);
+
+      log("Navegación: click menú -> ir a " + destino);
+    });
+
+    /*
+      =========================================================
+      1) EVENTO: click
+      =========================================================
+      Utilidad: ejecutar acciones (abrir, cerrar, activar, etc.)
+    */
+    $("#btnClick").on("click", function () {
+      $("#clickMsg").removeClass("alert-secondary").addClass("alert-success")
+        .text("Perfecto: se disparó el evento click.");
+      log("Evento: click en #btnClick");
+    });
+
+    $("#btnClickReset").on("click", function () {
+      $("#clickMsg").removeClass("alert-success").addClass("alert-secondary")
+        .text("Aún no has hecho click.");
+      log("Acción: reset mensaje click");
+    });
+
+    /*
+      =========================================================
+      2) EVENTO: dblclick
+      =========================================================
+      Utilidad: confirmar acciones o entrar a “modo edición”
+    */
+    $("#dblBox").on("dblclick", function () {
+      $("#dblMsg").removeClass("alert-warning").addClass("alert-success")
+        .text("Bien: se disparó dblclick (doble clic).");
+      log("Evento: dblclick en #dblBox");
+    });
+
+    /*
+      =========================================================
+      3) EVENTOS: mouseenter / mouseleave
+      =========================================================
+      Utilidad: hover UI, mostrar ayuda, resaltar elementos
+    */
+    $("#hoverBox").on("mouseenter", function () {
+      $(this).css("transform", "scale(1.01)");
+      $("#hoverMsg").removeClass("alert-info").addClass("alert-success")
+        .text("mouseenter: el mouse entró a la caja.");
+      log("Evento: mouseenter en #hoverBox");
+    });
+
+    $("#hoverBox").on("mouseleave", function () {
+      $(this).css("transform", "scale(1)");
+      $("#hoverMsg").removeClass("alert-success").addClass("alert-info")
+        .text("mouseleave: el mouse salió de la caja.");
+      log("Evento: mouseleave en #hoverBox");
+    });
+
+    /*
+      =========================================================
+      4) EVENTOS: keydown / keyup / keypress
+      =========================================================
+      - keydown: se presiona la tecla
+      - keyup: se suelta la tecla
+      - keypress: “carácter” (más antiguo)
+    */
+    var cDown = 0, cUp = 0, cPress = 0;
+
+    $("#keyInput").on("keydown", function (e) {
+      cDown++;
+      $("#countDown").text(cDown);
+      log("Evento: keydown (tecla=" + e.key + ")");
+    });
+
+    $("#keyInput").on("keyup", function (e) {
+      cUp++;
+      $("#countUp").text(cUp);
+      log("Evento: keyup (tecla=" + e.key + ")");
+    });
+
+    $("#keyInput").on("keypress", function (e) {
+      cPress++;
+      $("#countPress").text(cPress);
+      log("Evento: keypress (tecla=" + e.key + ")");
+    });
+
+    /*
+      =========================================================
+      5) EVENTO: change
+      =========================================================
+      Utilidad: reaccionar a cambios en select/checkbox
+    */
+    $("#selRuta").on("change", function () {
+      var val = $(this).val();
+      if (!val) {
+        $("#changeMsg").removeClass("alert-success").addClass("alert-info")
+          .text("Selecciona una ruta para ver el cambio.");
+      } else {
+        $("#changeMsg").removeClass("alert-info").addClass("alert-success")
+          .text("change: elegiste la ruta -> " + val);
+      }
+      log("Evento: change en #selRuta (valor=" + (val || "vacío") + ")");
+    });
+
+    $("#chkAcepto").on("change", function () {
+      var ok = $(this).is(":checked");
+
+      $("#checkMsg").toggleClass("alert-success", ok)
+        .toggleClass("alert-secondary", !ok)
+        .text("Estado: " + (ok ? "aceptado. Puedes enviar el formulario." : "no aceptado."));
+
+      // Habilita o deshabilita el botón enviar (relación change -> submit)
+      $("#btnEnviar").prop("disabled", !ok);
+
+      log("Evento: change en #chkAcepto (checked=" + ok + ")");
+    });
+
+    /*
+      =========================================================
+      6) EVENTO: submit
+      =========================================================
+      - preventDefault() evita que la página se recargue
+      - aquí solo validamos y mostramos mensaje (demo)
+    */
+    $("#frmRegistro").on("submit", function (e) {
+      e.preventDefault(); // evita recargar
+
+      var nombre = $("#frmNombre").val().trim();
+      var email = $("#frmEmail").val().trim();
+
+      if (!nombre || !email) {
+        log("submit: faltan datos (nombre o email)");
+        alert("Completa nombre y email (demo).");
+        return;
+      }
+
+      $("#submitOk").removeClass("d-none");
+      log("Evento: submit en #frmRegistro (nombre=" + nombre + ", email=" + email + ")");
+    });
+
+    /*
+      =========================================================
+      7) EVENTO: load (en imagen)
+      =========================================================
+      Se dispara cuando la imagen termina de cargar
+    */
+    $("#imgDemo").on("load", function () {
+      $("#loadMsg").removeClass("alert-warning").addClass("alert-success")
+        .text("Estado: imagen cargada completamente (evento load).");
+      log("Evento: load en #imgDemo (imagen lista)");
+    });
+
+    /*
+      =========================================================
+      8) OTROS: focus / blur, input, scroll, resize
+      =========================================================
+    */
+    $("#focusInput").on("focus", function () {
+      $("#focusMsg").removeClass("alert-secondary").addClass("alert-success")
+        .text("focus: el input tiene foco.");
+      log("Evento: focus en #focusInput");
+    });
+
+    $("#focusInput").on("blur", function () {
+      $("#focusMsg").removeClass("alert-success").addClass("alert-secondary")
+        .text("blur: el input perdió el foco.");
+      log("Evento: blur en #focusInput");
+    });
+
+    $("#inputLive").on("input", function () {
+      var txt = $(this).val();
+      $("#inputPreview").text(txt ? txt : "(vacío)");
+      log("Evento: input en #inputLive (texto=" + (txt || "vacío") + ")");
+    });
+
+    // scroll: mostrar botón Arriba con fade
+    $(window).on("scroll", function () {
+      var y = $(window).scrollTop();
+      if (y > 500) $("#btnTop").fadeIn("fast");
+      else $("#btnTop").fadeOut("fast");
+    });
+
+    $("#btnTop").on("click", function () {
+      $("html, body").animate({ scrollTop: 0 }, 600);
+      log("Acción: click en #btnTop (volver arriba)");
+    });
+
+    // resize: mostrar tamaño de ventana
+    $(window).on("resize", function () {
+      $("#resizeMsg").text("resize: tamaño actual -> " + $(window).width() + "px x " + $(window).height() + "px");
+      log("Evento: resize (ancho=" + $(window).width() + ")");
+    });
+
+    /*
+      =========================================================
+      9) Controles del Log
+      =========================================================
+    */
+    $("#btnClearLog").on("click", function () {
+      $("#logBox").html("");
+      log("Log limpio.");
+    });
+
+    $("#btnDemoLog").on("click", function () {
+      log("Ejemplo: este es un mensaje manual en el log.");
+    });
+
+    /*
+      =========================================================
+      10) Inicio: cuando el DOM está listo
+      =========================================================
+      - jQuery ejecuta esta función cuando ya existe el HTML (DOM)
+    */
+    $(function () {
+      log("DOM listo: $(document).ready() (atajo con $(function(){}))");
+
+      // Si el alumno recarga la página, el load de la imagen puede ocurrir muy rápido.
+      // Este chequeo asegura que el mensaje se muestre si ya estaba cargada.
+      if ($("#imgDemo")[0].complete) {
+        $("#imgDemo").trigger("load");
+      }
+
+      // Inicializa el mensaje de resize con el tamaño actual
+      $("#resizeMsg").text("resize: tamaño actual -> " + $(window).width() + "px x " + $(window).height() + "px");
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+
+
+
+    <title>Documento</title>
+</head>
+<style>
+
+</style>
+<body>
+
+   
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-5" style="margin-right: 10px; padding: 50px; background-color: blue;">Columna 1</div>
+    <div class="col-5" style="padding: 50px; background-color: red;">Columna 2</div>
+    <div class="col-2" style="padding: 50px; background-color: yellow;">Columna 3</div>
+  </div>
+</div>
+
+
+<hr><hr>
+<hr><hr>
+
+<h2 style="margin-left: 50px; margin-bottom: 30px; font-size: 30px;"> Envía tu ticket al soporte</h2>
+
+<form style="padding: 0 50px;">
+    <div class="input-group mb-3">
+    <span class="input-group-text" id="basic-addon1">@</span>
+    <input type="text" class="form-control" placeholder="Escribe tu usuario" aria-label="Username" aria-describedby="basic-addon1" required>
+    </div>
+
+    <select class="form-select" aria-label="Default select example" style="margin-top: 30px;">
+        <option selected></option>
+        <option value="1">Problema técnico</option>
+        <option value="2">Devolución de dinero</option>
+        <option value="3">No recibí la factura</option>
+        <option value="4">Otro problema</option>
+    </select>
+
+    <div class="mb-3" style="margin-top: 20px;">
+    <label for="exampleFormControlTextarea1" class="form-label">Describe tu problema</label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+    </div>  
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+      <label class="form-check-label" for="invalidCheck">
+        Acepta el contrato de reclamo
+      </label>
+      <div class="invalid-feedback">
+        Esto es obligatorio si quieres mandar un ticket
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Enviar Ticket</button>
+</form>
+
+<hr><hr><hr><hr><hr><br><br>
+
+
+<section>
+    <div>
+        <h2>Preguntas Frecuentes</h2>
+    </div>
+    <div class="accordion" id="accordionExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        ¿Cómo puedo contratar tus servicio?
+      </button>
+    </h2>
+    <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        Y escribo la respuesta que quiero para que me contacte <a href="">aquí</a>
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        ¿Que mascotas existen para adoptar?
+      </button>
+    </h2>
+    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+       Puedes ver algunas de nuestras mascotas acá <img src="assets/img/gatito.jpeg" alt=""> <img src="assets/img/perrito.webp" alt=""> <a href="Ver más mascotas"></a>
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+        Accordion Item #3
+      </button>
+    </h2>
+    <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <strong>This is the third item’s accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It’s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+<br><br><br><br><br>
+<button type="button" class="btn btn-primary position-relative">
+  Inbox
+  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+    99+
+    <span class="visually-hidden">unread messages</span>
+  </span>
+</button>
+<br><br><br><br><br>
+<hr><hr><hr><hr><hr><hr>
+<br>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Tomar contacto
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Llena el formulario y un vededor te contactará</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="assets/img/gatito.jpeg">
+
+            <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label">Primer Nombre</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" placeholder="Ingresa tu nombre"></textarea>
+            </div>
+            <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Ingresa tu correo">
+            </div>
+            <button type="submit" class="btn btn-primary mb-3">Enviar datos</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+<hr><hr><hr><hr><hr><hr>
+<br><br><br><br><br>
+
+<a class="btn btn-primary" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+  Link with href
+</a>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+  <div class="offcanvas-header">
+    <img src="assets/img/gatito.jpeg" alt="">
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Servicios</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Contacto</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Portafolio</a>
+        </li>
+    </ul>
+  </div>
+</div>
+
+<hr><hr><hr><hr><hr><hr>
+<br><br><br><br><br>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

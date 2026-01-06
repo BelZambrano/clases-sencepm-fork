@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Formulario paso a paso</title>
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f6f7fb;
+      color: #111827;
+      display: flex;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 520px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    }
+
+    h1 {
+      font-size: 20px;
+      margin: 0 0 10px 0;
+    }
+
+    .sub {
+      margin: 0 0 18px 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .pasos {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .paso {
+      flex: 1;
+      height: 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .paso.activo::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: #2563eb;
+    }
+
+    .step {
+      display: none;
+      margin-top: 10px;
+    }
+    .step.activo {
+      display: block;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 6px;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      outline: none;
+      font-size: 14px;
+    }
+    input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+
+    .hint {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .error {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #b91c1c;
+      display: none;
+    }
+    .error.visible {
+      display: block;
+    }
+
+    .acciones {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button {
+      padding: 10px 12px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-primario {
+      background: #2563eb;
+      color: white;
+      flex: 1;
+    }
+    .btn-primario:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-secundario {
+      background: #f3f4f6;
+      color: #111827;
+      border-color: #e5e7eb;
+      width: 120px;
+    }
+
+    .resumen {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .resumen p { margin: 6px 0; }
+
+    .ok {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      display: none;
+    }
+    .ok.visible { display: block; }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>Formulario paso a paso</h1>
+    <p class="sub" id="subtitulo">Paso 1 de 3</p>
+
+    <!-- Indicador visual de pasos -->
+    <div class="pasos" aria-hidden="true">
+      <div class="paso" id="barra1"></div>
+      <div class="paso" id="barra2"></div>
+      <div class="paso" id="barra3"></div>
+    </div>
+
+    <!-- Paso 1: Nombre -->
+    <div class="step activo" id="step1">
+      <h2 style="font-size:16px;margin:0 0 6px;">Ingresa tu nombre</h2>
+      <label for="nombre">Nombre</label>
+      <input
+        id="nombre"
+        name="nombre"
+        type="text"
+        autocomplete="name"
+        placeholder="Ej: Ariel"
+      />
+      <div class="hint">Escribe tu nombre y presiona “Siguiente”.</div>
+      <div class="error" id="error1">Por favor, ingresa tu nombre.</div>
+
+      <div class="acciones">
+        <button class="btn-primario" id="btnSiguiente1">Siguiente</button>
+      </div>
+    </div>
+
+    <!-- Paso 2: Email (personalizado con el nombre) -->
+    <div class="step" id="step2">
+      <h2 style="font-size:16px;margin:0 0 6px;" id="tituloPaso2">Hola, ingresa tu correo</h2>
+      <label for="email">Correo</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        placeholder="Ej: ariel@correo.com"
+      />
+      <div class="hint">Usa un correo válido (debe tener “@”).</div>
+      <div class="error" id="error2">Por favor, ingresa un correo válido.</div>
+
+      <div class="acciones">
+        <button class="btn-secundario" id="btnAtras2">Atrás</button>
+        <button class="btn-primario" id="btnSiguiente2">Siguiente</button>
+      </div>
+    </div>
+
+    <!-- Paso 3: Confirmación -->
+    <div class="step" id="step3">
+      <h2 style="font-size:16px;margin:0 0 6px;">Confirma tus datos</h2>
+
+      <div class="resumen" id="resumen">
+        <p><strong>Nombre:</strong> <span id="resNombre">-</span></p>
+        <p><strong>Correo:</strong> <span id="resEmail">-</span></p>
+      </div>
+
+      <div class="hint">Si necesitas corregir algo, vuelve atrás.</div>
+
+      <div class="acciones">
+        <button class="btn-secundario" id="btnAtras3">Atrás</button>
+        <button class="btn-primario" id="btnConfirmar">Confirmar</button>
+      </div>
+
+      <div class="ok" id="okMensaje">Listo. Datos “enviados” (simulado). Revisa la consola para verlos.</div>
+    </div>
+  </div>
+
+  <script>
+    // Estado (datos del "formulario")
+    const datos = {
+      nombre: "",
+      email: ""
+    };
+
+    // Helpers: obtener elementos
+    const $ = (id) => document.getElementById(id);
+
+    // Pasos
+    const steps = [ $("step1"), $("step2"), $("step3") ];
+    let pasoActual = 1;
+
+    // Barras de progreso
+    const barras = [ $("barra1"), $("barra2"), $("barra3") ];
+
+    // Textos
+    const subtitulo = $("subtitulo");
+    const tituloPaso2 = $("tituloPaso2");
+
+    // Errores
+    const error1 = $("error1");
+    const error2 = $("error2");
+
+    // Inputs
+    const inputNombre = $("nombre");
+    const inputEmail = $("email");
+
+    // Resumen
+    const resNombre = $("resNombre");
+    const resEmail = $("resEmail");
+
+    // OK
+    const okMensaje = $("okMensaje");
+
+    function actualizarUI() {
+      // Mostrar solo el paso actual
+      steps.forEach((step, index) => {
+        step.classList.toggle("activo", index === pasoActual - 1);
+      });
+
+      // Subtítulo
+      subtitulo.innerText = `Paso ${pasoActual} de 3`;
+
+      // Barras
+      barras.forEach((b, index) => {
+        b.classList.toggle("activo", index < pasoActual);
+      });
+
+      // Ocultar mensajes
+      error1.classList.remove("visible");
+      error2.classList.remove("visible");
+
+      // En paso 3, mostrar resumen
+      if (pasoActual === 3) {
+        resNombre.innerText = datos.nombre || "-";
+        resEmail.innerText = datos.email || "-";
+      }
+    }
+
+    function irAPaso(nuevoPaso) {
+      pasoActual = nuevoPaso;
+      actualizarUI();
+    }
+
+    function validarNombre(nombre) {
+      return nombre.trim().length >= 2; // regla simple
+    }
+
+    function validarEmail(email) {
+      // regla simple para principiantes: debe contener "@" y un "."
+      const e = email.trim();
+      return e.includes("@") && e.includes(".");
+    }
+
+    // Paso 1 -> Siguiente
+    $("btnSiguiente1").addEventListener("click", () => {
+      const nombre = inputNombre.value;
+
+      if (!validarNombre(nombre)) {
+        error1.classList.add("visible");
+        return;
+      }
+
+      datos.nombre = nombre.trim();
+
+      // Personalización del paso 2
+      tituloPaso2.innerText = `Hola ${datos.nombre}, ingresa tu correo`;
+
+      irAPaso(2);
+      inputEmail.focus();
+    });
+
+    // Paso 2 -> Atrás
+    $("btnAtras2").addEventListener("click", () => {
+      irAPaso(1);
+      inputNombre.focus();
+    });
+
+    // Paso 2 -> Siguiente
+    $("btnSiguiente2").addEventListener("click", () => {
+      const email = inputEmail.value;
+
+      if (!validarEmail(email)) {
+        error2.classList.add("visible");
+        return;
+      }
+
+      datos.email = email.trim();
+      irAPaso(3);
+    });
+
+    // Paso 3 -> Atrás
+    $("btnAtras3").addEventListener("click", () => {
+      irAPaso(2);
+      inputEmail.focus();
+    });
+
+    // Confirmar (simulado)
+    $("btnConfirmar").addEventListener("click", () => {
+      // Aquí normalmente enviarías a un backend.
+      // Por ahora: mostramos en consola y un mensaje en pantalla.
+      console.log("=== DATOS ENVIADOS (SIMULADO) ===");
+      console.log("Nombre:", datos.nombre);
+      console.log("Email:", datos.email);
+
+      okMensaje.classList.add("visible");
+    });
+
+    // Opcional: Enter para avanzar en inputs
+    inputNombre.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        $("btnSiguiente1").click();
+      }
+    });
+
+    inputEmail.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        $("btnSiguiente2").click();
+      }
+    });
+
+    // Inicial
+    actualizarUI();
+    inputNombre.focus();
+  </script>
+</body>
+</html>

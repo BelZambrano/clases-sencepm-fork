@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Demo AJAX con jQuery — Sin backend (simulado)</title>
+
+  <!-- Bootstrap 4 (solo para que se vea claro) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+
+  <style>
+    .menu {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 999;
+    }
+    .contenido { padding-top: 80px; }
+
+    section {
+      padding: 60px 0;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+      background: #fff;
+    }
+    section:nth-child(even) { background: #f8f9fa; }
+
+    .log {
+      height: 220px;
+      overflow: auto;
+      background: #0b1020;
+      color: #d7e0ff;
+      border-radius: 10px;
+      padding: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13px;
+      border: 1px solid rgba(255,255,255,.1);
+    }
+    .log .muted { color: rgba(215,224,255,.65); }
+
+    .kbd {
+      border: 1px solid rgba(0,0,0,.2);
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #fff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+    }
+
+    /* Spinner simple */
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(0,0,0,.2);
+      border-top-color: rgba(0,0,0,.7);
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+
+<body>
+
+  <!-- MENU -->
+  <nav class="menu bg-dark">
+    <div class="container py-3 d-flex flex-wrap align-items-center">
+      <span class="text-white font-weight-bold mr-3">AJAX (Demo)</span>
+
+      <button class="btn btn-sm btn-outline-light mr-2 mb-2 js-ir" data-ir="#que-es">¿Qué es?</button>
+      <button class="btn btn-sm btn-outline-light mr-2 mb-2 js-ir" data-ir="#simulado">AJAX simulado</button>
+      <button class="btn btn-sm btn-outline-light mr-2 mb-2 js-ir" data-ir="#json-local">JSON local</button>
+      <button class="btn btn-sm btn-outline-light mr-2 mb-2 js-ir" data-ir="#errores">Errores y timeouts</button>
+      <button class="btn btn-sm btn-outline-info mb-2 js-ir" data-ir="#log">Log</button>
+    </div>
+  </nav>
+
+  <div class="contenido">
+
+    <!-- SECCIÓN: QUÉ ES AJAX -->
+    <section id="que-es">
+      <div class="container">
+        <h1 class="mb-2">¿Qué es AJAX?</h1>
+        <p class="text-muted">
+          AJAX significa <strong>Asynchronous JavaScript and XML</strong>. En la práctica, es una técnica para
+          <strong>pedir o enviar datos sin recargar la página</strong>.
+        </p>
+
+        <div class="alert alert-info">
+          En esta demo NO nos conectamos a un backend real. Simulamos el comportamiento de AJAX con esperas
+          (como si fuera “internet”) y respuestas en JSON.
+        </div>
+
+        <h5>¿Qué se aprende aquí?</h5>
+        <ul class="mb-0">
+          <li>Qué significa “asíncrono” (no bloquea la página).</li>
+          <li>Estados típicos: <span class="kbd">loading</span>, <span class="kbd">success</span>, <span class="kbd">error</span>.</li>
+          <li>Cómo actualizar la UI cuando llegan datos.</li>
+          <li>Cómo manejar errores y timeouts (simulados).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: AJAX SIMULADO -->
+    <section id="simulado">
+      <div class="container">
+        <h2>AJAX simulado (sin backend)</h2>
+        <p class="text-muted">
+          Un AJAX real hace una petición a una URL. Aquí vamos a imitar ese proceso:
+          al apretar un botón, se muestra “Cargando…”, esperamos 1 a 2 segundos y luego “llega” una respuesta.
+        </p>
+
+        <div class="row">
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Ejemplo 1: “Cargar lista”</h5>
+
+                <button id="btnCargarLista" class="btn btn-primary">
+                  Cargar lista (simulado)
+                </button>
+
+                <div class="mt-3" id="estadoLista"></div>
+
+                <ul class="mt-3 mb-0" id="listaDatos"></ul>
+
+                <div class="mt-3 text-muted">
+                  Utilidad real: cargar productos, notificaciones, tablas, etc. sin recargar.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Ejemplo 2: “Guardar formulario”</h5>
+
+                <form id="frmGuardar">
+                  <div class="form-group">
+                    <label>Nombre</label>
+                    <input id="nombre" class="form-control" placeholder="Ej: Ariel">
+                  </div>
+
+                  <div class="form-group">
+                    <label>Correo</label>
+                    <input id="correo" type="email" class="form-control" placeholder="Ej: ariel@correo.com">
+                  </div>
+
+                  <button class="btn btn-success" type="submit">
+                    Guardar (simulado)
+                  </button>
+                </form>
+
+                <div class="mt-3" id="estadoGuardar"></div>
+
+                <div class="mt-3 text-muted">
+                  Utilidad real: registrar usuarios, enviar mensajes, guardar datos en un sistema.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-warning mb-0">
+          Idea clave: la página sigue “viva” mientras se espera la respuesta. Eso es lo asíncrono.
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: JSON LOCAL (sin servidor) -->
+    <section id="json-local">
+      <div class="container">
+        <h2>“Traer JSON” local (sin backend)</h2>
+        <p class="text-muted">
+          En un proyecto real, el servidor responde con JSON. Aquí lo vamos a representar con un objeto local, pero
+          lo mostraremos como si hubiera llegado desde internet.
+        </p>
+
+        <div class="card">
+          <div class="card-body">
+            <h5>Ejemplo: cargar “perfil”</h5>
+            <p class="text-muted">
+              Presiona el botón: se simula una petición, luego se pinta el perfil en pantalla.
+            </p>
+
+            <button id="btnPerfil" class="btn btn-outline-primary">Cargar perfil (simulado)</button>
+            <div class="mt-3" id="estadoPerfil"></div>
+
+            <div class="row mt-3 d-none" id="perfilBox">
+              <div class="col-md-4 mb-2">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="text-muted">Nombre</div>
+                    <div class="h5 mb-0" id="perfilNombre"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 mb-2">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="text-muted">Rol</div>
+                    <div class="h5 mb-0" id="perfilRol"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 mb-2">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="text-muted">Estado</div>
+                    <div class="h5 mb-0" id="perfilEstado"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-3 text-muted">
+              Utilidad real: “mi cuenta”, “mi dashboard”, “mis cursos”, etc.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: ERRORES Y TIMEOUTS -->
+    <section id="errores">
+      <div class="container">
+        <h2>Errores y timeouts (simulados)</h2>
+        <p class="text-muted">
+          En AJAX real, a veces falla: no hay internet, el servidor cae, o la respuesta demora demasiado.
+          Aquí imitamos esos escenarios.
+        </p>
+
+        <div class="row">
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Simular error</h5>
+                <button id="btnError" class="btn btn-danger">Pedir datos (fallar)</button>
+                <div class="mt-3" id="estadoError"></div>
+
+                <p class="mt-3 mb-0 text-muted">
+                  Utilidad: mostrar un mensaje claro y permitir reintentar.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Simular timeout</h5>
+                <button id="btnTimeout" class="btn btn-warning">Pedir datos (timeout)</button>
+                <div class="mt-3" id="estadoTimeout"></div>
+
+                <p class="mt-3 mb-0 text-muted">
+                  Utilidad: si se demora demasiado, avisar al usuario y cortar la espera.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-secondary mb-0">
+          En un proyecto real, esto se maneja con callbacks (<span class="kbd">success/error</span>) o Promises
+          (<span class="kbd">then/catch</span>) y a veces un <span class="kbd">timeout</span>.
+        </div>
+      </div>
+    </section>
+
+    <!-- LOG -->
+    <section id="log">
+      <div class="container">
+        <h2>Log (para entender el flujo)</h2>
+        <p class="text-muted">
+          Mira cómo se pasa por estados: “Loading → Success/Error”.
+        </p>
+
+        <div class="row">
+          <div class="col-lg-8 mb-3">
+            <div class="log" id="logBox"></div>
+          </div>
+          <div class="col-lg-4 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5>Controles</h5>
+                <button id="btnClearLog" class="btn btn-outline-danger btn-sm">Limpiar log</button>
+                <button id="btnDemoLog" class="btn btn-outline-primary btn-sm ml-2">Agregar ejemplo</button>
+                <div class="mt-3 text-muted">
+                  En clases: pide al alumno que describa los pasos del flujo antes de apretar el botón.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-info mb-0">
+          Importante: esto simula AJAX. En el mundo real, el “fetch” es una llamada HTTP real hacia una URL.
+        </div>
+      </div>
+    </section>
+
+    <footer class="py-4 bg-light">
+      <div class="container text-center text-muted">
+        <small>Demo educativa de AJAX con jQuery — sin backend (simulado)</small>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script>
+    /*
+      =========================================================
+      UTILIDAD: LOG (para que el alumno vea el flujo)
+      =========================================================
+    */
+    function log(msg) {
+      var t = new Date().toLocaleTimeString();
+      $("#logBox").prepend("<div><span class='muted'>[" + t + "]</span> " + msg + "</div>");
+    }
+
+    /*
+      =========================================================
+      NAV: scroll suave a secciones (como en tu página anterior)
+      =========================================================
+    */
+    $(".js-ir").on("click", function () {
+      var destino = $(this).data("ir");
+      var $sec = $(destino);
+      if (!$sec.length) return;
+
+      var alturaMenu = $(".menu").outerHeight() || 0;
+      var pos = $sec.offset().top - alturaMenu;
+
+      $("html, body").stop().animate({ scrollTop: pos }, 450);
+      log("Navegación -> " + destino);
+    });
+
+    /*
+      =========================================================
+      “AJAX” SIMULADO: función que imita una petición al servidor
+      =========================================================
+      En la vida real, esto sería $.ajax({ url, method, ... })
+      Aquí NO llamamos a un backend. Solo:
+      - mostramos loading
+      - esperamos X ms
+      - devolvemos una "respuesta" (success) o un "error"
+    */
+    function fakeAjax(options) {
+      // options: { delay, shouldFail, data }
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          if (options.shouldFail) {
+            reject({ message: "Error simulado: servidor no respondió." });
+          } else {
+            resolve(options.data);
+          }
+        }, options.delay);
+      });
+    }
+
+    /*
+      =========================================================
+      HELPER: UI de loading / success / error
+      =========================================================
+    */
+    function setLoading($el, text) {
+      $el.html("<div class='alert alert-warning mb-0'><span class='spinner'></span>" + text + "</div>");
+    }
+
+    function setSuccess($el, text) {
+      $el.html("<div class='alert alert-success mb-0'>" + text + "</div>");
+    }
+
+    function setError($el, text) {
+      $el.html("<div class='alert alert-danger mb-0'>" + text + "</div>");
+    }
+
+    /*
+      =========================================================
+      Ejemplo 1: Cargar lista (simulado)
+      =========================================================
+    */
+    $("#btnCargarLista").on("click", function () {
+      var $estado = $("#estadoLista");
+      var $lista = $("#listaDatos");
+
+      // 1) UI loading
+      setLoading($estado, "Cargando lista (simulado)...");
+      $lista.html("");
+      log("Lista: loading");
+
+      // 2) “Petición” fake
+      fakeAjax({
+        delay: 1200, // 1.2 seg
+        shouldFail: false,
+        data: [
+          { id: 1, nombre: "Introducción a AJAX" },
+          { id: 2, nombre: "Estados: loading/success/error" },
+          { id: 3, nombre: "Actualizar UI sin recargar" }
+        ]
+      })
+      .then(function (data) {
+        // 3) success
+        setSuccess($estado, "Lista cargada con éxito.");
+        log("Lista: success (llegaron " + data.length + " items)");
+
+        // Pintar HTML
+        data.forEach(function (item) {
+          $lista.append("<li class='mb-1'>" + item.id + " — " + item.nombre + "</li>");
+        });
+      })
+      .catch(function (err) {
+        // 4) error
+        setError($estado, err.message);
+        log("Lista: error -> " + err.message);
+      });
+    });
+
+    /*
+      =========================================================
+      Ejemplo 2: “Guardar” formulario (simulado)
+      =========================================================
+    */
+    $("#frmGuardar").on("submit", function (e) {
+      e.preventDefault();
+
+      var nombre = $("#nombre").val().trim();
+      var correo = $("#correo").val().trim();
+      var $estado = $("#estadoGuardar");
+
+      if (!nombre || !correo) {
+        setError($estado, "Completa nombre y correo.");
+        log("Guardar: validación falló");
+        return;
+      }
+
+      setLoading($estado, "Guardando (simulado)...");
+      log("Guardar: loading (nombre=" + nombre + ")");
+
+      fakeAjax({
+        delay: 1500,
+        shouldFail: false,
+        data: { ok: true, id: Math.floor(Math.random() * 9000) + 1000 }
+      })
+      .then(function (resp) {
+        setSuccess($estado, "Guardado exitoso. ID generado: " + resp.id);
+        log("Guardar: success (id=" + resp.id + ")");
+      })
+      .catch(function (err) {
+        setError($estado, err.message);
+        log("Guardar: error -> " + err.message);
+      });
+    });
+
+    /*
+      =========================================================
+      Ejemplo 3: “Traer JSON” local (perfil)
+      =========================================================
+    */
+    var perfilLocal = {
+      nombre: "Estudiante Demo",
+      rol: "FULL-STACK",
+      estado: "Activo"
+    };
+
+    $("#btnPerfil").on("click", function () {
+      var $estado = $("#estadoPerfil");
+      setLoading($estado, "Cargando perfil (simulado)...");
+      $("#perfilBox").addClass("d-none");
+      log("Perfil: loading");
+
+      fakeAjax({
+        delay: 900,
+        shouldFail: false,
+        data: perfilLocal
+      })
+      .then(function (p) {
+        setSuccess($estado, "Perfil cargado.");
+        $("#perfilNombre").text(p.nombre);
+        $("#perfilRol").text(p.rol);
+        $("#perfilEstado").text(p.estado);
+        $("#perfilBox").removeClass("d-none");
+        log("Perfil: success");
+      })
+      .catch(function (err) {
+        setError($estado, err.message);
+        log("Perfil: error -> " + err.message);
+      });
+    });
+
+    /*
+      =========================================================
+      Ejemplo 4: Error simulado
+      =========================================================
+    */
+    $("#btnError").on("click", function () {
+      var $estado = $("#estadoError");
+      setLoading($estado, "Pidiendo datos... (esto fallará)");
+      log("Error demo: loading");
+
+      fakeAjax({
+        delay: 1100,
+        shouldFail: true,
+        data: null
+      })
+      .then(function () {})
+      .catch(function (err) {
+        setError($estado, err.message + " (Reintenta).");
+        log("Error demo: error -> " + err.message);
+      });
+    });
+
+    /*
+      =========================================================
+      Ejemplo 5: Timeout simulado
+      =========================================================
+      En AJAX real puedes configurar timeout.
+      Aquí lo simulamos con: “si demora más de X ms, lo cortamos”.
+    */
+    $("#btnTimeout").on("click", function () {
+      var $estado = $("#estadoTimeout");
+      setLoading($estado, "Pidiendo datos... (simulando timeout)");
+      log("Timeout demo: loading");
+
+      // Promesa "lenta"
+      var request = fakeAjax({
+        delay: 4000, // demora 4s
+        shouldFail: false,
+        data: { ok: true, mensaje: "Llegó tarde, pero llegó." }
+      });
+
+      // Promesa "timeout" (corta a los 1500ms)
+      var timeout = new Promise(function (_, reject) {
+        setTimeout(function () {
+          reject({ message: "Timeout simulado: se demoró demasiado." });
+        }, 1500);
+      });
+
+      // Promise.race: gana la que termine primero (request o timeout)
+      Promise.race([request, timeout])
+        .then(function (data) {
+          setSuccess($estado, "Respuesta a tiempo: " + data.mensaje);
+          log("Timeout demo: success (antes del límite)");
+        })
+        .catch(function (err) {
+          setError($estado, err.message);
+          log("Timeout demo: error -> " + err.message);
+        });
+    });
+
+    /*
+      =========================================================
+      Controles del Log
+      =========================================================
+    */
+    $("#btnClearLog").on("click", function () {
+      $("#logBox").html("");
+      log("Log limpio.");
+    });
+
+    $("#btnDemoLog").on("click", function () {
+      log("Ejemplo: En AJAX real, aquí sería $.ajax() o fetch().");
+    });
+
+    /*
+      =========================================================
+      Inicio
+      =========================================================
+    */
+    $(function () {
+      log("DOM listo. Esta demo simula AJAX sin backend.");
+      log("Prueba: Cargar lista, Guardar formulario, Cargar perfil, Error, Timeout.");
+    });
+  </script>
+</body>
+</html>

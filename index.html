@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <title>Documento</title>
+</head>
+
+<body>
+  <style>
+    .boton {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .boton-escondido {
+      display: none;
+    }
+  </style>
+
+  <div style="max-width: 720px; margin: 40px auto; font-family: Arial, sans-serif; line-height: 1.5;">
+    <h1>Ejemplo jQuery: show() y hide()</h1>
+    <p>Haz clic en los botones para mostrar u ocultar el párrafo.</p>
+
+    <div style="margin: 16px 0;">
+      <button class="boton boton-escondido " id="btnMostrar" type="button">Mostrar texto</button>
+      <button class="boton" id="btnOcultar" type="button">Ocultar texto</button>
+
+      <a class="boton-escondido" href=""> Esto es otro link</a>
+    </div>
+
+    <p class="texto" style="display:none; padding: 12px; border: 1px solid #ccc; border-radius: 6px;">
+      Hola, soy el párrafo con clase <strong>.texto</strong>. Ahora me puedes mostrar u ocultar con jQuery.
+    </p>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    $(function () {
+
+      $("#btnMostrar").on("click", function () {
+        $("p.texto").show();
+
+        // Se oculta Mostrar y se muestra Ocultar
+        $("#btnMostrar").hide();
+        $("#btnOcultar").show();
+      });
+
+      $("#btnOcultar").on("click", function () {
+        $("p.texto").hide();
+
+        // Se oculta Ocultar y se muestra Mostrar
+        $("#btnOcultar").hide();
+        $("#btnMostrar").show();
+      });
+
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+  const btnMostrar = document.getElementById("btnMostrar");
+  const btnOcultar = document.getElementById("btnOcultar");
+  const parrafo = document.querySelector("p.texto");
+
+  btnMostrar.addEventListener("click", function () {
+    // $("p.texto").show();
+    parrafo.style.display = "block";
+
+    // $("#btnMostrar").hide();  $("#btnOcultar").show();
+    btnMostrar.style.display = "none";
+    btnOcultar.style.display = "inline-block";
+  });
+
+  btnOcultar.addEventListener("click", function () {
+    // $("p.texto").hide();
+    parrafo.style.display = "none";
+
+    // $("#btnOcultar").hide();  $("#btnMostrar").show();
+    btnOcultar.style.display = "none";
+    btnMostrar.style.display = "inline-block";
+  });
+});
+
+  </script>
+
+  
+</body>
+</html>

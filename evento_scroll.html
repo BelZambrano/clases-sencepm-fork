@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Clases de Inglés | Página informativa</title>
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #0f172a;
+      background: #f8fafc;
+      line-height: 1.6;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(248, 250, 252, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .nav {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .nav a {
+      text-decoration: none;
+      color: #0f172a;
+      font-size: 14px;
+      padding: 8px 10px;
+      border-radius: 10px;
+    }
+    .nav a:hover { background: #e2e8f0; }
+
+    .container {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 22px 16px 56px;
+    }
+
+    .hero {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      align-items: center;
+    }
+
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; }
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      margin: 0 0 14px;
+      color: #334155;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #0f172a;
+      border-color: #e2e8f0;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 860px) {
+      .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    .feature {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .feature h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+    .feature p { margin: 0; color: #334155; font-size: 14px; }
+
+    h2 { margin: 0 0 8px; }
+    .muted { color: #334155; }
+
+    .pricing {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (max-width: 860px) {
+      .pricing { grid-template-columns: 1fr; }
+    }
+
+    .price-card {
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      padding: 16px;
+      background: #ffffff;
+    }
+    .price-card.highlight {
+      border-color: #2563eb;
+      box-shadow: 0 10px 30px rgba(37,99,235,0.18);
+    }
+    .price {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 8px 0;
+    }
+    ul { margin: 10px 0 0; padding-left: 18px; }
+    li { margin: 6px 0; color: #334155; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 860px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    label { font-size: 14px; display: block; margin: 8px 0 6px; }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      outline: none;
+      font-size: 14px;
+      background: white;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+    textarea { min-height: 100px; resize: vertical; }
+
+    footer {
+      padding: 26px 16px;
+      color: #64748b;
+      text-align: center;
+    }
+
+    /* POPUP (modal) */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 999;
+    }
+    .overlay.visible { display: flex; }
+
+    .modal {
+      width: 100%;
+      max-width: 520px;
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      padding: 18px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+      position: relative;
+    }
+    .modal h3 { margin: 0 0 6px; }
+    .modal p { margin: 0 0 12px; color: #334155; }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      background: #ecfeff;
+      border: 1px solid #a5f3fc;
+      color: #155e75;
+      padding: 6px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 34px;
+      text-align: center;
+    }
+    .close:hover { background: #e2e8f0; }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .small-note {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">EnglishBoost</div>
+      <nav>
+        <a href="#metodo">Método</a>
+        <a href="#niveles">Niveles</a>
+        <a href="#planes">Planes</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" id="inicio">
+      <div>
+        <h1>Clases de inglés prácticas para hablar con confianza</h1>
+        <p>
+          Clases 100% enfocadas en conversación, vocabulario útil y corrección inmediata.
+          Ideal si necesitas inglés para trabajo, entrevistas o viajes.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#contacto">Agendar diagnóstico</a>
+          <a class="btn btn-secondary" href="#planes">Ver planes</a>
+        </div>
+        <p class="muted" style="margin-top:12px;font-size:13px;">
+          Modalidad online. Horarios flexibles. Material incluido.
+        </p>
+      </div>
+
+      <div class="feature">
+        <h3>Resultados típicos en 4 semanas</h3>
+        <p>
+          Mejor fluidez + estructura para responder en reuniones, presentaciones cortas y conversaciones reales.
+        </p>
+        <ul>
+          <li>Corrección de pronunciación en vivo</li>
+          <li>Role-play con situaciones laborales</li>
+          <li>Guías cortas para estudiar 10–15 min/día</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" id="metodo">
+      <h2>Método</h2>
+      <p class="muted">
+        En cada clase se trabaja con un objetivo concreto. Sin “relleno”: práctica, feedback y seguimiento.
+      </p>
+
+      <div class="grid-3">
+        <div class="feature">
+          <h3>1) Diagnóstico</h3>
+          <p>Se define tu nivel real, objetivo y un plan de 4 semanas.</p>
+        </div>
+        <div class="feature">
+          <h3>2) Conversación guiada</h3>
+          <p>Hablas desde el minuto 1 con prompts y situaciones reales.</p>
+        </div>
+        <div class="feature">
+          <h3>3) Feedback accionable</h3>
+          <p>Correcciones rápidas + tareas cortas para consolidar.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="niveles">
+      <h2>Niveles</h2>
+      <p class="muted">Trabajamos desde cero hasta nivel intermedio/avanzado, con metas claras.</p>
+
+      <div class="grid-3">
+        <div class="feature">
+          <h3>Starter (A0–A1)</h3>
+          <p>Frases esenciales, pronunciación base y confianza para presentarte.</p>
+        </div>
+        <div class="feature">
+          <h3>Progress (A2–B1)</h3>
+          <p>Conversación en presente/pasado, vocabulario laboral y preguntas frecuentes.</p>
+        </div>
+        <div class="feature">
+          <h3>Pro (B2+)</h3>
+          <p>Fluidez, precisión, reuniones, presentaciones, entrevistas y negociación.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="planes">
+      <h2>Planes</h2>
+      <p class="muted">Elige según tu objetivo. Puedes cambiar de plan mes a mes.</p>
+
+      <div class="pricing">
+        <div class="price-card">
+          <h3>Lite</h3>
+          <div class="price">2 clases / semana</div>
+          <ul>
+            <li>Conversación guiada</li>
+            <li>Tareas cortas</li>
+            <li>Material incluido</li>
+          </ul>
+          <div class="cta-row" style="margin-top:12px;">
+            <a class="btn btn-secondary" href="#contacto">Consultar</a>
+          </div>
+        </div>
+
+        <div class="price-card highlight">
+          <h3>Focus</h3>
+          <div class="price">3 clases / semana</div>
+          <ul>
+            <li>Corrección intensiva</li>
+            <li>Role-play laboral</li>
+            <li>Seguimiento semanal</li>
+          </ul>
+          <div class="cta-row" style="margin-top:12px;">
+            <a class="btn btn-primary" href="#contacto">Elegir Focus</a>
+          </div>
+        </div>
+
+        <div class="price-card">
+          <h3>Intensive</h3>
+          <div class="price">5 clases / semana</div>
+          <ul>
+            <li>Inmersión</li>
+            <li>Objetivos por día</li>
+            <li>Preparación entrevistas</li>
+          </ul>
+          <div class="cta-row" style="margin-top:12px;">
+            <a class="btn btn-secondary" href="#contacto">Agendar</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Testimonios</h2>
+      <div class="grid-3" style="margin-top:12px;">
+        <div class="feature">
+          <h3>“Ahora sí hablo en reuniones”</h3>
+          <p class="muted">“Me costaba responder rápido. Con práctica guiada gané fluidez.”</p>
+        </div>
+        <div class="feature">
+          <h3>“Entrevista aprobada”</h3>
+          <p class="muted">“Ensayamos preguntas reales. Llegué con estructura y seguridad.”</p>
+        </div>
+        <div class="feature">
+          <h3>“Menos vergüenza”</h3>
+          <p class="muted">“Correcciones claras sin frenar la conversación. Mejoré pronunciación.”</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="contacto">
+      <h2>Contacto</h2>
+      <p class="muted">Deja tus datos y te proponemos un plan según tu objetivo.</p>
+
+      <form id="formulario">
+        <div class="form-row">
+          <div>
+            <label for="nombre">Nombre</label>
+            <input id="nombre" name="nombre" type="text" autocomplete="name" placeholder="Ej: Ariel" required />
+          </div>
+          <div>
+            <label for="email">Correo</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="Ej: ariel@correo.com" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label for="objetivo">Objetivo</label>
+            <select id="objetivo" name="objetivo">
+              <option>Conversación general</option>
+              <option>Inglés para trabajo</option>
+              <option>Preparación de entrevista</option>
+              <option>Viajes</option>
+            </select>
+          </div>
+          <div>
+            <label for="nivel">Nivel (estimado)</label>
+            <select id="nivel" name="nivel">
+              <option>Principiante (A0–A1)</option>
+              <option>Básico (A2)</option>
+              <option>Intermedio (B1)</option>
+              <option>Intermedio alto (B2+)</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="mensaje">Mensaje</label>
+        <textarea id="mensaje" name="mensaje" placeholder="Cuéntanos tu meta y disponibilidad..."></textarea>
+
+        <div class="cta-row" style="margin-top:12px;">
+          <button class="btn btn-primary" type="submit">Enviar</button>
+          <button class="btn btn-secondary" type="button" id="btnScrollTop">Volver arriba</button>
+        </div>
+
+        <p class="small-note">
+          Este formulario es de demostración. Al enviar, verás los datos en la consola.
+        </p>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    © 2025 EnglishBoost. Demo informativa para practicar HTML/CSS/JS.
+  </footer>
+
+  <!-- POPUP / MODAL -->
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="popupTitle" aria-describedby="popupDesc">
+    <div class="modal">
+      <button class="close" id="btnCerrar" aria-label="Cerrar">×</button>
+      <div class="badge">Oferta por tiempo limitado</div>
+      <h3 id="popupTitle">50% en tu primera clase de diagnóstico</h3>
+      <p id="popupDesc">
+        Reserva hoy y obtén una clase de diagnóstico a mitad de precio. Incluye plan de 4 semanas y feedback personalizado.
+      </p>
+      <div class="modal-actions">
+        <a class="btn btn-primary" href="#contacto" id="btnIrContacto">Quiero la oferta</a>
+        <button class="btn btn-secondary" id="btnNoGracias" type="button">No, gracias</button>
+      </div>
+      <div class="small-note">La oferta aparece cuando alcanzas el 50% de scroll (solo una vez por carga).</div>
+    </div>
+  </div>
+
+  <script>
+    // Botón volver arriba
+    document.getElementById("btnScrollTop").addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    // Form (demo)
+    document.getElementById("formulario").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = {
+        nombre: document.getElementById("nombre").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        objetivo: document.getElementById("objetivo").value,
+        nivel: document.getElementById("nivel").value,
+        mensaje: document.getElementById("mensaje").value.trim()
+      };
+      console.log("=== FORMULARIO ENVIADO (DEMO) ===");
+      console.log(data);
+      alert("Enviado (demo). Revisa la consola.");
+    });
+
+    // Popup al 50% de scroll
+    const overlay = document.getElementById("overlay");
+    const btnCerrar = document.getElementById("btnCerrar");
+    const btnNoGracias = document.getElementById("btnNoGracias");
+    const btnIrContacto = document.getElementById("btnIrContacto");
+
+    let popupMostrado = false;
+
+    function porcentajeScroll() {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const alturaVentana = window.innerHeight;
+      const alturaDoc = document.documentElement.scrollHeight;
+
+      // "Progreso" real del scroll: (scrollTop + viewport) / docHeight
+      const progreso = (scrollTop + alturaVentana) / alturaDoc;
+      return Math.round(progreso * 100);
+    }
+
+    function mostrarPopup() {
+      overlay.classList.add("visible");
+      popupMostrado = true;
+      // Enfocar el botón principal para accesibilidad
+      setTimeout(() => btnIrContacto.focus(), 0);
+    }
+
+    function cerrarPopup() {
+      overlay.classList.remove("visible");
+    }
+
+    window.addEventListener("scroll", () => {
+      if (popupMostrado) return;
+
+      const p = porcentajeScroll();
+      if (p >= 50) {
+        mostrarPopup();
+      }
+    });
+
+    // Cerrar con botones
+    btnCerrar.addEventListener("click", cerrarPopup);
+    btnNoGracias.addEventListener("click", cerrarPopup);
+
+    // Cerrar al hacer click fuera del modal
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) cerrarPopup();
+    });
+
+    // Cerrar con ESC
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.classList.contains("visible")) {
+        cerrarPopup();
+      }
+    });
+  </script>
+</body>
+</html>

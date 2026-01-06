@@ -1,0 +1,80 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Variables globales */
+:root {
+    --color-negro: #2d2d2d;
+    --color-gris-oscuro: #374151;
+    --color-gris-medio: #9CA3AF;
+    --color-gris-claro: #F3F4F6;
+    --color-blanco: #FFFFFF;
+}
+
+/* Fondo general */
+html {
+    background-color: white;
+    font-family: "Roboto", sans-serif;
+}
+
+/* Contenedor */
+.seccion-cajas {
+    display: flex;
+    gap: 20px;
+    padding: 50px;
+    min-height: 500px;
+    background-color: var(--color-gris-claro);
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 22px;
+    text-align: center;
+}
+
+.caja-1 {
+    background: pink;
+    height: 200px;
+    width: 200px;
+    border-radius: 7px;
+    
+}
+
+
+.caja-2 {
+    background-color: red;
+    height: 200px;
+    width: 200px;
+    border-radius: 7px;
+}
+
+
+
+.caja-3 {
+    background-color: orange;
+    height: 200px;
+    width: 200px;
+    border-radius: 7px;
+}
+
+.titulo {
+    font-size: 30px;
+    margin: 50px 0;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.parrafo {
+    font-size: 20px;
+    margin: 50px 10px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
