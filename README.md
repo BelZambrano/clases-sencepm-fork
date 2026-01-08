@@ -1,127 +1,70 @@
-# Demo jQuery — Eventos comunes (sitio completo)
+# Clases SENCE — Python con Django (material de apoyo y demos)
 
 ## Resumen ejecutivo
 
-Este proyecto es una página web educativa (una sola vista) diseñada para enseñar, de forma práctica y visual, los **eventos más comunes de jQuery** en un contexto realista: un “sitio largo” con navegación por secciones, componentes con Bootstrap y un **panel de Log** que registra cada interacción del alumno.
+Este repositorio reúne **archivos de práctica y material de clases** usados en múltiples sesiones del programa SENCE orientado a formación Full-Stack con foco en **fundamentos web y herramientas base** que luego se conectan con el trabajo en **Python/Django** (entorno, estructura de proyecto, navegación, assets, flujo de trabajo con Git, y componentes UI).
 
-El objetivo es que el estudiante entienda:
-- qué evento se dispara,
-- en qué momento se dispara,
-- y cómo se conecta con un caso de uso típico (formularios, UI, navegación, etc.).
-
-La página funciona como material de **Clase 1–2** para introducir interacciones con DOM, eventos y buenas prácticas básicas (evitar recarga con `preventDefault`, habilitar botones por estado, etc.).
+El contenido está organizado como un conjunto de **demos autocontenidas** (principalmente HTML/CSS/JS/Bootstrap/jQuery) que se pueden abrir en el navegador para explicar conceptos y realizar ejercicios guiados.
 
 ---
 
-## Objetivo pedagógico (para clase)
+## Qué incluye el proyecto (visión general)
 
-- Practicar eventos frecuentes: `click`, `dblclick`, `mouseenter`, `mouseleave`, `keydown`, `keyup`, `keypress`, `change`, `submit`, `load`, `focus`, `blur`, `input`, `scroll`, `resize`.
-- Aprender a leer el comportamiento de la UI mediante un **Log** centralizado.
-- Asociar cada evento a una aplicación real: UX, formularios, navegación, interacción con teclado, etc.
-
----
-
-## Alcance y funcionalidades
-
-### 1) Navegación por secciones (menú superior fijo)
-- Menú fijo con botones que hacen scroll suave a secciones.
-- Usa `data-ir` para definir el destino del scroll.
-- Ajusta el offset según altura del menú para evitar que la sección quede debajo.
-
-**Eventos asociados:**
-- `click` (botones del menú)
-- `scroll` (interacción general con la página)
+- **Fundamentos HTML**: estructura, secciones, páginas y plantillas simples.
+- **CSS básico**: estilos mínimos, layout y presentación.
+- **Bootstrap**: ejemplos de maquetación rápida con componentes.
+- **JavaScript (intro)**: manipulación básica y eventos.
+- **jQuery (eventos y utilidades)**: eventos comunes, scroll, formularios, efectos, demos de AJAX.
+- **Git (flujo de trabajo)**: material y práctica para control de versiones y repositorios remotos.
+- **Páginas de ejemplo**: páginas simples tipo “sitio público” (contacto, términos, etc.).
+- **Assets reutilizables**: carpetas de CSS/JS/IMG para usar en ejercicios.
 
 ---
 
-### 2) Módulos de demostración por evento
+## Estructura del repositorio (alto nivel)
 
-Cada sección incluye:
-- explicación breve,
-- ejemplo interactivo,
-- resultado visible (alertas / mensajes),
-- registro automático en el Log.
+- `assets/`
+  - Recursos compartidos para demos.
+  - Subcarpetas típicas: `css/`, `js/`, `img/`.
 
-#### a) `click`
-- Botón principal que cambia estado y texto de un mensaje.
-- Botón “Reset” para volver al estado inicial.
+- `jquery/`
+  - Conjunto de demos enfocadas a jQuery:
+    - Eventos comunes (click, hover, scroll, teclado, submit, etc.).
+    - Formularios.
+    - Efectos (ej.: fade).
+    - AJAX (ejemplos de consumo/flujo).
 
-#### b) `dblclick`
-- Tarjeta que requiere doble clic como “confirmación”.
+- `components/`
+  - Componentes HTML reutilizables para ejercicios (p. ej. tarjetas, botones).
 
-#### c) `mouseenter` / `mouseleave`
-- Caja “hover” que se resalta con una leve escala y cambia mensajes al entrar/salir.
+- `paginas/`
+  - Páginas de ejemplo tipo “sitio público” (p. ej. contacto, términos).
 
-#### d) `keydown` / `keyup` / `keypress`
-- Input con contadores por tipo de evento.
-- Registra teclas presionadas (`e.key`) en el Log.
-- Incluye nota pedagógica sobre `keypress` (evento más antiguo).
+- Archivos HTML en la raíz (demos por tema)
+  - `clase_html.html`, `estructura_html.html`: estructura base y prácticas HTML.
+  - `clase_css.html`: introducción práctica a CSS.
+  - `clase_js_uno.html`, `clase2_js.html`: fundamentos de JavaScript.
+  - `clase_boostrap.html`, `ejemplo-boostrap.html`: maquetación con Bootstrap.
+  - `evento_scroll.html`, `velocidad_reaccion.html`: ejercicios interactivos (eventos/UX).
+  - `funciones.html`: práctica de funciones y lógica simple.
+  - `git.html`: material/práctica de Git en contexto de clase.
 
-#### e) `change`
-- `select` que actualiza un mensaje según la opción elegida.
-- `checkbox` que:
-  - actualiza estado visual,
-  - y habilita/deshabilita el botón de envío del formulario (con `prop("disabled", ...)`).
+- `notas.md`
+  - Notas breves de clase y lineamientos de ejercicios.
 
-#### f) `submit`
-- Formulario que:
-  - usa `preventDefault()` para evitar recarga,
-  - valida nombre + email,
-  - muestra mensaje de éxito sin recargar,
-  - registra acción en el Log.
-
-#### g) `load` (en imagen)
-- Imagen embebida (SVG en Data URI) que dispara evento `load`.
-- Al cargar, cambia el estado del mensaje a “cargada”.
-
-#### h) Otros eventos extra
-- `focus` / `blur`: muestra estado del input.
-- `input`: vista previa en vivo del texto escrito.
-- `scroll`: muestra botón “Arriba” con `fadeIn`/`fadeOut` al pasar cierta altura.
-- `resize`: registra tamaño de ventana y actualiza mensaje.
+> Nota: el repositorio contiene múltiples ejercicios “sueltos” (no necesariamente un único proyecto integrado). La intención es pedagógica: abrir, modificar y practicar.
 
 ---
 
-## Componentes clave
+## Cómo usar este repositorio (para clases)
 
-### 1) Panel “Log”
-El Log es el núcleo pedagógico: permite observar, en tiempo real, el disparo de eventos.
+### Opción A — Abrir directamente en el navegador
+- Haz doble clic sobre cualquiera de los `.html` y se abrirá en tu navegador.
+- Ideal para revisar conceptos rápidamente o mostrar en clase.
 
-- Función `log(msg)`:
-  - agrega timestamp,
-  - usa `prepend` para mostrar primero el evento más reciente,
-  - se renderiza en `#logBox`.
+### Opción B — Servidor local (recomendado)
+Levanta un servidor local para evitar problemas de rutas relativas y trabajar como “sitio”:
 
-**Controles de log:**
-- “Limpiar log”
-- “Agregar ejemplo” (mensaje manual)
-
----
-
-## Estructura técnica
-
-### Dependencias (CDN)
-- **Bootstrap 4.6.2** (solo CSS) para maquetación rápida.
-- **jQuery 3.6.0** para eventos y manipulación DOM.
-
-### Arquitectura
-- Archivo HTML único (`.html`), autocontenido:
-  - estilos en `<style>`,
-  - lógica en `<script>`,
-  - layout en HTML con secciones.
-
-### Convenciones usadas
-- Selectores por `id` para demos puntuales: `#btnClick`, `#dblBox`, etc.
-- Clase `.js-ir` + atributo `data-ir` para navegación.
-- Uso de `.on("evento", handler)` para asociar eventos.
-- Uso de `.toggleClass`, `.prop`, `.text`, `.val`, `.css`, `.animate`, `.fadeIn`, `.fadeOut`.
-
----
-
-## Cómo ejecutar
-
-### Opción A: abrir localmente
-1) anda a la carpeta `jquery` y busca el archivo `jquery_event.html`.
-2) Ábrelo con el navegador.
-
-
+```bash
+cd ruta/al/repositorio
+python3 -m http.server 8000
