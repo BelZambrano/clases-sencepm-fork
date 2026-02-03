@@ -1,0 +1,254 @@
+@startuml Carlos
+' Configuración general
+title Sistema de Gestión de Biblioteca Gratuita
+skinparam classAttributeIconSize 0
+skinparam genericDisplay old
+skinparam backgroundColor white
+skinparam roundcorner 5
+skinparam shadowing false
+
+skinparam class {
+  BackgroundColor<<Persona>> #E8F5E9
+  BackgroundColor<<Usuario>> #E3F2FD
+  BackgroundColor<<Empleado>> #FFF3E0
+  BackgroundColor<<Gestión>> #FCE4EC
+  BackgroundColor<<Config>> #F3E5F5
+  BorderColor Black
+  ArrowColor #666666
+}
+
+' =========== PAQUETE PERSONAS ===========
+package "Personas" {
+  abstract class Persona <<Persona>> {
+    -id: String
+    -nombre: String
+    -telefono: String
+    -email: String
+    -direccion: String
+    --
+    +consultarInformacion(): String
+  }
+
+  class Usuario <<Usuario>> {
+    -numeroCarnet: String
+    -fechaRegistro: Date
+    -estado: String
+    -librosPrestados: int
+    -multasPendientes: double
+    --
+    +solicitarPrestamo(libro: Libro): Boolean
+    +devolverLibro(prestamo: Prestamo): Boolean
+    +consultarMultas(): List<Multa>
+    +pagarMulta(multa: Multa): Boolean
+    +renovarPrestamo(prestamo: Prestamo): Boolean
+  }
+
+  abstract class Empleado <<Empleado>> {
+    -codigoEmpleado: String
+    -fechaContratacion: Date
+    -salario: double
+    -horario: String
+    --
+    +registrarEntrada(): Boolean
+    +registrarSalida(): Boolean
+    +generarReporte(): String
+  }
+
+  class PersonaLimpieza <<Empleado>> {
+    -areaAsignada: String
+    -horarioLimpieza: String
+    -materiales: List<String>
+    --
+    +registrarLimpieza(): Boolean
+    +reportarIncidencia(descripcion: String): Boolean
+    +solicitarMateriales(items: List<String>): Boolean
+  }
+
+  class PersonaMostrador <<Empleado>> {
+    -turno: String
+    -cajaAsignada: int
+    -prestamosProcesados: int
+    --
+    +validarPrestamo(usuario: Usuario, libro: Libro): Prestamo
+    +registrarDevolucion(prestamo: Prestamo): Boolean
+    +aplicarMulta(prestamo: Prestamo): Multa
+    +renovarPrestamo(prestamo: Prestamo): Boolean
+    +generarComprobante(prestamo: Prestamo): String
+  }
+
+  class PersonaOrdenLibros <<Empleado>> {
+    -seccionAsignada: String
+    -librosOrdenados: int
+    -donacionesProcesadas: int
+    --
+    +registrarNuevoLibro(libro: Libro): Boolean
+    +ordenarLibroDevuelto(libro: Libro): Boolean
+    +catalogarLibro(libro: Libro, categoria: String): Boolean
+    +procesarDonacion(donacion: Donacion): Boolean
+    +generarReporteStock(): String
+  }
+}
+
+' =========== PAQUETE GESTIÓN ===========
+package "Gestión" <<Gestión>> {
+  class Libro {
+    -isbn: String
+    -titulo: String
+    -autor: String
+    -editorial: String
+    -anioPublicacion: int
+    -genero: String
+    -estado: String
+    -ubicacion: String
+    -disponible: Boolean
+    --
+    +consultarDisponibilidad(): Boolean
+    +actualizarEstado(nuevoEstado: String): void
+    +obtenerInformacion(): String
+  }
+
+  class Prestamo {
+    -idPrestamo: String
+    -fechaPrestamo: Date
+    -fechaDevolucionPrevista: Date
+    -fechaDevolucionReal: Date
+    -diasPrestamo: int
+    -estado: String
+    --
+    +calcularDiasRetraso(): int
+    +calcularMulta(): double
+    +estaVencido(): Boolean
+    +renovar(diasExtra: int): Boolean
+  }
+
+  class Multa {
+    -idMulta: String
+    -monto: double
+    -fechaGeneracion: Date
+    -fechaPago: Date
+    -motivo: String
+    -estado: String
+    --
+    +calcularMonto(diasRetraso: int): double
+    +registrarPago(): Boolean
+    +estaPagada(): Boolean
+    +generarRecibo(): String
+  }
+
+  class Donacion {
+    -idDonacion: String
+    -fechaDonacion: Date
+    -donante: String
+    -cantidadLibros: int
+    -estadoProcesamiento: String
+    -observaciones: String
+    --
+    +registrarDonacion(): Boolean
+    +generarAgradecimiento(): String
+    +marcarProcesada(): void
+    +obtenerDetalle(): String
+  }
+
+  class Seccion {
+    -codigoSeccion: String
+    -nombre: String
+    -ubicacionFisica: String
+    -capacidad: int
+    -librosActuales: int
+    --
+    +agregarLibro(libro: Libro): Boolean
+    +removerLibro(libro: Libro): Boolean
+    +obtenerLibros(): List<Libro>
+    +verificarDisponibilidadEspacio(): Boolean
+  }
+}
+
+' =========== PAQUETE CONFIGURACIÓN ===========
+package "Configuración" <<Config>> {
+  class Configuracion {
+    -diasPrestamoEstudiante: int
+    -diasPrestamoProfesor: int
+    -montoMultaDiaria: double
+    -maxLibrosUsuario: int
+    -maxRenovaciones: int
+    --
+    +actualizarConfiguracion(clave: String, valor: Object): Boolean
+    +obtenerConfiguracion(clave: String): Object
+    +validarUsuario(usuario: Usuario): Boolean
+  }
+}
+
+' =========== RELACIONES DE HERENCIA ===========
+Persona <|-- Usuario
+Persona <|-- Empleado
+Empleado <|-- PersonaLimpieza
+Empleado <|-- PersonaMostrador
+Empleado <|-- PersonaOrdenLibros
+
+' =========== RELACIONES DE ASOCIACIÓN ===========
+Usuario "1" -- "*" Prestamo : realiza
+PersonaMostrador "1" -- "*" Prestamo : procesa
+Prestamo "1" -- "1" Libro : incluye
+Prestamo "0..1" -- "0..1" Multa : genera
+Libro "1" -- "1" Seccion : pertenece
+Donacion "1" -- "*" Libro : contiene
+PersonaOrdenLibros "1" -- "*" Libro : gestiona
+PersonaOrdenLibros "1" -- "*" Donacion : procesa
+PersonaMostrador "1" -- "*" Multa : aplica
+Configuracion "1" -- "*" Prestamo : configura
+Configuracion "1" -- "*" Multa : define
+
+' =========== NOTAS EXPLICATIVAS ===========
+note top of Usuario
+  Estados posibles:
+  - ACTIVO
+  - SUSPENDIDO
+  - INACTIVO
+end note
+
+note right of Prestamo
+  Estados posibles:
+  - ACTIVO
+  - DEVUELTO
+  - VENCIDO
+  - RENOVADO
+end note
+
+note left of Libro
+  Estados posibles:
+  - DISPONIBLE
+  - PRESTADO
+  - REPARACIÓN
+  - RESERVADO
+end note
+
+note bottom of Multa
+  Monto calculado por:
+  días de retraso × monto diario
+  Configuración en clase Configuracion
+end note
+
+note right of PersonaMostrador
+  Responsabilidades:
+  1. Validar préstamos
+  2. Registrar devoluciones
+  3. Aplicar multas
+  4. Renovar préstamos
+end note
+
+note left of PersonaOrdenLibros
+  Responsabilidades:
+  1. Ordenar libros devueltos
+  2. Procesar donaciones
+  3. Catalogar nuevos libros
+  4. Mantener inventario
+end note
+
+note left of PersonaLimpieza
+  Responsabilidades:
+  1. Limpieza de áreas asignadas
+  2. Reporte de incidencias
+  3. Mantenimiento básico
+end note
+
+@enduml

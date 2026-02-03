@@ -1,0 +1,104 @@
+@startuml
+title Diagrama de Clases - Sistema de Arriendo de Canchas
+skinparam classAttributeIconSize 0
+
+enum RolEmpleado {
+    RECEPCION
+    ASEO
+}
+
+enum EstadoReserva {
+    CONFIRMADA
+    EN_CURSO
+    FINALIZADA
+    CANCELADA
+}
+
+enum EstadoLimpieza {
+    PENDIENTE
+    EN_PROCESO
+    TERMINADA
+}
+
+enum TipoCancha {
+    FUTBOL_11
+    TENIS
+}
+
+
+class Empleado {
+    - id : int
+    - nombre : String
+    - usuario : String
+    - contrasena : String
+    - rol : RolEmpleado
+}
+
+class Cliente {
+    - rut : String
+    - nombre : String
+    - telefono : String
+}
+
+abstract class EventoAgenda {
+    - fechaHoraInicio : DateTime
+    - fechaHoraTermino : DateTime
+    + verificarSolapamiento() : boolean
+}
+
+class Reserva {
+    - id : int
+    - estado : EstadoReserva
+    - montoTotal : double
+    - observaciones : String
+    + confirmar()
+    + cancelar()
+    + finalizar()
+}
+
+class Mantenimiento {
+    - id : int
+    - estado : EstadoLimpieza
+    + iniciarLimpieza()
+    + finalizarLimpieza()
+}
+
+class Cancha {
+    - id : int
+    - nombre : String
+    - tipo : TipoCancha
+    - precioHora : double
+    + estaDisponible(fechaInicio, fechaTermino) : boolean
+}
+
+class ItemBodega {
+    - id : int
+    - nombre : String
+    - stockTotal : int
+    - stockDisponible : int
+    + descontarStock(cantidad)
+    + reponerStock(cantidad)
+}
+
+class DetallePrestamo {
+    - cantidadPrestada : int
+    - devuelto : boolean
+}
+
+EventoAgenda <|-- Reserva
+EventoAgenda <|-- Mantenimiento
+
+
+Empleado "1" --> "*" Reserva : realiza (Recepcion)
+
+Empleado "1" --> "*" Mantenimiento : asigna (Aseo)
+
+Reserva "1" --> "1" Cliente : pertenece a
+
+Cancha "1" o-- "*" EventoAgenda : agenda contiene
+
+Reserva "1" *-- "*" DetallePrestamo : incluye
+
+DetallePrestamo --> "1" ItemBodega : refiere a
+
+@enduml

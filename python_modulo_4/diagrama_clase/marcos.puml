@@ -1,0 +1,99 @@
+@startuml MArcos
+skinparam classAttributeIconSize 0
+
+class LIBRO {
+    id_libro
+    titulo
+    autor
+    categoria
+    disponible
+    --
+    prestar()
+    devolver()
+    mostrar_info()
+}
+
+class USUARIO {
+    id_usuario
+    nombre
+    email
+    castigado
+    dias_castigo
+    --
+    solicitar_prestamo()
+    devolver_libro()
+    ver_prestamos()
+}
+
+class PRESTAMO {
+    libro
+    usuario
+    fecha_prestamo
+    fecha_devolucion
+    plazo_maximo
+    devuelto
+    --
+    registrar_prestamo()
+    registrar_devolucion()
+    calcular_retraso()
+}
+
+class CASTIGO {
+    dias_castigo
+    motivo
+    --
+    aplicar_castigo(usuario)
+    levantar_castigo(usuario)
+}
+
+class BIBLIOTECA {
+    nombre
+    libros
+    usuarios
+    prestamos
+    --
+    agregar_libro()
+    listar_libros()
+    registrar_usuario()
+    prestar_libro()
+    recibir_libro()
+}
+
+class EMPLEADO {
+    id_empleado
+    nombre
+    --
+    realizar_tarea()
+}
+
+class PERSONAL_LIMPIEZA {
+    limpiar_biblioteca()
+}
+
+class ENCARGADO_MOSTRADOR {
+    validar_prestamo()
+    registrar_devolucion()
+    aplicar_castigo()
+}
+
+class ENCARGADO_LIBROS {
+    ordenar_libros()
+    agregar_libro_donado()
+}
+
+' Relaciones
+BIBLIOTECA "1" o-- "*" LIBRO
+BIBLIOTECA "1" o-- "*" USUARIO
+BIBLIOTECA "1" o-- "*" PRESTAMO
+
+PRESTAMO --> LIBRO
+PRESTAMO --> USUARIO
+
+CASTIGO --> USUARIO
+
+' Herencia
+EMPLEADO <|-- PERSONAL_LIMPIEZA
+EMPLEADO <|-- ENCARGADO_MOSTRADOR
+EMPLEADO <|-- ENCARGADO_LIBROS
+
+@enduml

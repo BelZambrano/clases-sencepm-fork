@@ -1,0 +1,76 @@
+@startuml
+skinparam monochrome true
+
+class Bibliotecario {
+  +id: String
+  +nombre: String
+  -email: String
+  +validarPrestamo(): boolean
+  +ordenarLibro(): void
+}
+
+class PersonalLimpieza {
+  +id: String
+  +nombre: String
+  +limpiar(): void
+}
+
+class Libro {
+  +isbn: String
+  +titulo: String
+  +autor: String
+  -estado: EstadoLibro
+  +prestar(): void
+  +devolver(): void
+}
+
+class Prestamo {
+  +id: String
+  -fechaPrestamo: Date
+  -fechaDevolucion: Date
+  -diasPlazo: int
+  -multaPorDia: double
+  +calcularMulta(): double
+  +estaVencido(): boolean
+}
+
+class Multa {
+  +id: String
+  -monto: double
+  -fecha: Date
+  +pagar(): void
+}
+
+class Lector {
+  +id: String
+  +nombre: String
+  +deuda: double
+  +registrarPrestamo(): void
+}
+
+class Donacion {
+  +id: String
+  +fecha: Date
+  +procesar(): void
+}
+
+enum EstadoLibro {
+  DISPONIBLE
+  PRESTADO
+  MANTENIMIENTO
+}
+
+Bibliotecario <|-- PersonalLimpieza
+Lector "1" -- "*" Prestamo
+Prestamo }o-- "1" Libro : composición
+Prestamo "1" -- "*" Multa
+Bibliotecario "1" -- "*" Prestamo : valida
+Bibliotecario "1" -- "*" Libro : ordena
+Bibliotecario "1" -- "*" Donacion
+Lector "1" -- "*" Multa : paga
+
+note right of Prestamo : Multa si vencido
+note right of Bibliotecario : 3 personas:\n1 mostrador\n1 ordena\n1 limpia
+
+Libro ..> EstadoLibro
+@enduml

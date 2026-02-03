@@ -1,0 +1,151 @@
+@startuml
+
+' Configuración de estilo
+skinparam classAttributeIconSize 0
+skinparam genericDisplay old
+skinparam backgroundColor white
+skinparam roundcorner 5
+skinparam shadowing false
+skinparam class {
+    BackgroundColor White
+    ArrowColor #2C3E50
+    BorderColor #2C3E50
+}
+
+title Diagrama de Clases - Sistema de Gestión Biblioteca Gratuita
+
+' --- Enumeraciones ---
+
+enum EstadoLibro {
+    DISPONIBLE
+    PRESTADO
+    EN_REPARACION
+    PERDIDO
+}
+
+enum EstadoPrestamo {
+    ACTIVO
+    DEVUELTO
+    DEVUELTO_TARDE
+}
+
+enum TipoSancion {
+    SUSPENSION_TEMPORAL
+    REPOSICION_MATERIAL
+    BLOQUEO_PERMANENTE
+}
+
+' --- Clases de Personas ---
+
+abstract class Persona {
+    - id: String
+    - nombre: String
+    - telefono: String
+    - email: String
+    + getDatos(): String
+}
+
+class Usuario {
+    - fechaRegistro: Date
+    - sancionesActivas: Boolean
+    + solicitarPrestamo(libro: Libro): Boolean
+    + devolverLibro(libro: Libro): void
+    + pagarSancion(): void
+    + tieneSanciones(): Boolean
+}
+
+abstract class Empleado {
+    - numeroEmpleado: String
+    - turno: String
+    + registrarEntrada(): void
+    + registrarSalida(): void
+}
+
+class EncargadoMostrador {
+    + validarPrestamo(usuario: Usuario, libro: Libro): Prestamo
+    + procesarDevolucion(prestamo: Prestamo): void
+    + aplicarSancion(usuario: Usuario, dias: Integer): Sancion
+}
+
+class Organizador {
+    + registrarDonacion(libro: Libro): void
+    + ordenarLibrosDevueltos(): void
+    + darDeBajaLibro(libro: Libro): void
+    + catalogarLibro(libro: Libro): void
+}
+
+class PersonalLimpieza {
+    - areaAsignada: String
+    + reportarIncidente(descripcion: String): void
+}
+
+' --- Clases de Dominio / Negocio ---
+
+class Libro {
+    - isbn: String
+    - titulo: String
+    - autor: String
+    - ubicacionEstante: String
+    - estado: EstadoLibro
+    + actualizarEstado(nuevoEstado: EstadoLibro): void
+    + esPrestable(): Boolean
+}
+
+class Prestamo {
+    - idPrestamo: String
+    - fechaInicio: Date
+    - fechaVencimiento: Date
+    - fechaDevolucionReal: Date
+    - estado: EstadoPrestamo
+    + calcularDiasRetraso(): Integer
+    + cerrarPrestamo(): void
+    + estaVencido(): Boolean
+}
+
+class Sancion {
+    - idSancion: String
+    - fechaImposicion: Date
+    - fechaFinSancion: Date
+    - motivo: String
+    - tipo: TipoSancion
+    - resuelta: Boolean
+    + resolverSancion(): void
+    + estaVigente(): Boolean
+}
+
+' --- Relaciones ---
+
+Persona <|-- Usuario
+Persona <|-- Empleado
+
+Empleado <|-- EncargadoMostrador
+Empleado <|-- Organizador
+Empleado <|-- PersonalLimpieza
+
+' Relaciones de negocio
+Usuario "1" o-- "0..*" Prestamo : realiza >
+Usuario "1" *-- "0..*" Sancion : recibe >
+
+Prestamo "1" --> "1" Libro : contiene >
+Prestamo "1" --> "1" EncargadoMostrador : validado por >
+
+Libro "1" --> "1" Organizador : gestionado/ingresado por >
+
+' Notas explicativas
+note right of Organizador
+  Encargado de colocar libros devueltos
+  y procesar donaciones.
+end note
+
+note right of EncargadoMostrador
+  Valida préstamos y gestiona
+  el retorno y multas.
+end note
+
+note bottom of Sancion
+  Al ser gratuita, la sanción suele ser
+  tiempo de suspensión o reposición
+  si se perdió el libro.
+end note
+
+@enduml

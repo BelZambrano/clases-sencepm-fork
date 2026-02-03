@@ -1,0 +1,120 @@
+@startuml Sistema_Arriendo_Canchas
+
+title Sistema de Arriendo de Canchas - Diagrama de Clases UML
+
+abstract class Cancha {
+    - numero: int
+    - estado: String
+    - precioHora: float
+    + verificarDisponibilidad(fecha: Date, hora: int): bool
+    + calcularPrecio(horas: int): float
+}
+
+class CanchaFutbol {
+    - capacidad: int
+    + esFutbol11(): bool
+}
+
+class CanchaTenis {
+    - tipoJuego: String
+    + esDobles(): bool
+    + esSingles(): bool
+}
+
+class Cliente {
+    - rut: String
+    - nombre: String
+    - apellido: String
+    - telefono: String
+    - email: String
+    + registrarDatos(): void
+    + obtenerHistorial(): List<Arriendo>
+}
+
+class Arriendo {
+    - id: int
+    - fecha: Date
+    - horaInicio: int
+    - horaFin: int
+    - estado: String
+    - montoTotal: float
+    + crearArriendo(): bool
+    + modificarArriendo(): bool
+    + cancelarArriendo(): bool
+    + calcularMonto(): float
+    + validarHorario(): bool
+}
+
+class Empleado {
+    - id: int
+    - rut: String
+    - nombre: String
+    - turno: Turno
+    - usuario: String
+    + autenticar(): bool
+    + registrarArriendo(arriendo: Arriendo): bool
+    + consultarDisponibilidad(): List<Cancha>
+}
+
+class Turno {
+    - tipo: String
+    - horaInicio: int
+    - horaFin: int
+    + validarHorario(hora: int): bool
+}
+
+class PersonalAseo {
+    - id: int
+    - nombre: String
+    - turno: String
+    + limpiarCancha(cancha: Cancha): void
+    + reportarEstado(): String
+}
+
+class Bodega {
+    - ubicacion: String
+    - capacidad: int
+    + agregarImplemento(implemento: Implemento): void
+    + prestarImplemento(tipo: String): Implemento
+    + devolverImplemento(implemento: Implemento): void
+    + consultarStock(): List<Implemento>
+}
+
+abstract class Implemento {
+    - id: int
+    - tipo: String
+    - estado: String
+    - disponible: bool
+    + prestar(): bool
+    + devolver(): void
+    + verificarEstado(): String
+}
+
+class Pelota {
+    - deporte: String
+}
+
+class Raqueta {
+    - tamaño: String
+}
+
+class Peto {
+    - color: String
+    - talla: String
+}
+
+Cancha <|-- CanchaFutbol
+Cancha <|-- CanchaTenis
+Implemento <|-- Pelota
+Implemento <|-- Raqueta
+Implemento <|-- Peto
+
+Cliente "1" -- "*" Arriendo : realiza
+Arriendo "*" -- "1" Cancha : reserva
+Empleado "1" -- "*" Arriendo : gestiona
+Empleado "*" -- "1" Turno : trabaja en
+Bodega "1" *-- "*" Implemento : contiene
+Arriendo "*" o-- "*" Implemento : solicita
+PersonalAseo ..> Cancha : limpia
+
+@enduml

@@ -1,0 +1,138 @@
+@startuml
+
+' Configuración de estilo visual para mayor claridad
+skinparam class {
+    BackgroundColor White
+    ArrowColor #2C3E50
+    BorderColor #2C3E50
+    BackgroundColor<<Enum>> #EFEFEF
+}
+skinparam note {
+    BackgroundColor #FFF9C4
+    BorderColor #FBC02D
+}
+
+title Diagrama de Clases - Sistema de Arriendo de Canchas y Control de Stock
+
+' ---------------- ENUMS (Tipos de datos fijos) ----------------
+package "Definiciones" {
+    enum TipoCancha <<Enum>> {
+        FUTBOL_11
+        TENIS_SINGLES
+        TENIS_DOBLES
+    }
+
+    enum EstadoCancha <<Enum>> {
+        DISPONIBLE
+        OCUPADA
+        SUCIA_MANTENIMIENTO
+    }
+    
+    enum EstadoReserva <<Enum>> {
+        PENDIENTE
+        CONFIRMADA
+        CANCELADA
+        FINALIZADA
+    }
+}
+
+' ---------------- CLASES PRINCIPALES ----------------
+
+class Recepcionista {
+    - id: Integer
+    - usuario: String
+    - contrasena: String
+    - turno: String
+    + login(): Boolean
+    + crearReserva(cliente, cancha, fecha, hora): Reserva
+    + cancelarReserva(reserva): Void
+    + cambiarEstadoCancha(cancha, estado): Void
+    + registrarPrestamo(reserva, articulo, cantidad): Void
+}
+note left of Recepcionista
+  Representa a los 2 empleados.
+  Son los únicos que interactúan con el sistema.
+  Modifican el estado de la cancha (Limpia/Sucia)
+  basado en el reporte visual del personal de aseo.
+end note
+
+class Cliente {
+    - nombre: String
+    - telefono: String
+    + registrarDatos(): Void
+}
+
+class Cancha {
+    - numeroId: Integer
+    - tipo: TipoCancha
+    - estado: EstadoCancha
+    - tarifaFija: Float
+    + verificarDisponibilidad(fecha, hora): Boolean
+    + setEstado(nuevoEstado): Void
+}
+note right of Cancha
+  El recinto tiene:
+  1 de Futbol 11
+  2 de Tenis
+  Horario op: 11:00 - 23:00
+end note
+
+class Reserva {
+    - codigoReserva: String
+    - fecha: Date
+    - horaInicio: Integer
+    - duracion: Integer = 1
+    - estado: EstadoReserva
+    + calcularTotal(): Float
+    + confirmarReserva(): Void
+}
+note bottom of Reserva
+  Regla de Negocio:
+  Bloques fijos de 1 hora.
+  Sin reservas recurrentes.
+end note
+
+' ---------------- GESTIÓN DE BODEGA ----------------
+
+class Articulo {
+    - id: Integer
+    - nombre: String
+    - stockTotal: Integer
+    - stockDisponible: Integer
+    + verificarStock(cantidad): Boolean
+    + descontarStock(cantidad): Void
+    + devolverStock(cantidad): Void
+}
+note right of Articulo
+  Ejemplos:
+  - Pelota Tenis
+  - Raqueta
+  - Peto
+  - Pelota Futbol
+end note
+
+class Prestamo {
+    - cantidad: Integer
+    - horaEntrega: Time
+    - devuelto: Boolean
+    + registrarDevolucion(): Void
+}
+
+' ---------------- RELACIONES ----------------
+
+' Un Recepcionista gestiona muchas Reservas
+Recepcionista "1" -- "*" Reserva : Gestiona >
+
+' Una Reserva pertenece a un Cliente
+Cliente "1" -- "*" Reserva : Solicita >
+
+' Una Reserva ocupa una Cancha
+Reserva "*" -- "1" Cancha : Asignada a >
+
+' Una Reserva puede tener muchos Préstamos (relación de composición opcional)
+Reserva "1" *-- "0..*" Prestamo : Contiene >
+
+' Un Préstamo se refiere a un tipo de Artículo
+Prestamo "*" -- "1" Articulo : De tipo >
+
+@enduml

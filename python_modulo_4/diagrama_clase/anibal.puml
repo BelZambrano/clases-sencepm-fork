@@ -1,0 +1,68 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+
+class Libro {
+    - idLibro: String
+    - titulo: String
+    - autor: String
+    - estado: String
+    + actualizarEstado(nuevoEstado: String)
+}
+
+class Usuario {
+    - idUsuario: String
+    - nombre: String
+    - estadoSancion: Boolean
+    + consultarDisponibilidad()
+}
+
+class Prestamo {
+    - idPrestamo: String
+    - fechaSalida: Date
+    - fechaVencimiento: Date
+    - fechaDevolucion: Date
+    + calcularAtraso(): int
+    + verificarSancion(): Boolean
+}
+
+class Sancion {
+    - idSancion: String
+    - diasCastigo: int
+    - motivo: String
+    + aplicarPenalizacion(usuario: Usuario)
+}
+
+abstract class Empleado {
+    - idEmpleado: String
+    - nombre: String
+}
+
+class EncargadoMostrador {
+    + validarPrestamo(usuario: Usuario, libro: Libro)
+    + registrarDevolucion(prestamo: Prestamo)
+}
+
+class BibliotecarioOrden {
+    + ordenarLibros(libros: List)
+    + ingresarDonacion(nuevoLibro: Libro)
+}
+
+class PersonalLimpieza {
+    - zonaAsignada: String
+    + registrarLimpieza()
+}
+
+' Relaciones
+Usuario "1" -- "0..*" Prestamo : solicita
+Libro "1" -- "0..*" Prestamo : es prestado
+Prestamo "0..1" -- "0..1" Sancion : genera
+EncargadoMostrador "1" -- "0..*" Prestamo : gestiona
+BibliotecarioOrden "1" -- "0..*" Libro : organiza e ingresa
+
+' Herencia
+Empleado <|-- EncargadoMostrador
+Empleado <|-- BibliotecarioOrden
+Empleado <|-- PersonalLimpieza
+
+@enduml

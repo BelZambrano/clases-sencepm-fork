@@ -1,0 +1,78 @@
+@startuml
+left to right direction
+hide empty members
+
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 90
+skinparam classAttributeIconSize 0
+
+' ---- Clases (sin atributos, sin métodos) ----
+together {
+  abstract class Usuario
+  class Cliente
+  class Repartidor
+  class Admin
+}
+
+together {
+  class Pedido
+  class Restaurante
+  class ItemPedido
+  class Producto
+}
+
+together {
+  abstract class Pago
+  class PagoTarjeta
+  class PagoTransferencia
+  class PagoEfectivo
+}
+
+together {
+  abstract class Entrega
+  class EntregaMoto
+  class EntregaBicicleta
+  class EntregaAuto
+}
+
+together {
+  abstract class Notificacion
+  class NotificacionEmail
+  class NotificacionSMS
+  class NotificacionPush
+}
+
+' ---- Herencia ----
+Usuario <|-- Cliente
+Usuario <|-- Repartidor
+Usuario <|-- Admin
+
+Pago <|-- PagoTarjeta
+Pago <|-- PagoTransferencia
+Pago <|-- PagoEfectivo
+
+Entrega <|-- EntregaMoto
+Entrega <|-- EntregaBicicleta
+Entrega <|-- EntregaAuto
+
+Notificacion <|-- NotificacionEmail
+Notificacion <|-- NotificacionSMS
+Notificacion <|-- NotificacionPush
+
+' ---- Relaciones + Cardinalidad ----
+Cliente "1" o-- "0..N" Pedido : crea
+Restaurante "1" o-- "0..N" Pedido : recibe
+
+Pedido "1" *-- "1..N" ItemPedido : items
+ItemPedido "1" --> "1" Producto : producto
+Restaurante "1" o-- "0..N" Producto : ofrece
+
+Pedido "1" o-- "0..1" Pago : pago
+Pedido "1" o-- "0..1" Entrega : entrega
+Repartidor "0..N" o-- "0..1" Pedido : asignado_a
+
+' Notificación: dependencia punteada (uso), sin rombo
+Pedido --> Notificacion : notifica
+
+@enduml

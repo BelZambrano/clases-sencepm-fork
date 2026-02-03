@@ -1,0 +1,110 @@
+@startuml samirah
+' =========================
+' Clases principales
+' =========================
+
+class Libro {
+    - idLibro : int
+    - titulo : String
+    - autor : String
+    - categoria : String
+    - estado : String
+    + marcarPrestado()
+    + marcarDisponible()
+    + marcarDañado()
+    + getEstado() : String
+}
+
+class Usuario {
+    - idUsuario : int
+    - nombre : String
+    - correo : String
+    - castigosActivos : int
+    + puedePedirPrestamo() : boolean
+    + agregarCastigo()
+    + eliminarCastigo()
+    + getNombre() : String
+}
+
+class Prestamo {
+    - idPrestamo : int
+    - libro : Libro
+    - usuario : Usuario
+    - fechaPrestamo : Date
+    - fechaLimite : Date
+    - fechaDevolucion : Date
+    - estado : String
+    + calcularRetraso() : int
+    + cerrarPrestamo()
+    + estaAtrasado() : boolean
+    + getLibro() : Libro
+    + getUsuario() : Usuario
+}
+
+class Castigo {
+    - idCastigo : int
+    - diasCastigo : int
+    - motivo : String
+    - fechaInicio : Date
+    - fechaFin : Date
+    + estaActivo() : boolean
+}
+
+' =========================
+' Clase Empleado y subclases
+' =========================
+
+abstract class Empleado {
+    - idEmpleado : int
+    - nombre : String
+    - rol : String
+    + iniciarSesion()
+}
+
+class EmpleadoMostrador {
+    + validarPrestamo(usuario : Usuario)
+    + registrarDevolucion(prestamo : Prestamo)
+    + aplicarCastigo(usuario : Usuario, dias : int, motivo : String)
+}
+
+class EmpleadoCatalogo {
+    + registrarLibro(libro : Libro)
+    + clasificarLibro(libro : Libro)
+}
+
+
+' =========================
+' Clase SistemaBiblioteca
+' =========================
+
+class SistemaBiblioteca {
+    - libros : List<Libro>
+    - usuarios : List<Usuario>
+    - prestamos : List<Prestamo>
+    + agregarLibro(libro : Libro)
+    + agregarUsuario(usuario : Usuario)
+    + generarPrestamo(prestamo : Prestamo)
+    + mostrarLibros()
+}
+
+' =========================
+' Relaciones
+' =========================
+
+Usuario "1" --> "*" Prestamo
+Libro "1" --> "*" Prestamo
+Prestamo "1" --> "0..1" Castigo
+
+Empleado <|-- EmpleadoMostrador
+Empleado <|-- EmpleadoCatalogo
+
+EmpleadoMostrador --> Prestamo
+EmpleadoMostrador --> Usuario
+
+EmpleadoCatalogo --> Libro
+
+SistemaBiblioteca --> Libro
+SistemaBiblioteca --> Usuario
+SistemaBiblioteca --> Prestamo
+
+@enduml
