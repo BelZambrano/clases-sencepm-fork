@@ -21,6 +21,8 @@
 # ============================================================
 
 
+
+
 class Usuario:
     campos = ["user_id", "nombre" "email", "estado"]
     ESTADOS_VALIDOS = {"Activo", "Inactivo", "Suspendido "}
@@ -135,7 +137,6 @@ def case_01_usuario_attr_campo():
     u = Usuario(user_id=1, nombre="A", email="a@a.com", estado="Activo")
     print(u.resumen())
 
-
 def case_02_usuario_keyerror_nombreemail():
     Usuario.campo = Usuario.campos
     u = Usuario(user_id=1, nombre="A", email="a@a.com", estado="Activo")
@@ -229,8 +230,17 @@ def case_16_syntax_error_exec():
     exec("if True\n    print('hola')")
 
 
+
+#=====================================
+class AppError(Exception):
+    pass
+
 def main():
-    case_01_usuario_attr_campo()
+    try:
+        case_01_usuario_attr_campo()
+    except Exception as e:
+        print("Esto es un error tipop AppError", e)
+
     case_02_usuario_keyerror_nombreemail()
     case_03_usuario_emial_attrerror()
     case_04_usuario_cambiar_estado_valueerror()
@@ -249,6 +259,7 @@ def main():
     case_15_staff_permiso_faltante()
 
     case_16_syntax_error_exec()
-
+    '''
 
 main()
+print("hola")
