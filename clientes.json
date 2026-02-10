@@ -1,12 +1,33 @@
 [
-  {
-    "cliente_id": 1,
-    "nombre": "Carla",
-    "email": "carla@nuevo.cl"
-  },
-  {
-    "cliente_id": 2,
-    "nombre": "Josefa Andrea",
-    "email": "josefa@miempresa.cl"
-  }
+    {
+        "cliente_id": 1,
+        "nombre": "Carla",
+        "email": "carla@nuevo.cl"
+    },
+    {
+        "cliente_id": 2,
+        "nombre": "Josefa Andrea",
+        "email": "josefa@miempresa.cl"
+    },
+    {
+        "id": "f4f1d7ce",
+        "nombre": "hola",
+        "telefono": "+569",
+        "email": "holm",
+        "estado": "activo"
+    },
+    {
+        "id": "f15112e4",
+        "nombre": "otro",
+        "telefono": "+569",
+        "email": "hkjh",
+        "estado": "activo"
+    },
+    {
+        "id": 1,
+        "nombre": "holeees",
+        "correo": "holleeecor",
+        "telefono": "+669",
+        "direccion": "dkaldjñasd"
+    }
 ]

@@ -1,0 +1,26 @@
+[
+  {
+    "cliente_id": 1,
+    "nombre": "Carla",
+    "email": "carla@mimail.cl",
+    "estado": "Activo",
+    "telefonos": ["+56 9 1111 1111", "+56 2 2222 2222"],
+    "direccion": {
+      "calle": "Av. Siempre Viva 123",
+      "ciudad": "Santiago",
+      "pais": "Chile"
+    }
+  },
+  {
+    "cliente_id": 2,
+    "nombre": "Josefa",
+    "email": "josefa@miempresa.cl",
+    "estado": "Activo",
+    "telefonos": ["+56 9 3333 3333"],
+    "direccion": {
+      "calle": "Las Condes 456",
+      "ciudad": "Santiago",
+      "pais": "Chile"
+    }
+  }
+]
