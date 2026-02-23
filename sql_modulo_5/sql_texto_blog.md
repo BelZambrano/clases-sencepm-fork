@@ -1,7 +1,7 @@
 # 📖 SQL — Consultas sobre texto de blog
 
-> Si tenés una tabla `blog` con una columna de tipo `TEXT` que guarda el contenido de cada post,
-> podés hacer consultas **dentro de ese texto** usando funciones de texto de PostgreSQL.
+> Si se tiene una tabla `blog` con una columna de tipo `TEXT` que guarda el contenido de cada post,
+> es posible hacer consultas **dentro de ese texto** usando funciones de texto de PostgreSQL.
 
 ---
 
@@ -46,8 +46,8 @@ FROM blog;
 
 | Código                 | Qué significa                                    |
 | ---------------------- | ------------------------------------------------ |
-| `LEFT(contenido, 200)` | "Tomá los primeros 200 caracteres del contenido" |
-| `AS resumen`           | "Llamá a ese resultado 'resumen'"                |
+| `LEFT(contenido, 200)` | "Toma los primeros 200 caracteres del contenido" |
+| `AS resumen`           | "Llama a ese resultado 'resumen'"                |
 
 ---
 
@@ -84,7 +84,7 @@ WHERE contenido ILIKE '%base de datos%'
 | `AND`                     | "Y además..."                                     |
 | `ILIKE '%seguridad%'`     | "...también debe contener la palabra 'seguridad'" |
 
-> Solo devuelve posts que tengan **ambas** cosas. Si querés que tenga una **u otra**, usás `OR`.
+> Solo devuelve posts que tengan **ambas** cosas. Si se requiere que tenga una **u otra**, se usa `OR`.
 
 ---
 
@@ -96,12 +96,12 @@ FROM blog
 WHERE to_tsvector('spanish', contenido) @@ to_tsquery('spanish', 'inyeccion');
 ```
 
-| Código                               | Qué significa                                           |
-| ------------------------------------ | ------------------------------------------------------- |
-| `to_tsvector('spanish', contenido)`  | "Convertí el texto en un índice de palabras en español" |
-| `'spanish'`                          | "Usá las reglas del idioma español"                     |
-| `@@`                                 | "Contiene / coincide con..."                            |
-| `to_tsquery('spanish', 'inyeccion')` | "...la búsqueda de la palabra 'inyeccion' en español"   |
+| Código                               | Qué significa                                            |
+| ------------------------------------ | -------------------------------------------------------- |
+| `to_tsvector('spanish', contenido)`  | "Convierte el texto en un índice de palabras en español" |
+| `'spanish'`                          | "Usa las reglas del idioma español"                      |
+| `@@`                                 | "Contiene / coincide con..."                             |
+| `to_tsquery('spanish', 'inyeccion')` | "...la búsqueda de la palabra 'inyeccion' en español"    |
 
 ---
 
