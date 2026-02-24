@@ -396,41 +396,53 @@ path('', lista_productos, name='lista_productos')
 
 El primer argumento `''` está vacío porque la URL completa `/productos/` la define el `urls.py` del proyecto. La app solo define lo que viene **después** de ese prefijo.
 
-### Paso 8.2 — Conectar con el urls.py del proyecto
+### Paso 8.2 — Conectar la app con el `urls.py` del proyecto principal
 
-Abrí **`catalogoapp/urls.py`** (el que ya existía desde el inicio) y **reemplazá** todo su contenido con:
+Ahora viene la parte más importante: Django, por defecto, **no sabe que nuestra app `productos` tiene rutas**. El proyecto solo mira su propio archivo principal.
+
+Imaginalo como un **conmutador telefónico de una empresa**: llama un cliente al número principal (el proyecto) y la recepcionista tiene que transferir la llamada a la oficina de "Productos" (la app). La función `include()` es esa transferencia.
+
+Abrí **`catalogoapp/urls.py`** (el archivo que ya existía desde el principio) y **reemplazá** todo su contenido con:
 
 ```python
-# catalogoapp/urls.py   ← ARCHIVO EXISTENTE (modificarlo)
+# catalogoapp/urls.py   ← ARCHIVO PRINCIPAL DEL PROYECTO
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include   # ¡NO OLVIDES AGREGAR `include` AQUÍ!
 
 urlpatterns = [
+    # Esta ruta ya venía por defecto
     path('admin/', admin.site.urls),
+
+    # Esta es la línea clave que agregamos nosotros:
     path('productos/', include('productos.urls')),
     #     ↑                       ↑
-    #     │                       └── busca más rutas en productos/urls.py
-    #     └── cuando la URL empieza con /productos/, delega a la app
+    #     │                       └── "Buscá las rutas específicas dentro del archivo productos/urls.py"
+    #     └── "Cuando alguien escriba tupagina.com/productos/..."
 ]
 ```
 
-### ¿Cómo funciona el enrutamiento en dos niveles?
+#### ¿Por qué lo hacemos así en dos pasos?
+
+Django te obliga a ser ordenado. No ponemos todas las rutas juntas en el archivo principal porque si tuvieras 10 apps (usuarios, productos, ventas, blog, etc.) tendrías un archivo gigante y caótico de 500 líneas.
+
+**Así funciona el viaje de la URL:**
 
 ```
-Usuario visita: http://127.0.0.1:8000/productos/
+1️⃣ El usuario escribe en su navegador:
+   http://127.0.0.1:8000/productos/
 
-NIVEL 1: catalogoapp/urls.py
-  → Recibe: /productos/
-  → Encuentra: path('productos/', include('productos.urls'))
-  → Recorta el prefijo 'productos/' y delega el resto a productos/urls.py
+2️⃣ El conserje del edificio (catalogoapp/urls.py) recibe la URL:
+   "Ah, veo que la ruta empieza con /productos/"
+   "Tengo instrucciones de mandar todo eso a la oficina productos.urls"
+   → (Recorta la palabra 'productos/' de la ruta y pasa lo que sobra)
 
-NIVEL 2: productos/urls.py
-  → Recibe: '' (cadena vacía, lo que quedó después de recortar)
-  → Encuentra: path('', lista_productos)
-  → Ejecuta: lista_productos(request)
-
-RESULTADO: Se ejecuta la función lista_productos y se devuelve el HTML
+3️⃣ La oficina (productos/urls.py) recibe lo que sobró:
+   En este caso, recibe '' (nada, una URL vacía).
+   "Ah, tengo una ruta para la URL vacía: path('', lista_productos)"
+   "¡A ejecutar la vista lista_productos!"
 ```
+
+Este sistema modular te permite que si mañana querés cambiar la dirección a `mis-ofertas/` en vez de `productos/`, **solo cambiás una línea** en el proyecto principal y todas las rutas de la app interna siguen funcionando mágicamente.
 
 ---
 
