@@ -635,3 +635,185 @@ Si ves la lista de productos que cargaste desde el admin, **¡todo está funcion
 ---
 
 > 💬 **¿Algún paso no funcionó?** Revisá la tabla de errores comunes o consultá al docente. La mayoría de los problemas son por el orden de los pasos o por algún archivo en la carpeta incorrecta.
+
+---
+
+## 🏠 Paso 12 (Opcional) — Crear una Home personalizada
+
+> ⚠️ **Nota sobre la pantalla de bienvenida de Django:** La pantalla del cohete 🚀 que muestra "The install worked successfully!" **desaparece en cuanto definís la primera URL** en `urlpatterns`. Es una pantalla de diagnóstico, no una página de inicio real. Una vez que empezás a configurar rutas, ya no se puede recuperar. Lo que necesitás a partir de ahora es crear tu propia pantalla de inicio.
+
+---
+
+### ¿Dónde conviene crear la home? — Decisión de arquitectura
+
+La pantalla de inicio (`/`) no pertenece a ninguna app en particular (no es de `productos`, no es de `usuarios`). Es una página del **sitio en general**.
+
+Por eso, la buena práctica (recomendada por _Two Scoops of Django_) es crear una app dedicada exclusivamente a páginas genéricas del sitio, comúnmente llamada **`core`** o **`pages`**:
+
+```text
+catalogoapp/
+├── core/          ← 🏠 pages genéricas (home, about, contact...)
+├── productos/     ← 📦 lógica de productos
+└── usuarios/      ← 👤 lógica de usuarios
+```
+
+Así, si mañana la home cambia radicalmente (pasa de "lista de productos" a "página de marketing"), no tocás ni una sola línea de la app `productos`.
+
+> ❗ **¿`core` es un renombre de la carpeta `catalogoapp/catalogoapp/`?**
+> **No.** La carpeta `catalogoapp/catalogoapp/` (la que tiene `settings.py` y el `urls.py` global) **no se toca aquí**. Lo que hacemos es crear una **app Django completamente nueva** con `startapp core`, igual que hiciste con `startapp productos`.
+>
+> Renombrar esa carpeta interna a `config/` es una convención de proyectos profesionales que se hace **únicamente al inicio** de un proyecto vacío. En este tutorial no la aplicamos para no complicar el flujo.
+
+---
+
+### Paso 12.1 — Crear la app `core`
+
+```bash
+python manage.py startapp core
+```
+
+Registrala en `settings.py`:
+
+```python
+INSTALLED_APPS = [
+    # ...
+    'productos',
+    'core',      # ← agregar
+]
+```
+
+### Paso 12.2 — Crear la vista de inicio
+
+Abrí `core/views.py` y escribí:
+
+```python
+# core/views.py
+from django.shortcuts import render
+
+
+def home(request):
+    """Vista de la página de inicio del sitio."""
+    return render(request, 'home.html')
+```
+
+### Paso 12.3 — Crear el template de la home
+
+Creá la carpeta de templates de la app `core`:
+
+```bash
+# Linux / Mac
+mkdir -p core/templates
+
+# Windows
+mkdir core\templates
+```
+
+Dentro de `core/templates/`, creá `home.html`:
+
+```html
+<!-- core/templates/home.html -->
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catálogo — Inicio</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        text-align: center;
+        padding: 60px 20px;
+      }
+      h1 {
+        font-size: 2.5rem;
+        color: #2c3e50;
+      }
+      p {
+        color: #555;
+        font-size: 1.1rem;
+      }
+      a {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 32px;
+        background: #2ecc71;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+      a:hover {
+        background: #27ae60;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🛒 Bienvenido al Catálogo</h1>
+    <p>Explorá todos nuestros productos disponibles.</p>
+    <a href="/productos/">Ver catálogo →</a>
+  </body>
+</html>
+```
+
+### Paso 12.4 — Crear `urls.py` de la app `core`
+
+Este archivo **no existe todavía**. Crealo a mano dentro de la carpeta `core/`:
+
+```python
+# core/urls.py   ← ARCHIVO NUEVO
+from django.urls import path
+from .views import home
+
+urlpatterns = [
+    path('', home, name='home'),
+]
+```
+
+### Paso 12.5 — Conectar en el proyecto principal
+
+Abrí `catalogoapp/urls.py` y agregá la ruta de `core`:
+
+```python
+# catalogoapp/urls.py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('productos/', include('productos.urls')),
+    path('', include('core.urls')),   # ← la home en la raíz '/'
+]
+```
+
+> 💡 La ruta de la home va con el prefijo `''` (vacío) porque queremos que responda exactamente en `http://127.0.0.1:8000/`.
+
+### Resultado final
+
+Ahora tenés tres URLs funcionales:
+
+| URL                                | Qué muestra                                 |
+| ---------------------------------- | ------------------------------------------- |
+| `http://127.0.0.1:8000/`           | 🏠 Home personalizada con botón al catálogo |
+| `http://127.0.0.1:8000/productos/` | 📦 Lista de productos                       |
+| `http://127.0.0.1:8000/admin/`     | ⚙️ Panel de administración                  |
+
+### Estructura final del proyecto
+
+```
+catalogoapp/
+├── manage.py
+├── catalogoapp/
+│   ├── settings.py      ← 'productos' y 'core' en INSTALLED_APPS
+│   └── urls.py          ← incluye core.urls y productos.urls
+├── core/                ← 🆕 app de páginas genéricas
+│   ├── views.py         ← def home(request)
+│   ├── urls.py          ← path('', home)
+│   └── templates/
+│       └── home.html    ← página de inicio
+└── productos/
+    ├── models.py
+    ├── views.py
+    ├── urls.py
+    └── templates/
+        └── lista_productos.html
+```
