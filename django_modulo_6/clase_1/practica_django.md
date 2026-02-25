@@ -183,7 +183,7 @@ INSTALLED_APPS = [
 
 Un **modelo** es una clase Python que define la estructura de una tabla en la base de datos.
 
-Abre `productos/models.py` y **reemplazá** todo el contenido con:
+Abre `productos/models.py` y **reemplaza** todo el contenido con:
 
 ```python
 # productos/models.py
@@ -267,7 +267,7 @@ El panel admin de Django permite gestionar los datos sin escribir una sola líne
 
 ### Paso 6.1 — Registrar el modelo en admin.py
 
-Abre `productos/admin.py` y **reemplazá** todo el contenido con:
+Abre `productos/admin.py` y **reemplaza** todo el contenido con:
 
 ```python
 # productos/admin.py
@@ -317,7 +317,7 @@ Abre `http://127.0.0.1:8000/admin/`, inicia sesión y carga 3 o 4 productos de e
 
 La **vista** es la función que recibe la solicitud del usuario, consulta los datos y decide qué mostrar.
 
-Abre `productos/views.py` y **reemplazá** todo el contenido con:
+Abre `productos/views.py` y **reemplaza** todo el contenido con:
 
 ```python
 # productos/views.py
@@ -402,7 +402,7 @@ Ahora viene la parte más importante: Django, por defecto, **no sabe que nuestra
 
 Imaginalo como un **conmutador telefónico de una empresa**: llama un cliente al número principal (el proyecto) y la recepcionista tiene que transferir la llamada a la oficina de "Productos" (la app). La función `include()` es esa transferencia.
 
-Abre **`catalogoapp/urls.py`** (el archivo que ya existía desde el principio) y **reemplazá** todo su contenido con:
+Abre **`catalogoapp/urls.py`** (el archivo que ya existía desde el principio) y **reemplaza** todo su contenido con:
 
 ```python
 # catalogoapp/urls.py   ← ARCHIVO PRINCIPAL DEL PROYECTO
@@ -522,7 +522,7 @@ Dentro de `productos/templates/`, crea el archivo **`lista_productos.html`**:
     </ul>
     {% else %}
     <p>
-      No hay productos cargados todavía. Ingresá al
+      No hay productos cargados todavía. ingresa al
       <a href="/admin/">panel de administración</a> para agregar algunos.
     </p>
     {% endif %}

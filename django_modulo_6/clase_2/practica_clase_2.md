@@ -175,7 +175,7 @@ Abre `productos/templates/lista_productos.html` y muestra la oferta:
     </ul>
     {% else %}
     <p>
-      No hay productos cargados todavía. Ingresá al
+      No hay productos cargados todavía. ingresa al
       <a href="/admin/">panel de administración</a> para agregar algunos.
     </p>
     {% endif %}

@@ -1,4 +1,4 @@
-'''with open("python_modulo_4/mi_archivo.txt", "w", encoding="utf-8") as f:
+with open("python_modulo_4/mi_archivo.txt", "w", encoding="utf-8") as f:
     f.write("Hola mundo")
 
 print("se creo el archivo")

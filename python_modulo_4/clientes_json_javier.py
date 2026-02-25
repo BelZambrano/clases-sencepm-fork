@@ -1,5 +1,5 @@
 import json
-import uuid
+import uuid 
 from typing import List, Dict, Any
 
 class Cliente:
@@ -93,3 +93,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+
+550e8400-e29b-41d4-a716-446655440000-50
