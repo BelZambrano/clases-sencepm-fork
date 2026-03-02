@@ -176,7 +176,7 @@ Los triggers se programan **directamente en la base de datos**, no en tu aplicac
 │   Servidor de Base de Datos│    ← PostgreSQL, MySQL, etc.
 │   (local o remoto/nube)    │
 │                            │
-│   AQUÍ VIVEN LOS TRIGGERS  │    ← El trigger se guarda y ejecuta ACÁ
+│   AQUÍ VIVEN LOS TRIGGERS  │    ← El trigger se guarda y ejecuta AQUÍ
 │   Se ejecutan DENTRO de    │
 │   la base de datos.        │
 └────────────────────────────┘
@@ -228,7 +228,7 @@ OLD.nombre   -- el nombre que se está borrando
 | UPDATE | ✅ Sí existe | ✅ Sí existe |
 | DELETE | ✅ Sí existe | ❌ No existe |
 
-> **¿Qué significa ❌ y ✅ acá?**
+> **¿Qué significa ❌ y ✅ aquí?**
 >
 > - ✅ = **la variable EXISTE** y la puedes usar en tu código.
 > - ❌ = **la variable NO EXISTE** porque no tiene sentido.

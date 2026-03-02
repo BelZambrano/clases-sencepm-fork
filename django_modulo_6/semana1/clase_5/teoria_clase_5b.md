@@ -20,14 +20,81 @@
 
 ## Las estadísticas
 
-El Standish Group publica cada año el CHAOS Report, el informe de referencia más citado en la industria del software. Las cifras del informe de 2024, que analizó decenas de miles de proyectos a nivel global, muestran una leve mejoría respecto a años anteriores pero confirman el mismo patrón de fondo:
+El Standish Group publica el CHAOS Report, el informe de referencia más citado en la industria del software. Su **último informe oficial fue publicado en 2020** y analizó decenas de miles de proyectos a nivel global. Años después, las cifras del seguimiento de 2024 muestran una leve mejoría, pero confirman el mismo patrón de fondo:
 
-- **Entre el 35% y el 39% de los proyectos de software** se entregan a tiempo, dentro del presupuesto y con todas las funcionalidades prometidas.
-- El resto se entrega tarde, caro, recortado, o directamente se cancela.
+| Resultado                                                    |        2020         |         2024          |     Cambio     |
+| ------------------------------------------------------------ | :-----------------: | :-------------------: | :------------: |
+| ✅ **Exitosos** (a tiempo, en presupuesto, alcance completo) |         31%         |          35%          |    ▲ +4 pp     |
+| ⚠️ **Desafiados** (entregados con desvíos)                   |         50%         |          45%          |    ▼ −5 pp     |
+| ❌ **Fallidos** (cancelados o nunca utilizados)              |         19%         |          20%          |    ▲ +1 pp     |
+| Proyectos pequeños — tasa de éxito                           |        ~90%         |         ~90%          |  → sin cambio  |
+| Proyectos grandes (+$10M) — tasa de éxito                    |        <10%         |         <10%          |  → sin cambio  |
+| Falla parcial o total (total combinado)                      |         69%         |          65%          |    ▼ −4 pp     |
+| Ágil vs Cascada                                              | Ágil 3× más exitoso | Ágil 2,5× más exitoso | Ágil consolida |
 
-Es decir: **más del 60% de los proyectos de software no cumple lo que prometió**.
+> _Fuente: Standish Group CHAOS Report 2020; datos 2024 de seguimiento por fuentes académicas y de consultoría (McKinsey, Gartner, PMStudyCircle)._
+
+Es decir, ya en **2020**, **el 69% de los proyectos de software no cumplía lo que prometía** — ya sea por desvíos de plazo, presupuesto o alcance, o directamente porque el proyecto se canceló o nunca se usó.
 
 Eso es antes de considerar si lo que se entregó realmente solucionó el problema del negocio.
+
+---
+
+### 📏 ¿Cómo se clasifica el tamaño de un proyecto?
+
+El Standish Group clasifica los proyectos principalmente por **presupuesto**, pero la industria también usa otros criterios combinados:
+
+**Por presupuesto** _(criterio principal del CHAOS Report)_
+
+| Tamaño     | Presupuesto estimado | Tasa de éxito (~2020) |
+| ---------- | :------------------: | :-------------------: |
+| 🟢 Pequeño |      < $1 M USD      |         ~90%          |
+| 🟡 Mediano |   $1 M – $10 M USD   |         ~50%          |
+| 🔴 Grande  |     > $10 M USD      |         < 10%         |
+
+**Por otros criterios** _(usados en combinación en la industria)_
+
+| Criterio          |       Pequeño        |     Mediano     |        Grande         |
+| ----------------- | :------------------: | :-------------: | :-------------------: |
+| 👥 Equipo         |    1 – 5 personas    | 6 – 20 personas |     +20 personas      |
+| ⏱️ Duración       |      < 3 meses       |  3 – 12 meses   |       +12 meses       |
+| 🧩 Módulos / apps |    1 – 3 módulos     | 4 – 10 módulos  |      +10 módulos      |
+| 🏢 Stakeholders   | 1 – 2 (cliente + PM) |   3 – 8 áreas   | +8 áreas / organismos |
+
+> _En proyectos reales, el tamaño percibido surge de cruzar todos estos factores juntos. Un proyecto con presupuesto mediano pero 15 stakeholders y 12 meses de duración se comporta estadísticamente como un proyecto grande._
+
+---
+
+### 🌍 ¿Cuántos proyectos hay en el mundo por tamaño?
+
+No existe un censo global exacto de proyectos de software activos. Lo que sí hay son estimaciones de IDC, Gartner y el Standish Group basadas en el gasto global en IT y el volumen de proyectos relevados:
+
+| Tamaño     | Estimación de proyectos activos (global, ~2024) | % del total |
+| ---------- | :---------------------------------------------: | :---------: |
+| 🟢 Pequeño |                ~70 – 80 millones                |    ~75%     |
+| 🟡 Mediano |                ~20 – 25 millones                |    ~22%     |
+| 🔴 Grande  |                 ~2 – 3 millones                 |     ~3%     |
+
+> _Fuentes: IDC Worldwide IT Projects Market Sizing, 2024; Gartner IT Spending Forecast, 2024. Las cifras son estimaciones de orden de magnitud, no recuentos exactos. Incluyen proyectos de software, infraestructura, transformación digital y sistemas internos en organizaciones de todo tipo._
+
+Lo más revelador de estos números: **el 75% de los proyectos son pequeños y tienen ~90% de éxito**. El 3% que son grandes concentran la mayoría del gasto global en IT y tienen menos del 10% de probabilidad de salir bien. Son los grandes proyectos gubernamentales, bancarios, de salud pública y de telecomunicaciones que, cuando fallan, fallan en público y con consecuencias enormes.
+
+---
+
+### 📈 Proyecciones hacia 2025
+
+> _No existe un CHAOS Report 2025 publicado oficialmente. Lo que se tiene son proyecciones de fuentes como McKinsey, Gartner y PMStudyCircle que actualizan la tendencia con datos de contexto reciente._
+
+| Resultado proyectado                      |    Proyección ~2025    |
+| ----------------------------------------- | :--------------------: |
+| ✅ **Exitosos**                           |          ~35%          |
+| ⚠️ **Desafiados**                         |          ~45%          |
+| ❌ **Fallidos**                           |          ~20%          |
+| Proyectos pequeños — tasa de éxito        |          ~90%          |
+| Proyectos grandes (+$10M) — tasa de éxito |          <10%          |
+| Metodología dominante                     | Ágil (sigue creciendo) |
+
+La proyección muestra una **mejora marginal** respecto al 2020, pero el patrón estructural se mantiene: los proyectos grandes siguen fallando, los proyectos pequeños siguen funcionando, y la metodología ágil sigue siendo la que mejor resultado da.
 
 ---
 
@@ -141,16 +208,30 @@ Cuando la deuda técnica llega a un nivel crítico, el proyecto empieza a mostra
 
 ## Los números de la deuda técnica hoy
 
-McKinsey, en sus investigaciones más recientes sobre tecnología empresarial, cuantificó el impacto de la deuda técnica con datos que actualizó en 2024:
+McKinsey, en sus investigaciones más recientes sobre tecnología empresarial, cuantificó el impacto de la deuda técnica con datos actualizados en 2024. El informe se llama **"Demystifying digital dark matter"** —traducido libremente: _descifrando la materia oscura digital_— y el nombre ya da una pista: habla de algo que está ahí, que pesa, pero que no se ve.
+
+Antes de leer los números, una analogía para entenderlos:
+
+> Imaginen que tienen un departamento. Con el tiempo, en lugar de arreglarlo bien cada vez que se rompe algo, van pegando parches provisorios: un cable pelado cubierto con cinta, una canilla que pierde pero "no tanto", una puerta que no cierra bien pero "se puede vivir con eso". El departamento sigue funcionando. Pero llegó el momento en que el 30% del tiempo que pasan ahí lo dedican a compensar las cosas rotas: dar vuelta la llave de una forma especial, esquivar el cable, no abrir esa ventana. Ese tiempo no genera ningún valor. Es el costo de haber parchado en lugar de arreglar.
+
+En software, ese costo acumulado tiene un nombre: **deuda técnica**.
+
+McKinsey lo midió así:
 
 > La deuda técnica representa entre el **20% y el 40% del valor total** del inventario tecnológico de las organizaciones relevadas. Los CIOs estiman que entre el **10% y el 20% del presupuesto destinado a nuevos productos** se redirige a resolver problemas generados por deuda técnica existente.
 > _(McKinsey Digital, "Demystifying digital dark matter", datos actualizados a 2024)_
 
+**¿Qué significa esto en palabras simples?**
+
+- **"20% al 40% del valor total del inventario tecnológico"**: Si una empresa tiene sistemas, servidores, aplicaciones y plataformas que valen 10 millones de dólares en conjunto, entre 2 y 4 millones de ese valor están "congelados" en código que nadie quiere tocar, sistemas que nadie entiende del todo, y arquitecturas que impiden avanzar. No generan valor nuevo. Solo existen porque deshacerlos costaría demasiado.
+
+- **"10% al 20% del presupuesto de nuevos productos"**: Cuando la empresa dice "este año vamos a invertir 1 millón en nuevas funcionalidades", en realidad entre 100.000 y 200.000 de ese millón se va a arreglar problemas viejos antes de poder construir algo nuevo. El presupuesto prometido para el futuro se gasta en el pasado.
+
 En términos prácticos: **uno de cada cuatro dólares invertidos en tecnología no genera valor nuevo** — se gasta en mantener, reparar o compensar decisiones pasadas.
 
-Un análisis de Gartner de 2025 proyecta que para 2027, **el 75% de las organizaciones enfrentará fallos sistémicos causados por deuda técnica no gestionada**.
+Un análisis de Gartner proyecta que para 2027, **el 75% de las organizaciones enfrentará fallos sistémicos causados por deuda técnica no gestionada**.
 
-Y desde la perspectiva del desarrollador: investigaciones recientes indican que los programadores dedican entre el **33% y el 42% de su tiempo de trabajo** a lidiar con deuda técnica — mantenimiento de código heredado, corrección de bugs y refactorización de atajos tomados en el pasado. Eso significa que casi **un día completo por semana** no se destina a construir funcionalidades nuevas.
+Y desde la perspectiva del desarrollador: los programadores dedican entre el **33% y el 42% de su tiempo de trabajo** a lidiar con deuda técnica — mantenimiento de código heredado, corrección de bugs y refactorización de atajos tomados en el pasado. Eso significa que casi **un día completo por semana** no se destina a construir funcionalidades nuevas.
 
 ---
 

@@ -98,7 +98,7 @@ Cuando se arma la caja de botín de Jack, la suma dará cero. Jack desaparece de
 
 **La Solución: El HAVING**
 Para evaluar "sumas matemáticas ya calculadas", se necesita un **Tasador** que trabaje **DESPUÉS** de que los cofres están cerrados. Ese tasador se llama `HAVING`.
-Se coloca _siempre_ después del `GROUP BY`. Él abre la caja final y dice: _"A ver Jack, ¿La suma completa de todo su contenido (`SUM(valor_monedas)`) supera los 500? Perfecto, ¡pasa al reporte!"_
+Se coloca _siempre_ después del `GROUP BY`. Él abre la caja final y dice: _"Veamos Jack, ¿La suma completa de todo su contenido (`SUM(valor_monedas)`) supera los 500? Perfecto, ¡pasa al reporte!"_
 
 ### ⚔️ Desafío 3: El Club de los 500
 
