@@ -52,7 +52,7 @@ Cada clave del diccionario se convierte en una variable disponible en el templat
 <p>Hay {{ total }} productos disponibles.</p>
 ```
 
-Regla fundamental: **la vista calcula, el template muestra**. Si necesitás filtrar una lista, lo hacés en la vista antes de pasarla. El template solo itera sobre lo que ya está listo.
+Regla fundamental: **la vista calcula, el template muestra**. Si necesitás filtrar una lista, lo haces en la vista antes de pasarla. El template solo itera sobre lo que ya está listo.
 
 ---
 

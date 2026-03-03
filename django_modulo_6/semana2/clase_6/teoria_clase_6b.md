@@ -42,7 +42,7 @@ Un CV de un desarrollador backend no debería verse igual que el de un artista g
 
 El diseño habla antes de que el usuario lea una palabra. Si hay contradicción entre lo que el diseño transmite y lo que el contenido dice, el usuario desconfía.
 
-**Ejercicio mental**: describí al usuario que va veamos este sitio con tres palabras. Esas palabras guían cada decisión de diseño.
+**Ejercicio mental**: describe al usuario que va veamos este sitio con tres palabras. Esas palabras guían cada decisión de diseño.
 
 ---
 

@@ -54,6 +54,8 @@ def process_file(filepath):
         (r'\binsertar\b', 'insertar'),
 
         # ── Imperativos (voseo → tuteo) ──
+
+        (r'\babrís\b', 'abres'),
         (r'\bhacé\b', 'haz'),
         (r'\bponé\b', 'pon'),
         (r'\bdecí\b', 'di'),
@@ -96,6 +98,7 @@ def process_file(filepath):
         (r'\bdetectá\b', 'detecta'),
         (r'\bcorregí\b', 'corrige'),
         (r'\bdecidí\b', 'decide'),
+        (r'\bdescribí\b', 'describe'),
         (r'\belegí\b', 'elige'),
         (r'\bcompletá\b', 'completa'),
         (r'\bjustificá\b', 'justifica'),
