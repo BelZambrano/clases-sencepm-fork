@@ -132,6 +132,7 @@ def process_file(filepath):
         (r'\bobtenés\b', 'obtienes'),
 
         # ── Mayúsculas ──
+        (r'\bDefinís\b', 'Defines'),
         (r'\bTenés\b', 'Tienes'),
         (r'\bPodés\b', 'Puedes'),
         (r'\bQuerés\b', 'Quieres'),

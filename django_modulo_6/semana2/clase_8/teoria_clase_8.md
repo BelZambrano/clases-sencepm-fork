@@ -511,6 +511,6 @@ urlpatterns = [
 
 ---
 
-> _"El ModelForm es el punto donde el modelo y el usuario se encuentran. Definís los datos una sola vez en el modelo, y el formulario los traduce a una interfaz web. Eso es DRY en acción."_
+> _"El ModelForm es el punto donde el modelo y el usuario se encuentran. Defines los datos una sola vez en el modelo, y el formulario los traduce a una interfaz web. Eso es DRY en acción."_
 
 ---
