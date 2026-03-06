@@ -1,4 +1,4 @@
-# 🚨 Django — Módulo 6 · Clase 9b
+# 🚨 Django — Guía de Errores HTTP
 
 ## Páginas de Error Personalizadas
 
@@ -8,18 +8,17 @@
 
 ---
 
-## ¿De qué trata esta parte?
+## ¿De qué trata esta guía?
 
 Cuando algo sale mal, el servidor responde con un **código de estado HTTP**.
-Django puede mostrar páginas propias para esos errores — o las del framework por defecto, que son feas y exponen información interna.
+Cada código tiene un significado preciso. Algunos los dispara Django automáticamente,
+otros los dispara el código propio, y algunos requieren que el developer cree una página personalizada.
 
-Esta guía cubre los tres errores más importantes en este orden:
+Esta guía cubre:
 
-| Código | Cuándo aparece                        |
-| ------ | ------------------------------------- |
-| `404`  | La URL o el objeto buscado no existe  |
-| `403`  | Acceso denegado — sin permiso         |
-| `500`  | El servidor crasheó con una excepción |
+1. Todos los códigos de error relevantes y qué significan
+2. Cuáles vale la pena personalizar y por qué
+3. Cómo configurar cada uno en Django
 
 ---
 
@@ -34,22 +33,23 @@ Hay un parámetro en `settings.py` que cambia todo el comportamiento de los erro
 | 500                                  | Stack trace completo del error | Tu `500.html`                |
 | ¿Las páginas personalizadas se usan? | ❌ No                          | ✅ Sí                        |
 
-**Mientras `DEBUG = True`, Django ignora los templates `403.html`, `404.html` y `500.html`.**
+**Mientras `DEBUG = True`, Django ignora los templates personalizados.**
 Se activan únicamente con `DEBUG = False`.
 
 ---
 
 ## Carpeta de templates a nivel proyecto
 
-Los tres templates van en la raíz de la carpeta `templates/`:
+Todos los templates de error van en la raíz de `templates/`:
 
 ```
 mi_proyecto/
 ├── templates/
 │   ├── base.html
-│   ├── 404.html     ← aquí
-│   ├── 403.html     ← aquí
-│   └── 500.html     ← aquí
+│   ├── 400.html
+│   ├── 403.html
+│   ├── 404.html
+│   └── 500.html
 ├── mi_app/
 └── settings.py
 ```
@@ -72,11 +72,193 @@ TEMPLATES = [
 
 ---
 
+# Glosario — Términos técnicos que aparecen en esta guía
+
+---
+
+> Si es la primera vez que ves estas palabras, este glosario es el primer lugar para leer.
+
+---
+
+| Término           | Qué es en palabras simples                                                                                                     |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Servidor**      | Una computadora (o programa) que recibe requests de los navegadores y responde con páginas, datos o errores                    |
+| **Cliente**       | El navegador (Chrome, Firefox, etc.) — el que pide información al servidor                                                     |
+| **Request**       | El mensaje que el navegador manda al servidor pidiendo algo ("dame la página /perfil/")                                        |
+| **Response**      | La respuesta del servidor al request — puede ser HTML, un error, una redirección                                               |
+| **HTTP**          | El protocolo que define cómo se comunican cliente y servidor — el idioma de la web                                             |
+| **Nginx**         | Un servidor web muy usado — recibe los requests del navegador y los pasa a Django (o devuelve archivos estáticos directamente) |
+| **Gunicorn**      | El programa que corre Django en producción — traduce los requests HTTP de Nginx en requests que Django puede procesar          |
+| **Proxy**         | Un intermediario entre el cliente y el servidor — recibe el request, lo pasa a otro lado y devuelve la respuesta               |
+| **Proxy inverso** | Como un proxy, pero del lado del servidor — Nginx actúa como proxy inverso frente a Django                                     |
+| **Load balancer** | Un proxy especial que distribuye los requests entre varios servidores para no sobrecargar uno solo                             |
+| **Stack trace**   | El "rastro de error" que Python muestra cuando el código crashea — lista las líneas de código que llevaron al error            |
+| **Debug mode**    | Modo de desarrollo — Django muestra información interna (errores, URLs, etc.) que nunca debe salir a producción                |
+| **Producción**    | El entorno real donde corre la app para los usuarios finales — opuesto a desarrollo local                                      |
+| **Middleware**    | Una capa de código que Django ejecuta en cada request antes de llegar a la vista (sesiones, CSRF, autenticación, etc.)         |
+| **CSRF**          | Cross-Site Request Forgery — un tipo de ataque. Django lo previene con tokens automáticos en los formularios                   |
+| **Caché**         | Almacenamiento temporal de respuestas para no recalcularlas cada vez — el navegador guarda páginas para cargarlas más rápido   |
+| **Header**        | Metadatos del request o response — información que acompaña al contenido (tipo de contenido, cookies, idioma, etc.)            |
+| **Rate limiting** | Límite de requests por período de tiempo — "máximo 5 intentos de login por minuto" para prevenir ataques de fuerza bruta       |
+| **Deploy**        | El proceso de subir el código a producción para que los usuarios puedan usarlo                                                 |
+| **Handler**       | En Django, una función que "maneja" (procesa) un tipo específico de error — reemplaza el comportamiento por defecto            |
+
+---
+
+---
+
+# Panorama completo — todos los errores HTTP
+
+---
+
+> Antes de saber cuáles personalizar, hay que entender qué existe.
+> Los códigos HTTP se agrupan en familias. El número de centenas indica la familia.
+
+---
+
+## Familia 1xx — Informativos
+
+Respuestas provisorias. El servidor dice "recibí el request, sigue enviando".
+
+| Código | Nombre              | Qué significa                                              |
+| ------ | ------------------- | ---------------------------------------------------------- |
+| `100`  | Continue            | El servidor aceptó los headers, el cliente puede continuar |
+| `101`  | Switching Protocols | El servidor acepta cambiar de protocolo (ej: WebSockets)   |
+
+**¿Se personalizan en Django?** ❌ No. Son automáticos y el usuario nunca los ve.
+Los gestiona el protocolo HTTP en segundo plano.
+
+---
+
+## Familia 2xx — Éxito
+
+El request fue recibido, entendido y procesado correctamente.
+
+| Código | Nombre     | Qué significa                                                     |
+| ------ | ---------- | ----------------------------------------------------------------- |
+| `200`  | OK         | Todo bien — la vista devolvió contenido                           |
+| `201`  | Created    | El recurso fue creado (común en APIs al hacer POST)               |
+| `204`  | No Content | Todo bien, pero no hay contenido que devolver (ej: DELETE en API) |
+
+**¿Se personalizan en Django?** ❌ No como "página de error".
+Son respuestas exitosas — el developer las controla desde la propia vista:
+
+```python
+from django.http import HttpResponse
+
+def eliminar_item(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    item.delete()
+    return HttpResponse(status=204)   # ← devuelve 204 manualmente
+```
+
+El `200` es lo que Django devuelve por defecto con `render()`. No requiere configuración adicional.
+
+---
+
+## Familia 3xx — Redirecciones
+
+El recurso existe, pero está en otro lugar. El servidor le dice al navegador adónde ir.
+
+| Código | Nombre             | Qué significa                                                |
+| ------ | ------------------ | ------------------------------------------------------------ |
+| `301`  | Moved Permanently  | El recurso se movió para siempre — los buscadores actualizan |
+| `302`  | Found              | Redirección temporal — el recurso está en otra URL por ahora |
+| `304`  | Not Modified       | El recurso no cambió desde la última vez — usar la caché     |
+| `307`  | Temporary Redirect | Redirección temporal que preserva el método HTTP (GET/POST)  |
+| `308`  | Permanent Redirect | Redirección permanente que preserva el método HTTP           |
+
+**¿Se personalizan en Django?** ❌ No como páginas de error — son respuestas exitosas.
+Pero Django las genera frecuentemente para redirigir usuarios:
+
+```python
+from django.shortcuts import redirect
+
+def login_exitoso(request):
+    return redirect('/dashboard/')    # ← Django devuelve 302 automáticamente
+
+# 301 — redirección permanente (SEO: cambio de URL definitivo)
+from django.views.generic import RedirectView
+path('perfil/', RedirectView.as_view(url='/cuenta/', permanent=True)),
+#                                                    ↑ permanent=True → 301
+#                                                    permanent=False  → 302 (defecto)
+```
+
+**El 302 es el más usado en Django:** login, logout, después de un form exitoso.
+Siempre que llamás a `redirect()`, Django devuelve un 302 por defecto.
+
+**El 304** lo gestiona el navegador y el servidor automáticamente con los headers de caché.
+No requiere código del developer.
+
+---
+
+## Familia 4xx — Errores del cliente
+
+El problema está del lado del que hizo el request.
+La URL estaba mal, faltaba autenticación, o el recurso no existe.
+
+| Código | Nombre               | Qué significa                                                       |
+| ------ | -------------------- | ------------------------------------------------------------------- |
+| `400`  | Bad Request          | El request está malformado o tiene datos inválidos                  |
+| `401`  | Unauthorized         | Falta autenticación — el servidor no sabe quién sos                 |
+| `403`  | Forbidden            | Autenticado pero sin permiso — el servidor sabe quién sos y dice no |
+| `404`  | Not Found            | La URL o el recurso buscado no existe                               |
+| `405`  | Method Not Allowed   | La URL existe pero no acepta ese método HTTP (GET vs POST)          |
+| `408`  | Request Timeout      | El cliente tardó demasiado en enviar el request completo            |
+| `410`  | Gone                 | El recurso existía pero fue eliminado permanentemente               |
+| `413`  | Payload Too Large    | El archivo o cuerpo del request supera el límite del servidor       |
+| `422`  | Unprocessable Entity | El request está bien formado pero tiene errores semánticos          |
+| `429`  | Too Many Requests    | El cliente hizo demasiados requests en poco tiempo (rate limiting)  |
+
+## Familia 5xx — Errores del servidor
+
+El problema está del lado del servidor. El request estaba bien, pero el servidor falló.
+
+| Código | Nombre                | Qué significa                                           |
+| ------ | --------------------- | ------------------------------------------------------- |
+| `500`  | Internal Server Error | El servidor lanzó una excepción no controlada           |
+| `502`  | Bad Gateway           | El proxy o load balancer recibió una respuesta inválida |
+| `503`  | Service Unavailable   | El servidor está sobrecargado o en mantenimiento        |
+| `504`  | Gateway Timeout       | El proxy no recibió respuesta a tiempo del servidor     |
+
+---
+
+## Cuáles vale la pena personalizar en Django
+
+| Familia | Código | ¿Personalizar?               | Razón                                                          |
+| ------- | ------ | ---------------------------- | -------------------------------------------------------------- |
+| 1xx     | todos  | ❌ No                        | El usuario nunca los ve — son automáticos del protocolo        |
+| 2xx     | todos  | ❌ No como error             | Son éxitos — se controlan desde la vista normalmente           |
+| 3xx     | `301`  | ⚠️ Redirigir desde la vista  | Cambio permanente de URL — usar `RedirectView(permanent=True)` |
+| 3xx     | `302`  | ✅ Siempre, desde la vista   | Es lo que `redirect()` devuelve — el más usado en Django       |
+| 4xx     | `400`  | ✅ Sí, en algunos casos      | Django lo dispara con `SuspiciousOperation`                    |
+| 4xx     | `403`  | ✅ Sí, siempre               | El usuario necesita saber qué hacer (login, contactar admin)   |
+| 4xx     | `404`  | ✅ Sí, siempre               | El más frecuente — URLs mal escritas o contenido eliminado     |
+| 4xx     | `405`  | ⚠️ Opcional                  | Útil en APIs; raro que lo vea un usuario final                 |
+| 4xx     | `429`  | ✅ Sí, si usas rate limiting | El usuario necesita saber que debe esperar                     |
+| 5xx     | `500`  | ✅ Sí, siempre               | El más crítico — nunca mostrar el stack trace en producción    |
+| 5xx     | `502`  | ❌ No en Django              | Lo maneja Nginx/proxy — Django no llega a ejecutarse           |
+| 5xx     | `503`  | ❌ No en Django (mayormente) | Lo maneja Nginx/proxy o el sistema operativo                   |
+| 5xx     | `504`  | ❌ No en Django              | Lo maneja el load balancer o proxy inverso                     |
+
+---
+
+**¿Por qué el 401 no se personaliza en Django?**
+
+Django no usa el código `401` por convención.
+Cuando un usuario no tiene sesión activa, la respuesta es siempre un **redirect 302** hacia el login — nunca un `401`.
+El `401` es estándar en APIs REST puras (con tokens JWT), no en aplicaciones web tradicionales con sesiones.
+
+---
+
+---
+
 # Parte I — Error 404
 
 ---
 
 > _"La URL que buscás no existe. Pero el sitio sí."_
+> **El más frecuente. Siempre vale la pena personalizarlo.**
 
 ---
 
@@ -110,7 +292,7 @@ def detalle_producto(request, pk):
 ```python
 # ❌ Forma incorrecta
 producto = Producto.objects.get(pk=pk)
-# Si el producto no existe → lanza DoesNotExist → crash → error 500
+# Si no existe → DoesNotExist → crash → error 500
 # Un "objeto no encontrado" termina siendo un "error del servidor". Incorrecto.
 
 # ✅ Forma correcta
@@ -121,17 +303,13 @@ producto = get_object_or_404(Producto, pk=pk)
 ### `get_object_or_404` acepta cualquier campo
 
 ```python
-# buscar por slug en lugar de pk
 articulo = get_object_or_404(Articulo, slug=slug)
 
-# buscar con condición adicional
+# con condición adicional: si existe pero no está publicado → también 404
 articulo = get_object_or_404(Articulo, slug=slug, publicado=True)
-# → si el artículo existe pero no está publicado → también dispara 404
 ```
 
-### Lanzar Http404 manualmente
-
-Cuando la lógica es más compleja que buscar un objeto:
+### Lanzar `Http404` manualmente
 
 ```python
 from django.http import Http404
@@ -140,7 +318,6 @@ def busqueda(request):
     query = request.GET.get('q', '')
     if len(query) < 3:
         raise Http404("La búsqueda necesita al menos 3 caracteres")
-    #    ↑ cualquier condición de negocio puede disparar un 404
 ```
 
 ---
@@ -164,16 +341,12 @@ def busqueda(request):
 {% endblock %}
 ```
 
-**Variable especial `{{ exception }}`:** Django la pasa automáticamente al template del 404.
-Contiene el mensaje del error — por ejemplo, el string dentro de `raise Http404("...")`.
+**Variable especial `{{ exception }}`:** Django la pasa automáticamente.
+Contiene el mensaje dentro de `raise Http404("...")`.
 
 ---
 
 ## Manejador personalizado para el 404
-
-Por defecto, Django busca `404.html` y lo renderiza.
-Si se necesita lógica adicional (pasar contexto extra, registrar el intento en la BD, etc.),
-se puede reemplazar con una función propia:
 
 ```python
 # mi_app/views.py
@@ -181,45 +354,24 @@ from django.shortcuts import render
 
 def handler_404(request, exception):
     context = {
-        'url_intentada': request.path,   # la URL que el usuario quiso visitar
+        'url_intentada': request.path,
     }
     return render(request, '404.html', context, status=404)
-    #                                            ↑ el status=404 es obligatorio
-    #                                              sin él, Django devuelve 200 aunque muestre la página de error
+    #                                            ↑ status=404 es obligatorio
+    #                                              sin él Django responde 200 aunque muestre el error
 ```
 
 ```python
-# urls.py principal del proyecto
+# urls.py raíz del proyecto
 handler404 = 'mi_app.views.handler_404'
-#            ↑ siempre un string con la ruta completa: 'app.views.nombre_funcion'
-#              y siempre en el urls.py raíz, no en el de una app
-```
-
-```html
-<!-- templates/404.html — usando el contexto adicional -->
-{% extends 'base.html' %} {% block content %}
-
-<div class="container my-5 text-center">
-  <h1 class="display-1 text-warning">404</h1>
-  <h2>Página no encontrada</h2>
-  <p class="text-muted">
-    La URL <code>{{ url_intentada }}</code> no existe en este sitio.
-  </p>
-  <a href="{% url 'home' %}" class="btn btn-primary">Volver al inicio</a>
-</div>
-
-{% endblock %}
 ```
 
 ---
 
-## Probar el 404 en desarrollo (sin cambiar `DEBUG`)
-
-Mientras `DEBUG = True`, los templates personalizados no se muestran.
-Para probarlos sin apagar el debug:
+## Probar el 404 en desarrollo
 
 ```python
-# mi_app/views.py — solo para testing, eliminar después
+# mi_app/views.py — solo para testing, sacar en producción
 from django.shortcuts import render
 
 def test_404(request):
@@ -227,8 +379,7 @@ def test_404(request):
 ```
 
 ```python
-# urls.py
-path('test-404/', test_404),   # visitar esta URL para ver cómo queda el template
+path('test-404/', test_404),
 ```
 
 ---
@@ -240,6 +391,7 @@ path('test-404/', test_404),   # visitar esta URL para ver cómo queda el templa
 ---
 
 > _"Sé quién sos. Pero no puedes entrar."_
+> **Siempre vale la pena personalizarlo — y decidir si redirigir al login.**
 
 ---
 
@@ -254,7 +406,7 @@ path('test-404/', test_404),   # visitar esta URL para ver cómo queda el templa
 
 ---
 
-## Cómo disparar un 403 desde el código
+## Cómo disparar un 403
 
 ### Con decorador
 
@@ -263,8 +415,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 
 @login_required
 @permission_required('tienda.change_producto', raise_exception=True)
-#                                              ↑ sin esto → redirige al login aunque ya tenga sesión
-#                                                con esto  → muestra el error 403
+#                                              ↑ sin esto → redirige al login aunque tenga sesión
+#                                                con esto  → muestra 403
 def editar_producto(request, pk):
     ...
 ```
@@ -280,7 +432,7 @@ class EditarProductoView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView
     fields              = ['nombre', 'precio']
     template_name       = 'producto_form.html'
     permission_required = 'tienda.change_producto'
-    raise_exception     = True     # ← 403 si tiene sesión pero no el permiso
+    raise_exception     = True
 ```
 
 ### Lanzar `PermissionDenied` manualmente
@@ -291,8 +443,7 @@ from django.core.exceptions import PermissionDenied
 def editar_perfil(request, pk):
     perfil = get_object_or_404(Perfil, pk=pk)
     if perfil.usuario != request.user:
-        raise PermissionDenied
-        # ↑ el usuario intenta editar el perfil de otro → 403
+        raise PermissionDenied   # → 403
     ...
 ```
 
@@ -321,63 +472,31 @@ def editar_perfil(request, pk):
 
 ## Comportamiento del 403 según el estado de sesión
 
-Aquí está el punto que confunde a muchos:
-
 ```
 Usuario sin sesión → intenta acceder a /panel-admin/
       ↓
 ¿Cómo está configurado el decorador?
 
-  @login_required                           → redirige a /login/?next=/panel-admin/
-  @permission_required(raise_exception=True)→ muestra 403 (incorrecto para este caso)
-  @login_required + @permission_required    → primero verifica sesión → redirige al login ✅
+  @login_required solo                    → redirige a /login/?next=/panel-admin/
+  @permission_required(raise_exception)   → muestra 403 (confuso si no tenía sesión)
+  @login_required + @permission_required  → primero verifica sesión → redirige al login ✅
 ```
 
-**La regla:** siempre poner `@login_required` antes de `@permission_required`.
-Si el usuario no tiene sesión → va al login. Si tiene sesión pero no el permiso → 403.
-
----
-
-## Qué hace Django cuando llega un 403 sin sesión
-
-Por defecto, `@login_required` redirige al login con `?next=`.
-`@permission_required` con `raise_exception=True` muestra el 403 **sin importar** si hay sesión o no.
-
-Por eso el orden de decoradores es crítico:
-
-```python
-@login_required                                              # 1° verifica: ¿tiene sesión?
-@permission_required('app.change_x', raise_exception=True)  # 2° verifica: ¿tiene permiso?
-def mi_vista(request):
-    ...
-```
-
-Los decoradores se aplican **de abajo hacia arriba** (el de abajo se ejecuta primero).
-En este orden: primero se verifica el permiso, y si falla, `@login_required` lo intercepta y manda al login si no tiene sesión.
+**Regla:** `@login_required` siempre antes de `@permission_required`.
+Los decoradores se aplican de abajo hacia arriba — el orden importa.
 
 ---
 
 ## Redirección al login en lugar de mostrar el 403
 
-### Cuándo tiene sentido
-
-| Escenario                                              | Qué hacer                               |
-| ------------------------------------------------------ | --------------------------------------- |
-| Sin sesión, llega a una vista protegida                | Redirigir al login con `?next=` ✅      |
-| Con sesión, sin permiso                                | Mostrar 403 — el login no resuelve nada |
-| Sistema simple sin permisos finos, solo login/no login | Siempre redirigir al login              |
-
 ### Opción A — Dejar que `@login_required` lo maneje (automático)
-
-La forma más simple. No hay que hacer nada extra:
 
 ```python
 # settings.py
-LOGIN_URL = '/login/'   # ← @login_required redirige aquí si no hay sesión
-```
+LOGIN_URL = '/login/'
 
-```python
-@login_required   # ← si no tiene sesión → /login/?next=/mi-vista/ automáticamente
+# views.py
+@login_required   # → si no hay sesión: /login/?next=/mi-vista/
 def mi_vista(request):
     ...
 ```
@@ -386,20 +505,15 @@ def mi_vista(request):
 
 ```python
 from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
 
 @login_required
 def panel(request):
     if not request.user.has_perm('app.view_reporte'):
         return redirect(f'/login/?next={request.path}')
-        #                         ↑ ?next= guarda la URL actual
-        #                           después del login, el usuario regresa aquí
     ...
 ```
 
-### Opción C — Handler global para el 403 (nivel proyecto)
-
-La opción más profesional: interceptar **todos** los 403 a nivel de proyecto y decidir el comportamiento según el estado de sesión:
+### Opción C — Handler global (la más profesional)
 
 ```python
 # mi_app/views.py
@@ -407,37 +521,13 @@ from django.shortcuts import redirect, render
 
 def handler_403(request, exception):
     if not request.user.is_authenticated:
-        # No tiene sesión → redirigir al login con ?next= para volver a donde estaba
         return redirect(f'/login/?next={request.path}')
-    # Tiene sesión pero no tiene permiso → mostrar la página de error
     return render(request, '403.html', status=403)
 ```
 
 ```python
-# urls.py del proyecto (raíz)
+# urls.py raíz
 handler403 = 'mi_app.views.handler_403'
-```
-
-Este patrón es el más usado en proyectos profesionales:
-
-- El usuario sin sesión nunca ve un "403 Forbidden" — ve el formulario de login.
-- El usuario con sesión pero sin permiso recibe la página de error que le dice qué hacer.
-
----
-
-## Probar el 403 en desarrollo
-
-```python
-# mi_app/views.py — solo para testing
-from django.shortcuts import render
-
-def test_403(request):
-    return render(request, '403.html', status=403)
-```
-
-```python
-# urls.py
-path('test-403/', test_403),
 ```
 
 ---
@@ -449,35 +539,32 @@ path('test-403/', test_403),
 ---
 
 > _"El servidor encontró un error que no supo manejar. Siempre es un bug del código."_
+> **El más crítico. Siempre personalizar. Nunca mostrar el stack trace.**
 
 ---
 
 ## ¿Cuándo dispara Django un 500?
 
-| Situación                                                    | Ejemplo                             |
-| ------------------------------------------------------------ | ----------------------------------- |
-| Una excepción no capturada en la vista                       | `AttributeError`, `TypeError`, etc. |
-| Error en el template (variable que no existe en una DBquery) | `{{ objeto.metodo_que_no_existe }}` |
-| La base de datos no responde                                 | `OperationalError` de psycopg2      |
-| Cualquier `Exception` que Django no captura                  | Cualquier bug no manejado           |
+| Situación                              | Ejemplo                             |
+| -------------------------------------- | ----------------------------------- |
+| Excepción no capturada en la vista     | `AttributeError`, `TypeError`, etc. |
+| Error en el template                   | Variable o método que no existe     |
+| La base de datos no responde           | `OperationalError` de psycopg2      |
+| Cualquier `Exception` que Django no ve | Cualquier bug no manejado           |
 
-El 500 **no se puede disparar intencionalmente** como el 404 o el 403 —
-aparece cuando el código tiene un bug. Si el código funciona bien, los 500 no ocurren.
+El 500 no se puede disparar intencionalmente — aparece cuando hay un bug.
 
 ---
 
-## Por qué el `500.html` es diferente
+## Por qué el `500.html` no puede heredar de `base.html`
 
-El `500.html` tiene una regla que no tienen el `404.html` ni el `403.html`:
-
-> **No puede usar `{% extends 'base.html' %}` ni `{% url %}` ni variables de contexto.**
-
-**¿Por qué?** El servidor está en un estado inestable. Si crasheó por un problema con la base de datos, intentar renderizar `base.html` (que puede tener consultas a la BD, `{{ user.username }}`, etc.) puede causar **otro error encima del primero** — y el usuario no ve nada.
+> Si el servidor crasheó por un problema con la BD, intentar renderizar `base.html`
+> (que puede tener `{{ user.username }}` u otras consultas) puede causar otro error encima del primero.
 
 El `500.html` debe ser **HTML puro y estático**:
 
 ```html
-<!-- templates/500.html -->
+<!-- templates/500.html — sin Django templates, sin extends, sin {% url %} -->
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -524,29 +611,18 @@ El `500.html` debe ser **HTML puro y estático**:
     <h2>Error interno del servidor</h2>
     <p>Algo salió mal de nuestro lado. El equipo ya fue notificado.</p>
     <a href="/">Volver al inicio</a>
-    <!-- ↑ se usa "/" directamente, no {% url 'home' %} — el motor de templates puede estar roto -->
+    <!-- ↑ "/" directo — no {% url 'home' %}, el motor de templates puede estar roto -->
   </body>
 </html>
 ```
 
-**Qué NO puede tener el 500.html:**
+**Lo que NO puede tener:**
 
 ```
 ❌ {% extends 'base.html' %}
 ❌ {% url 'home' %}
 ❌ {{ user.username }}
 ❌ {% load static %}
-❌ Cualquier tag o variable de Django
-```
-
-**Qué SÍ puede tener:**
-
-```
-✅ HTML puro
-✅ CSS embebido (<style>)
-✅ JavaScript puro
-✅ href="/" directamente en el link
-✅ Imagen embebida en base64 (si se quiere logo sin CDN)
 ```
 
 ---
@@ -558,38 +634,225 @@ El `500.html` debe ser **HTML puro y estático**:
 from django.shortcuts import render
 
 def handler_500(request):
-    # Importante: el handler del 500 NO recibe 'exception' como argumento
-    # El servidor está en mal estado — no se puede confiar en ese objeto
+    # el 500 NO recibe 'exception' — el servidor está en estado inestable
     return render(request, '500.html', status=500)
 ```
 
 ```python
-# urls.py del proyecto (raíz)
+# urls.py raíz
 handler500 = 'mi_app.views.handler_500'
 ```
-
-La firma del `handler_500` no tiene el argumento `exception` — a diferencia del 403 y el 404.
-Esto es intencional: Django no pasa la excepción porque el servidor puede estar en un estado que la hace inaccesible.
 
 ---
 
 ## Notificar errores 500 al equipo
 
-En producción, los 500 no deben pasar desapercibidos.
-La forma más simple de recibir notificaciones por email es configurar `ADMINS` en `settings.py`:
-
 ```python
 # settings.py
 ADMINS = [
-    ('Nombre Developer', 'developer@miempresa.com'),
+    ('Nombre Developer', 'dev@empresa.com'),
 ]
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# ... configuración de email ...
 ```
 
-Con `DEBUG = False` y `ADMINS` configurado, Django envía un email automáticamente
-cada vez que ocurre un error 500 no capturado, incluyendo el stack trace completo.
+Con `DEBUG = False` y `ADMINS` configurado, Django envía un email con el stack trace
+completo cada vez que ocurre un 500. El usuario ve la página genérica; el equipo ve el detalle.
+
+---
+
+---
+
+# Parte IV — Error 400 (Bad Request)
+
+---
+
+> _"El request llegó malformado. El servidor no lo puede procesar."_
+> **Vale la pena personalizar si el proyecto tiene formularios complejos o APIs.**
+
+---
+
+## ¿Cuándo dispara Django un 400?
+
+| Situación                                      | Cómo se dispara                          |
+| ---------------------------------------------- | ---------------------------------------- |
+| Datos del request inconsistentes o malformados | `raise SuspiciousOperation` en una vista |
+| Headers de sesión inválidos                    | Automático por el middleware de sesión   |
+| Datos de formulario con tamaño excesivo        | Automático por el parser del request     |
+
+Más raro de ver en proyectos web simples. Más común en APIs.
+
+---
+
+## Cómo dispararlo manualmente
+
+```python
+from django.core.exceptions import SuspiciousOperation
+
+def procesar_pago(request):
+    monto = request.POST.get('monto')
+    if not monto or int(monto) <= 0:
+        raise SuspiciousOperation("El monto debe ser positivo")
+        # ↑ dispara un 400 — el request tiene datos inválidos a nivel de protocolo
+```
+
+---
+
+## El template `400.html`
+
+```html
+<!-- templates/400.html -->
+{% extends 'base.html' %} {% block content %}
+
+<div class="container my-5 text-center">
+  <h1 class="display-1 text-secondary">400</h1>
+  <h2>Solicitud incorrecta</h2>
+  <p class="text-muted">
+    El servidor no pudo procesar la solicitud porque contiene datos inválidos.
+  </p>
+  <a href="{% url 'home' %}" class="btn btn-primary">Volver al inicio</a>
+</div>
+
+{% endblock %}
+```
+
+---
+
+## Manejador personalizado para el 400
+
+```python
+# mi_app/views.py
+from django.shortcuts import render
+
+def handler_400(request, exception):
+    return render(request, '400.html', status=400)
+```
+
+```python
+# urls.py raíz
+handler400 = 'mi_app.views.handler_400'
+```
+
+---
+
+---
+
+# Parte V — Error 429 (Too Many Requests)
+
+---
+
+> _"Estás haciendo demasiados requests en poco tiempo. Esperá."_
+> **Vale la pena personalizar si el proyecto usa rate limiting.**
+
+---
+
+## ¿Qué es el rate limiting?
+
+Es un mecanismo que limita cuántos requests puede hacer un usuario en un período de tiempo.
+Protege el servidor contra ataques de fuerza bruta, bots y abusos.
+
+```
+Usuario hace 100 requests en 1 minuto
+         ↓
+El sistema detecta el abuso
+         ↓
+Los siguientes requests reciben 429
+         ↓
+Después de X segundos, vuelve a funcionar
+```
+
+---
+
+## Django y el 429
+
+Django no tiene rate limiting incorporado.
+Se añade con la librería `django-ratelimit`:
+
+```bash
+pip install django-ratelimit
+```
+
+```python
+from django_ratelimit.decorators import ratelimit
+
+@ratelimit(key='ip', rate='5/m', block=True)
+# ↑ máximo 5 requests por minuto desde la misma IP
+# block=True → si supera el límite → 429
+def login_view(request):
+    ...
+```
+
+---
+
+## El template `429.html`
+
+```html
+<!-- templates/429.html -->
+{% extends 'base.html' %} {% block content %}
+
+<div class="container my-5 text-center">
+  <h1 class="display-1 text-warning">429</h1>
+  <h2>Demasiados intentos</h2>
+  <p class="text-muted">
+    Realizaste demasiadas solicitudes en poco tiempo. Esperá unos minutos antes
+    de intentarlo de nuevo.
+  </p>
+  <a href="{% url 'home' %}" class="btn btn-secondary">Volver al inicio</a>
+</div>
+
+{% endblock %}
+```
+
+---
+
+---
+
+# Parte VI — Errores que maneja la infraestructura, no Django
+
+---
+
+> No todo error llega a Django. El 502, 503 y 504 los maneja el servidor web (Nginx, Apache)
+> antes de que Django se ejecute o cuando Django no puede responder.
+
+---
+
+## 502 — Bad Gateway
+
+```
+Navegador → Nginx → Django (Gunicorn)
+                        ↑
+                    Gunicorn está caído
+                        ↓
+                    Nginx devuelve 502
+```
+
+**Django no llega a ejecutarse.** La página de error es de Nginx, no de Django.
+Se puede personalizar en la configuración de Nginx con una directiva `error_page`.
+
+---
+
+## 503 — Service Unavailable
+
+Aparece cuando el servidor está en mantenimiento o sobrecargado.
+En deploy con Nginx + Gunicorn, se puede configurar una página de mantenimiento estática:
+
+```nginx
+# nginx.conf
+error_page 503 /mantenimiento.html;
+location = /mantenimiento.html {
+    root /var/www/html;
+    internal;
+}
+```
+
+El archivo `mantenimiento.html` es HTML puro — no pasa por Django.
+
+---
+
+## 504 — Gateway Timeout
+
+El proxy o load balancer esperó demasiado al servidor. Generalmente indica que Django
+tardó más de lo permitido en responder (query lenta, proceso pesado sin timeout).
+
+**Solución:** no es una página de error — es un problema de performance o configuración.
 
 ---
 
@@ -599,23 +862,25 @@ cada vez que ocurre un error 500 no capturado, incluyendo el stack trace complet
 
 ---
 
-## Comparación entre los tres errores
+## Tabla de decisión: ¿personalizo o no?
 
-| Característica                | 404                | 403                         | 500                   |
-| ----------------------------- | ------------------ | --------------------------- | --------------------- |
-| Hereda `base.html`            | ✅ Sí              | ✅ Sí                       | ❌ No — HTML puro     |
-| Usa `{% url %}`               | ✅ Sí              | ✅ Sí                       | ❌ No                 |
-| Variable especial de Django   | `{{ exception }}`  | `{{ exception }}`           | Ninguna               |
-| Handler recibe `exception`    | ✅ Sí              | ✅ Sí                       | ❌ No                 |
-| Se puede disparar manualmente | ✅ `raise Http404` | ✅ `raise PermissionDenied` | ❌ Solo pasa por bugs |
-| Se puede redirigir al login   | No aplica          | ✅ Sí (ver Parte II)        | No aplica             |
+| Error | ¿Personalizar en Django? | ¿Con qué template?    | ¿Puede heredar `base.html`? |
+| ----- | ------------------------ | --------------------- | --------------------------- |
+| `400` | ✅ Sí, si hay APIs/forms | `400.html`            | ✅ Sí                       |
+| `403` | ✅ Sí, siempre           | `403.html` + redirect | ✅ Sí                       |
+| `404` | ✅ Sí, siempre           | `404.html`            | ✅ Sí                       |
+| `429` | ✅ Sí, si hay rate limit | `429.html`            | ✅ Sí                       |
+| `500` | ✅ Sí, siempre           | `500.html`            | ❌ No — HTML puro           |
+| `502` | ❌ No en Django          | Nginx/proxy           | —                           |
+| `503` | ❌ No en Django          | Nginx/proxy           | —                           |
+| `504` | ❌ No en Django          | Nginx/proxy           | —                           |
 
 ---
 
-## Definir los handlers — siempre en el `urls.py` raíz
+## Handlers en `urls.py` raíz
 
 ```python
-# proyecto/urls.py — el archivo que tiene los include() de todas las apps
+# proyecto/urls.py
 
 handler400 = 'mi_app.views.handler_400'
 handler403 = 'mi_app.views.handler_403'
@@ -625,55 +890,66 @@ handler500 = 'mi_app.views.handler_500'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('mi_app.urls')),
-    ...
 ]
 ```
 
-Sin definir estas variables, Django usa los manejadores por defecto
-(que solo buscan el template correspondiente y lo renderizan sin lógica extra).
+---
+
+## Diferencias clave entre handlers
+
+| Handler       | Recibe `exception` | Puede redirigir | Notas                                    |
+| ------------- | ------------------ | --------------- | ---------------------------------------- |
+| `handler_400` | ✅ Sí              | ✅ Sí           | —                                        |
+| `handler_403` | ✅ Sí              | ✅ Sí           | Ideal para redirigir al login sin sesión |
+| `handler_404` | ✅ Sí              | ✅ Sí           | El más usado                             |
+| `handler_500` | ❌ No              | ⚠️ Con cuidado  | Servidor en estado inestable             |
 
 ---
 
 ## Checklist de producción
 
 ```
-[ ] 1. Crear templates/404.html   — puede usar {% extends 'base.html' %}
-[ ] 2. Crear templates/403.html   — puede usar {% extends 'base.html' %}
-[ ] 3. Crear templates/500.html   — HTML puro, sin Django templates
-[ ] 4. DIRS configurado en TEMPLATES en settings.py
-[ ] 5. DEBUG = False en producción
-[ ] 6. ALLOWED_HOSTS con el dominio real
-[ ] 7. handler403 con lógica de redirección al login si no hay sesión
-[ ] 8. ADMINS configurado para recibir emails en caso de 500
+[ ] 1. Crear templates/404.html — puede usar {% extends 'base.html' %}
+[ ] 2. Crear templates/403.html — puede usar {% extends 'base.html' %}
+[ ] 3. Crear templates/500.html — HTML puro, sin Django templates
+[ ] 4. Crear templates/400.html — si el proyecto tiene formularios o API
+[ ] 5. DIRS configurado en TEMPLATES en settings.py
+[ ] 6. DEBUG = False en producción
+[ ] 7. ALLOWED_HOSTS con el dominio real
+[ ] 8. handler403 con lógica de redirección al login si no hay sesión
+[ ] 9. ADMINS configurado para recibir emails en caso de 500
+[ ] 10. Página de mantenimiento estática (503) configurada en Nginx
 ```
 
 ---
 
-## Flujo completo
+## Flujo completo de errores
 
 ```
 Request entra al servidor
         ↓
-¿La URL coincide con algún patrón?
+¿Nginx puede conectar con Django?
         │
-        ├── NO  ──────────────────────────────────────────→ 404 (tu 404.html)
+        ├── NO → 502 (Nginx) o 503 (mantenimiento) o 504 (timeout)
+        │          └── Manejado por Nginx, no por Django
         │
-        └── SÍ  → ejecuta la vista
+        └── SÍ → Django procesa el request
                         │
-                        ├── raise Http404 ──────────────→ 404 (tu 404.html)
+                        ├── URL no coincide ──────────────→ 404
                         │
-                        ├── raise PermissionDenied ─────→ 403 (tu handler_403)
-                        │          ↓
-                        │   ¿tiene sesión?
-                        │     NO  → redirect /login/?next=
-                        │     SÍ  → mostrar 403.html
-                        │
-                        ├── excepción no capturada ──────→ 500 (tu 500.html, HTML puro)
-                        │
-                        └── respuesta OK ──────────────→ 200 ✅
+                        └── Vista se ejecuta
+                                │
+                                ├── raise Http404 ─────────→ 404
+                                ├── raise PermissionDenied ─→ 403
+                                │     └── ¿tiene sesión?
+                                │           NO → redirect /login/?next=
+                                │           SÍ → mostrar 403.html
+                                ├── SuspiciousOperation ───→ 400
+                                ├── excepción no capturada ─→ 500 (HTML puro)
+                                └── OK ──────────────────→ 200 ✅
 
-En desarrollo (DEBUG=True): Django ignora tus templates y muestra páginas propias.
-En producción (DEBUG=False): tus templates toman el control.
+DEBUG=True:  Django ignora tus templates y muestra páginas propias con info interna.
+DEBUG=False: tus templates toman el control — nunca se expone info interna.
 ```
 
 ---
