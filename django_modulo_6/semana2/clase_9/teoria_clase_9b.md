@@ -230,6 +230,7 @@ test/cobertura-de-permisos
 | `chore/`    | Mantenimiento: deps, CI, configuraciones       |
 | `docs/`     | Solo documentación                             |
 | `test/`     | Solo tests                                     |
+| `backup/`   | Para respaldos en desarrolo                    |
 
 **Variante con número de ticket:** muchos equipos incluyen el ID del issue o tarjeta:
 
