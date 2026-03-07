@@ -285,7 +285,7 @@ Para escribir los estilos de nuestros componentes de forma profesional, existen 
 ### 🟦 HEX — El Sistema Clásico
 
 ```css
-color: #3182ce; /* Azul */
+color: #154776ff; /* Azul */
 color: #ffffff; /* Blanco */
 color: #e53e3e; /* Rojo */
 ```
@@ -313,6 +313,51 @@ color: hsl(210 65% 25%); /* Azul oscuro  — solo cambié el 3° número */
 **Ventaja:** Con un solo token HSL puedes generar toda una familia de variantes del mismo color ajustando la Luminosidad.
 
 ---
+
+### 🟩 RGB — Red, Green, Blue (El Sistema de las Pantallas)
+
+RGB es el sistema que las pantallas usan físicamente: cada píxel tiene tres "lámparas" (Roja, Verde y Azul) que se encienden con distintas intensidades para producir cualquier color.
+
+```css
+/* Sintaxis: rgb(Rojo  Verde  Azul) — cada canal va de 0 a 255 */
+color: rgb(49 130 206); /* Azul — equivale a #3182ce */
+color: rgb(255 255 255); /* Blanco — máximo en los tres canales */
+color: rgb(229 62 62); /* Rojo */
+color: rgb(0 0 0); /* Negro — todo apagado */
+```
+
+Cada canal va de `0` (apagado) a `255` (máximo):
+
+| Canal | `0`       | `128`       | `255`        |
+| ----- | --------- | ----------- | ------------ |
+| Rojo  | Sin rojo  | Rojo medio  | Rojo máximo  |
+| Verde | Sin verde | Verde medio | Verde máximo |
+| Azul  | Sin azul  | Azul medio  | Azul máximo  |
+
+**RGB también acepta transparencia (alpha):**
+
+```css
+/* Forma clásica */
+background-color: rgba(49, 130, 206, 0.15); /* Azul al 15% de opacidad */
+
+/* Forma moderna (recomendada) */
+background-color: rgb(
+  49 130 206 / 0.15
+); /* Mismo resultado, sintaxis más limpia */
+```
+
+**¿Cuándo usar RGB?** Cuando recibes colores en ese formato desde herramientas externas. Para sistemas de tokens CSS, **HSL sigue siendo más recomendable** porque sus parámetros son más fáciles de manipular matemáticamente.
+
+---
+
+### Comparativa Final de los Cuatro Sistemas
+
+| Sistema | Para qué | Legibilidad | ¿Permite derivar variantes? | Uso recomendado                              |
+| ------- | -------- | ----------- | --------------------------- | -------------------------------------------- |
+| **HEX** | Colores  | Baja        | No directamente             | Cuando copias colores de Figma/diseñadores   |
+| **RGB** | Colores  | Media       | No directamente             | Transparencias específicas o herramientas 3D |
+| **HSL** | Colores  | Alta        | ✅ Ajustando luminosidad    | Tokens CSS propios del proyecto              |
+| **REM** | Tamaños  | Alta        | ✅ Escala automático        | Fuentes, márgenes, espaciados y bordes       |
 
 ### 📐 REM — Para Tamaños (No para Colores)
 
@@ -457,52 +502,64 @@ Antes de crear el primer componente, responde estas preguntas. Toma 20 minutos y
 
 ---
 
-# GLOSARIO COMPLETO
+# GLOSARIO: DJANGO EN COMPONENTES DE DISEÑO
 
 ---
 
-## 11. Etiquetas, Variables y Filtros de Django en Partials
+## 11. Etiquetas y Variables de Django Usadas Dentro de Átomos, Moléculas y Organismos
 
-### 📌 Etiquetas (Tags) — Lo que va entre `{% %}`
-
-| Etiqueta                 | Qué hace                                                  | Ejemplo                                        |
-| ------------------------ | --------------------------------------------------------- | ---------------------------------------------- |
-| `{% include %}`          | Inserta un partial (componente) en la posición actual     | `{% include "components/atoms/button.html" %}` |
-| `{% include ... with %}` | Inserta un partial pasándole variables                    | `{% include "..." with texto="Guardar" %}`     |
-| `{% include ... only %}` | Aísla el partial: solo ve las variables que se le pasan   | `{% include "..." with texto="Ok" only %}`     |
-| `{% extends %}`          | Hereda la estructura HTML de otro template base           | `{% extends 'base.html' %}`                    |
-| `{% block %}`            | Define una zona reemplazable en la herencia de templates  | `{% block content %}{% endblock %}`            |
-| `{% for ... in ... %}`   | Itera sobre una lista o QuerySet de Django                | `{% for curso in cursos %}`                    |
-| `{% endfor %}`           | Cierra el bloque `{% for %}`                              | `{% endfor %}`                                 |
-| `{% empty %}`            | Se ejecuta si la lista del `{% for %}` está vacía         | `{% empty %} <p>No hay resultados.</p>`        |
-| `{% if %}`               | Condición. Ejecuta el bloque si la condición es verdadera | `{% if user.is_authenticated %}`               |
-| `{% else %}`             | Alternativa cuando el `{% if %}` no se cumple             | `{% else %} <p>Debes iniciar sesión.</p>`      |
-| `{% endif %}`            | Cierra el bloque `{% if %}`                               | `{% endif %}`                                  |
-| `{% url %}`              | Genera la URL de una vista por su nombre                  | `{% url 'cursos:listado' %}`                   |
-| `{% static %}`           | Genera la ruta a un archivo estático (CSS, imagen)        | `{% static 'css/index.css' %}`                 |
-| `{% load static %}`      | Activa el sistema de archivos estáticos de Django         | `{% load static %}` (al inicio del template)   |
-| `{% csrf_token %}`       | Inserta el token de seguridad en formularios              | `<form> {% csrf_token %} </form>`              |
-| `{# comentario #}`       | Comentario de una línea (no aparece en el HTML final)     | `{# Este partial espera la prop "color" #}`    |
+> Este glosario cubre **únicamente** las etiquetas y variables que aparecen dentro de los archivos de componentes (`atoms/`, `molecules/`, `organisms/`). No incluye etiquetas de formularios, autenticación o URL. Solo diseño.
 
 ---
 
-### 📌 Variables y Filtros — Lo que va entre `{{ }}`
+### 📌 Etiquetas de Diseño — `{% %}`
 
-| Variable / Filtro                 | Qué hace                                                         | Ejemplo                                     |
-| --------------------------------- | ---------------------------------------------------------------- | ------------------------------------------- |
-| `{{ variable }}`                  | Muestra el valor de una variable                                 | `{{ curso.nombre }}`                        |
-| `{{ objeto.campo }}`              | Accede a un campo de un objeto del modelo Django                 | `{{ course.profesor }}`                     |
-| `{{ variable\|default:'...' }}`   | Si la variable es vacía, usa el valor por defecto                | `{{ tipo\|default:'button' }}`              |
-| `{{ variable\|lower }}`           | Convierte el texto a minúsculas                                  | `{{ nombre\|lower }}`                       |
-| `{{ variable\|upper }}`           | Convierte el texto a mayúsculas                                  | `{{ nombre\|upper }}`                       |
-| `{{ variable\|title }}`           | Primera letra de cada palabra en mayúscula                       | `{{ nombre\|title }}`                       |
-| `{{ variable\|truncatechars:N }}` | Recorta el texto a N caracteres                                  | `{{ descripcion\|truncatechars:80 }}`       |
-| `{{ variable\|date:"d M Y" }}`    | Formatea un campo de fecha                                       | `{{ curso.fecha\|date:"d/m/Y" }}`           |
-| `{{ variable\|length }}`          | Devuelve cuántos elementos tiene una lista                       | `{{ cursos\|length }}`                      |
-| `{{ variable\|yesno:"Sí,No" }}`   | Convierte un boolean (`True`/`False`) en texto legible           | `{{ activo\|yesno:"Activo,Inactivo" }}`     |
-| `{{ forloop.counter }}`           | El número de iteración actual (desde 1) dentro de un `{% for %}` | `{{ forloop.counter }}. {{ curso.nombre }}` |
-| `{{ forloop.first }}`             | `True` solo en la primera iteración del `{% for %}`              | `{% if forloop.first %} ... {% endif %}`    |
-| `{{ forloop.last }}`              | `True` solo en la última iteración del `{% for %}`               | `{% if forloop.last %} ... {% endif %}`     |
+| Etiqueta                 | Dónde aparece          | Qué hace en el componente                                                                 | Ejemplo real                                                             |
+| ------------------------ | ---------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `{% include %}`          | Moléculas y Organismos | Inserta un componente hijo dentro del componente actual                                   | En `card.html`: `{% include "atoms/button.html" %}`                      |
+| `{% include ... with %}` | Moléculas y Organismos | Inserta un componente hijo y le pasa variables de personalización                         | `{% include "atoms/button.html" with texto="Guardar" color="primary" %}` |
+| `{% include ... only %}` | Átomos                 | Inserta un partial aislando el contexto: el hijo solo ve lo que se le pasa explícitamente | `{% include "atoms/badge.html" with texto=estado only %}`                |
+| `{% if %}`               | Átomos y Moléculas     | Cambia el aspecto visual según una condición                                              | En `button.html`: `{% if ancho == 'completo' %}c-btn--full{% endif %}`   |
+| `{% endif %}`            | Átomos y Moléculas     | Cierra el bloque condicional                                                              | `{% endif %}`                                                            |
+| `{% for ... in ... %}`   | Organismos             | Renderiza un componente hijo por cada elemento de una lista                               | En `navbar.html`: `{% for link in links %}...{% endfor %}`               |
+| `{% endfor %}`           | Organismos             | Cierra el bloque iterativo                                                                | `{% endfor %}`                                                           |
+| `{% empty %}`            | Organismos             | Muestra contenido alternativo si la lista está vacía                                      | `{% empty %} <p>No hay items.</p>`                                       |
+| `{# comentario #}`       | Todos                  | Documenta el componente sin agregar texto al HTML final                                   | `{# Props: texto, color #}`                                              |
+
+---
+
+### 📌 Variables y Filtros de Diseño — `{{ }}`
+
+| Variable / Filtro             | Dónde aparece    | Qué hace en el componente                                     | Ejemplo real                                            |
+| ----------------------------- | ---------------- | ------------------------------------------------------------- | ------------------------------------------------------- |
+| `{{ prop }}`                  | Átomos           | Muestra el valor de una prop recibida vía `with`              | `{{ texto }}` en `button.html`                          |
+| `{{ prop\|default:'...' }}`   | Átomos           | Si la prop no fue pasada, usa el valor por defecto            | `{{ color\|default:'primary' }}` en `button.html`       |
+| `{{ prop\|lower }}`           | Átomos           | Convierte la prop a minúsculas (útil para generar clases CSS) | `{{ tipo\|lower }}` → genera `c-btn--primary`           |
+| `{{ prop\|upper }}`           | Átomos           | Convierte la prop a mayúsculas (útil para etiquetas o badges) | `{{ estado\|upper }}` → muestra `ACTIVO`                |
+| `{{ prop\|title }}`           | Moléculas        | Primera letra de cada palabra en mayúscula                    | `{{ titulo\|title }}` → muestra `Python Avanzado`       |
+| `{{ prop\|truncatechars:N }}` | Moléculas        | Recorta el texto a N caracteres y agrega `…`                  | `{{ descripcion\|truncatechars:80 }}`                   |
+| `{{ prop\|yesno:"Sí,No" }}`   | Átomos/Moléculas | Convierte un booleano `True/False` en texto visible           | `{{ activo\|yesno:"Activo,Inactivo" }}` en `badge.html` |
+| `{{ objeto.campo }}`          | Moléculas        | Accede a un campo de un objeto de Django pasado como prop     | `{{ course.nombre }}` en `card_course.html`             |
+
+---
+
+### 📌 Cómo se Conectan en la Práctica
+
+```text
+ÁTOMO (button.html)
+  ↑ Recibe: {{ texto }}, {{ color }}
+  ↑ Genera: <button class="c-btn c-btn--primary">Guardar</button>
+
+MOLÉCULA (card.html)
+  ↑ Recibe: {{ titulo }}, {{ descripcion }}, {{ texto_boton }}
+  ↑ Invoca: {% include "atoms/button.html" with texto=texto_boton %}
+  ↑ Genera: <article> ... <button>Guardar</button> </article>
+
+ORGANISMO (navbar.html)
+  ↑ No recibe props (usa datos estáticos o del contexto global)
+  ↑ Invoca: {% include "atoms/button.html" with texto="Salir" color="danger" %}
+  ↑ Genera: <nav> ... <button>Salir</button> </nav>
+```
 
 ---
 
