@@ -25,8 +25,8 @@ Motor:      PostgreSQL
 Host:       db.pepuqhrltqfdagvhoxxc.supabase.co
 Puerto:     5432
 Nombre:     postgres
-Usuario:    postgres
-Contraseña: MiContraseña123
+Usuario:    student_readonly
+Contraseña: lectura123
 ```
 
 ---
