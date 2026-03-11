@@ -243,3 +243,20 @@ Si al entrar al Admin y hacer clic en un modelo ves un error, no te asustes. Gen
 **Solución:** Revisa el nombre del atributo en tu clase. Django usa el nombre del atributo como nombre de columna. Por ejemplo, si definiste `desc = models.TextField()` pero en la base de datos la columna se llama `descripcion`, fallará.
 
 ---
+
+## 🚀 Desafío para Avanzados
+
+Si ya lograste ver los datos en el Admin, intenta resolver estas 10 preguntas conceptuales y técnicas. No requieren programar más, sino investigar y entender qué está pasando "bajo el capó":
+
+1. **El Misterio de la Tabla ManyToMany:** En tu código solo definiste un campo en `Plato`. ¿Cómo sabe Django que existe una tabla llamada `menu_plato_ingredientes` sin que se lo digas explícitamente?
+2. **Filtros en el Admin:** ¿Cómo podrías agregar una barra de búsqueda en el Admin para buscar platos por el nombre de sus ingredientes? (Investiga `search_fields` con doble guion bajo).
+3. **El superpoder de `ReadOnlyField`:** Si el usuario es de solo lectura, ¿cómo podrías hacer que en el Admin todos los campos aparezcan como "solo lectura" automáticamente para evitar que el alumno intente editar y reciba un error de Postgres?
+4. **Custom QuerySets:** ¿Cómo podrías hacer que el Admin de Platos, por defecto, **solo** muestre los platos que están disponibles, ocultando los que no tienen stock, sin que el usuario tenga que filtrar manualmente?
+5. **Formato de Moneda:** En el `list_display` del Admin, el precio se ve como un número plano. ¿Cómo podrías crear un método en el modelo para que se vea con el signo `$` y puntos de miles?
+6. **Contador de Relaciones:** ¿Cómo podrías mostrar en la lista de Categorías una columna que diga cuántos platos tiene cada una?
+7. **La importancia de `__str__`:** Si quitas el método `__str__` de tus modelos, ¿cómo se verían los ingredientes dentro del formulario de un Plato? ¿Por qué esto es un problema de usabilidad?
+8. **Seguridad en la Base de Datos:** Si el usuario es de solo lectura en Postgres, ¿por qué Django sigue mostrándote el botón "Añadir"? ¿Dónde vive la lógica que decide mostrar o no ese botón?
+9. **Rendimiento (Select Related):** Si tienes 100 platos y cada uno muestra su categoría en la lista del Admin, Django está haciendo 101 consultas a la base de datos (problema N+1). ¿Cómo se soluciona esto en el `ModelAdmin`?
+10. **Exploración de Metadatos:** ¿Existe alguna forma de que Django lea la base de datos de Supabase y te escriba el código de `models.py` automáticamente? (Investiga el comando `inspectdb`).
+
+---
