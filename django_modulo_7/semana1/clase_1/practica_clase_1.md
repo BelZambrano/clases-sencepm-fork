@@ -268,6 +268,14 @@ Si al entrar al Admin y hacer clic en un modelo ves un error, no te asustes. Gen
 
 ---
 
+## Repositorio de consulta
+
+Si te quedas atascado o quieres comparar tu solución final, puedes consultar el código de referencia en este repositorio:
+
+🔗 [https://github.com/arielrosenmann94/modulo7_clase1](https://github.com/arielrosenmann94/modulo7_clase1)
+
+---
+
 ## 🚀 Desafío para Avanzados
 
 Si ya lograste ver los datos en el Admin, intenta resolver estas 10 preguntas conceptuales y técnicas. No requieren programar más, sino investigar y entender qué está pasando "bajo el capó":
