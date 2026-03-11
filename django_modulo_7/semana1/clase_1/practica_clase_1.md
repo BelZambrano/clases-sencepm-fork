@@ -29,7 +29,26 @@ Usuario:    student_readonly
 Contraseña: lectura123
 ```
 
-> ℹ️ **NOTA IMPORTANTE:** El usuario `student_readonly` tiene permiso **solo de lectura**. El panel de administración de Django te mostrará botones para "Añadir" o "Eliminar" (porque eres Superusuario de Django), pero si intentas guardar cambios, la base de datos te dará un error de permiso denegado. Esta práctica es solo para visualizar datos existentes.
+Debes usar estos datos para configurar el bloque `DATABASES` en el archivo `settings.py` de la siguiente manera:
+
+```python
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    },
+    "supabase_ro": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "postgres",
+        "USER": "student_readonly",
+        "PASSWORD": "lectura123",
+        "HOST": "db.pepuqhrltqfdagvhoxxc.supabase.co",
+        "PORT": "5432",
+    },
+}
+```
+
+> ℹ️ **NOTA IMPORTANTE:** Estamos usando una **arquitectura híbrida**. El sistema de usuarios y administración de Django vivirá en tu archivo local `db.sqlite3` (base de datos `"default"`), pero los datos del restaurante vendrán de la base de datos externa en Supabase (base de datos `"supabase_ro"`).
 
 ---
 
@@ -51,7 +70,7 @@ En el archivo de configuración del proyecto (`settings.py`) hay que registrar d
 
 **Primera:** Agregar la aplicación `menu` a la lista de aplicaciones instaladas (`INSTALLED_APPS`).
 
-**Segunda:** Configurar el bloque `DATABASES` con el motor PostgreSQL y las credenciales que te entregó el profesor.
+**Segunda:** Reemplazar el bloque `DATABASES` completo por el código que te entregó el profesor (el que tiene `default` y `supabase_ro`).
 
 ---
 
@@ -152,28 +171,33 @@ Para la relación muchos a muchos con ingredientes, define el campo `ManyToManyF
 
 ## Paso 4 — Registrar los modelos en el admin
 
-En el archivo `admin.py` de la app `menu`, registra los cuatro modelos para que aparezcan en el panel de administración.
+En el archivo `admin.py` de la app `menu`, registra los cuatro modelos.
 
-Para que la lista sea útil, configura cada modelo con al menos una columna visible. Las más útiles para cada uno:
+Como estamos usando dos bases de datos, debemos decirle a cada modelo del Admin que use la conexión de la base de datos externa. Para esto, agrega este método dentro de **cada clase** de tu `admin.py`:
 
-| Modelo      | Columnas sugeridas para `list_display` |
-| ----------- | -------------------------------------- |
-| Categoria   | nombre                                 |
-| Alergeno    | nombre                                 |
-| Ingrediente | nombre                                 |
-| Plato       | nombre, precio, disponible, categoria  |
+```python
+class CategoriaAdmin(admin.ModelAdmin):
+    list_display = ['nombre']
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).using('supabase_ro')
+
+admin.site.register(Categoria, CategoriaAdmin)
+```
+
+(Repite lo mismo para `AlergenoAdmin`, `IngredienteAdmin` y `PlatoAdmin`).
 
 ---
 
 ## Paso 5 — Las migraciones
 
-Genera las migraciones con el comando habitual. Como los modelos tienen `managed = False`, Django va a generar los archivos pero **no va a tocar las tablas** cuando apliques `migrate`.
+Genera las migraciones con el comando habitual.
 
-Ejecuta las migraciones con la opción `--fake` para registrarlas como aplicadas sin ejecutar ningún SQL:
+1. **Migración Real (SQLite):** Ejecuta `python manage.py migrate` para crear las tablas del Admin y Usuarios en tu archivo local.
+2. **Migración Fake (Supabase):** Para la app `menu`, debemos simular que las tablas existen pero sin intentar crearlas en Supabase. Ejecuta:
 
-```
-python manage.py makemigrations menu
-python manage.py migrate --fake
+```bash
+python manage.py migrate menu --fake --database supabase_ro
 ```
 
 ---
