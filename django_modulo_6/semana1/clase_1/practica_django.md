@@ -69,7 +69,7 @@ Al activarlo, verás el prefijo `(venv)` al inicio de la línea en la terminal:
 (venv) usuario@maquina:~/catalogoapp$
 ```
 
-> ⚠️ Si cerrás la terminal y volvés, tienes que activar el entorno de nuevo. El prefijo `(venv)` debe estar siempre visible cuando trabajás en el proyecto.
+> ⚠️ Si cierras la terminal y vuelves, tienes que activar el entorno de nuevo. El prefijo `(venv)` debe estar siempre visible cuando trabajas en el proyecto.
 
 ### 1.4 Instalar Django
 
@@ -175,7 +175,7 @@ INSTALLED_APPS = [
 ]
 ```
 
-> ❗ Si no registrás la app, Django no puede encontrar sus modelos, templates ni migraciones.
+> ❗ Si no registras la app, Django no puede encontrar sus modelos, templates ni migraciones.
 
 ---
 
@@ -442,7 +442,7 @@ Django te obliga a ser ordenado. No ponemos todas las rutas juntas en el archivo
    "¡A ejecutar la vista lista_productos!"
 ```
 
-Este sistema modular te permite que si mañana quieres cambiar la dirección a `mis-ofertas/` en vez de `productos/`, **solo cambiás una línea** en el proyecto principal y todas las rutas de la app interna siguen funcionando mágicamente.
+Este sistema modular te permite que si mañana quieres cambiar la dirección a `mis-ofertas/` en vez de `productos/`, **solo cambias una línea** en el proyecto principal y todas las rutas de la app interna siguen funcionando mágicamente.
 
 ---
 
@@ -640,7 +640,7 @@ Si ves la lista de productos que cargaste desde el admin, **¡todo está funcion
 
 ## 🏠 Paso 12 (Opcional) — Crear una Home personalizada
 
-> ⚠️ **Nota sobre la pantalla de bienvenida de Django:** La pantalla del cohete 🚀 que muestra "The install worked successfully!" **desaparece en cuanto defines la primera URL** en `urlpatterns`. Es una pantalla de diagnóstico, no una página de inicio real. Una vez que empezás a configurar rutas, ya no se puede recuperar. Lo que necesitás a partir de ahora es crear tu propia pantalla de inicio.
+> ⚠️ **Nota sobre la pantalla de bienvenida de Django:** La pantalla del cohete 🚀 que muestra "The install worked successfully!" **desaparece en cuanto defines la primera URL** en `urlpatterns`. Es una pantalla de diagnóstico, no una página de inicio real. Una vez que empiezas a configurar rutas, ya no se puede recuperar. Lo que necesitás a partir de ahora es crear tu propia pantalla de inicio.
 
 ---
 
@@ -657,7 +657,7 @@ catalogoapp/
 └── usuarios/      ← 👤 lógica de usuarios
 ```
 
-Así, si mañana la home cambia radicalmente (pasa de "lista de productos" a "página de marketing"), no tocás ni una sola línea de la app `productos`.
+Así, si mañana la home cambia radicalmente (pasa de "lista de productos" a "página de marketing"), no tocas ni una sola línea de la app `productos`.
 
 > ❗ **¿`core` es un renombre de la carpeta `catalogoapp/catalogoapp/`?**
 > **No.** La carpeta `catalogoapp/catalogoapp/` (la que tiene `settings.py` y el `urls.py` global) **no se toca aquí**. Lo que hacemos es crear una **app Django completamente nueva** con `startapp core`, igual que hiciste con `startapp productos`.

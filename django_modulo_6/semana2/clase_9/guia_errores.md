@@ -185,7 +185,7 @@ path('perfil/', RedirectView.as_view(url='/cuenta/', permanent=True)),
 ```
 
 **El 302 es el más usado en Django:** login, logout, después de un form exitoso.
-Siempre que llamás a `redirect()`, Django devuelve un 302 por defecto.
+Siempre que llamas a `redirect()`, Django devuelve un 302 por defecto.
 
 **El 304** lo gestiona el navegador y el servidor automáticamente con los headers de caché.
 No requiere código del developer.

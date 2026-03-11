@@ -73,7 +73,7 @@ Al terminar este proyecto vas a poder:
 - [ ] Las URLs están configuradas tanto en el `urls.py` del proyecto como en el de la app
 - [ ] Cada vista tiene su URL y al visitarla se muestra el contenido correspondiente
 
-**Pista:** Si navegás a la URL de tu vista en el browser y ves tu contenido (no el cohete de Django), las rutas están bien ✅
+**Pista:** Si navegas a la URL de tu vista en el browser y ves tu contenido (no el cohete de Django), las rutas están bien ✅
 
 ---
 

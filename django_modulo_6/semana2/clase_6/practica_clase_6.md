@@ -252,6 +252,6 @@ Finalmente, armamos lo que el usuario va veamos.
 
 ---
 
-> _"Un portfolio bien hecho es la primera muestra de tu trabajo como desarrollador. Quien lo ve, no solo lee tu experiencia — ve cómo pensás y cómo construís."_
+> _"Un portfolio bien hecho es la primera muestra de tu trabajo como desarrollador. Quien lo ve, no solo lee tu experiencia — ve cómo piensas y cómo construyes."_
 
 ---

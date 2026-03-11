@@ -55,7 +55,7 @@ Cuando todo tiene `[X]`, puedes continuar.
 
 ---
 
-**¿Por qué hace falta?** Los modelos existen en la base de datos, pero el admin no los conoce hasta que los registrás explícitamente.
+**¿Por qué hace falta?** Los modelos existen en la base de datos, pero el admin no los conoce hasta que los registras explícitamente.
 
 Abre el archivo `admin.py` de tu app del CV. Probablemente está casi vacío:
 
@@ -145,7 +145,7 @@ class Habilidad(models.Model):
 
 ---
 
-**¿Por qué?** El registro básico funciona, pero la lista tiene una sola columna. Con `ModelAdmin` agregás columnas, buscador y filtros en pocas líneas.
+**¿Por qué?** El registro básico funciona, pero la lista tiene una sola columna. Con `ModelAdmin` agregas columnas, buscador y filtros en pocas líneas.
 
 Reemplazá el contenido de `admin.py` con la versión personalizada:
 

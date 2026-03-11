@@ -127,7 +127,7 @@ El administrador espera
 
 Ese flujo tiene un problema de poder: una persona no puede hacer su trabajo sin la intermediación de otra. El admin de Django rompe esa dependencia. Le devuelve autonomía a quien administra los datos.
 
-Cuando configurás correctamente el panel — con los permisos correctos, el acceso correcto para cada persona — estás haciendo algo más que programar. **Estás diseñando quién puede hacer qué, y quién no necesita pedir permiso para hacer su trabajo.**
+Cuando configuras correctamente el panel — con los permisos correctos, el acceso correcto para cada persona — estás haciendo algo más que programar. **Estás diseñando quién puede hacer qué, y quién no necesita pedir permiso para hacer su trabajo.**
 
 Eso es diseño de sistemas. Y el diseño de sistemas es, en última instancia, diseño social.
 
@@ -159,7 +159,7 @@ El modelo separa los datos de la lógica. La vista separa la lógica de la prese
 
 Todo eso es **comunicación**. Comunicación de qué hace cada parte. Comunicación de dónde empieza una responsabilidad y dónde termina otra.
 
-> Cuando terminás un módulo como este, no solo sabes más Django. Sabes pensar con más claridad sobre cómo las partes de un sistema se relacionan. Y esa habilidad — la de ver sistemas, no solo código — es la que se busca en el mundo profesional.
+> Cuando terminas un módulo como este, no solo sabes más Django. Sabes pensar con más claridad sobre cómo las partes de un sistema se relacionan. Y esa habilidad — la de ver sistemas, no solo código — es la que se busca en el mundo profesional.
 
 ---
 

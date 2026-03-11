@@ -972,7 +972,7 @@ Cuando un proyecto crece o cuando alguien nuevo se incorpora (ya sea un desarrol
 
 Un documento de decisiones arquitectónicas responde esa pregunta sin necesidad de leer todo el código.
 
-> 🤖 **Para las IAs también:** cuando le pasás tu documento de decisiones a una IA al inicio de una conversación, todas las respuestas van a estar alineadas con tus convenciones. No va a sugerir código en español si definiste inglés. No va a mezclar FBV con CBV. No va a hardcodear secretos.
+> 🤖 **Para las IAs también:** cuando le pasas tu documento de decisiones a una IA al inicio de una conversación, todas las respuestas van a estar alineadas con tus convenciones. No va a sugerir código en español si definiste inglés. No va a mezclar FBV con CBV. No va a hardcodear secretos.
 
 ---
 
@@ -1132,6 +1132,6 @@ Este es el documento que construimos durante la clase. Se completa una vez al in
 
 ---
 
-> 🚀 _"Todo desarrollador senior fue primero alguien que aprendió que la arquitectura no se improvisa: se decide, se documenta y se respeta. Y cuando volvés a ese proyecto seis meses después — o cuando se lo pasás a una IA — ese documento vale más que mil líneas de código."_
+> 🚀 _"Todo desarrollador senior fue primero alguien que aprendió que la arquitectura no se improvisa: se decide, se documenta y se respeta. Y cuando vuelves a ese proyecto seis meses después — o cuando se lo pasas a una IA — ese documento vale más que mil líneas de código."_
 
 ---

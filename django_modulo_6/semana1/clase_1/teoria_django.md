@@ -228,7 +228,7 @@ Las migraciones automatizan todo ese proceso.
 ### El flujo de migraciones
 
 ```
-1. Modificás models.py  (ejemplo: agregás un campo nuevo)
+1. Modificás models.py  (ejemplo: agregas un campo nuevo)
         ↓
 2. python manage.py makemigrations
    → Django detecta el cambio
@@ -365,7 +365,7 @@ Django protege automáticamente contra los ataques web más comunes:
 
 #### Faceted filtering en el Admin (Django 5.0)
 
-El panel de administración ahora muestra cuántos registros corresponden a cada opción de filtro. Si filtrás por "disponible", ves `Sí (12) / No (3)`. Facilita enormemente la navegación en tablas con miles de registros.
+El panel de administración ahora muestra cuántos registros corresponden a cada opción de filtro. Si filtras por "disponible", ves `Sí (12) / No (3)`. Facilita enormemente la navegación en tablas con miles de registros.
 
 ```python
 class ProductoAdmin(admin.ModelAdmin):

@@ -12,8 +12,8 @@
 
 Esta práctica tiene **dos partes que se hacen en orden**:
 
-1. **ETAPA 1:** Analizás un proyecto existente con problemas de arquitectura, detectás los errores y los corregís.
-2. **ETAPA 2:** Con el proyecto ya corregido en mente, completás el Documento de Decisiones como si fueras el arquitecto que lo diseñó desde cero.
+1. **ETAPA 1:** Analizás un proyecto existente con problemas de arquitectura, detectas los errores y los corriges.
+2. **ETAPA 2:** Con el proyecto ya corregido en mente, completas el Documento de Decisiones como si fueras el arquitecto que lo diseñó desde cero.
 
 ---
 
@@ -187,9 +187,9 @@ urlpatterns = [
 
 ## Tu tarea — Etapa 1
 
-Completa la siguiente tabla con **todos los problemas que encontrás**. Para cada uno indica dónde está el error, cuál es el problema y cómo lo corregirías.
+Completa la siguiente tabla con **todos los problemas que encuentras**. Para cada uno indica dónde está el error, cuál es el problema y cómo lo corregirías.
 
-| #   | Ubicación del error | ¿Qué está mal? | ¿Cómo lo corregís? |
+| #   | Ubicación del error | ¿Qué está mal? | ¿Cómo lo corriges? |
 | --- | ------------------- | -------------- | ------------------ |
 | 1   |                     |                |                    |
 | 2   |                     |                |                    |

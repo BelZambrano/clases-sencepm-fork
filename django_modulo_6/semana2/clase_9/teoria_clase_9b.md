@@ -4,7 +4,7 @@
 
 ---
 
-> _"El código que escribís es solo el 30% del trabajo. El otro 70% es cómo lo organizás, versionás y comunicás."_
+> _"El código que escribís es solo el 30% del trabajo. El otro 70% es cómo lo organizas, versionás y comunicás."_
 
 ---
 
@@ -439,7 +439,7 @@ La respuesta correcta es: **cuando el código está en un estado estable con un 
 | Agregué un test que cubre el caso nuevo            | Código comentado que se va a borrar |
 
 **Frecuencia recomendada para principiantes:** al menos un commit por sesión de trabajo,
-pero idealmente uno cada vez que completás una pieza funcional (un modelo, una vista, un template, un test).
+pero idealmente uno cada vez que completas una pieza funcional (un modelo, una vista, un template, un test).
 
 ---
 
