@@ -81,20 +81,19 @@ menu/
 ├── models/
 │   ├── __init__.py
 │   ├── categoria.py
-│   ├── marca.py
-│   ├── producto.py
-│   ├── variante.py
-│   ├── imagen.py
-│   ├── cliente.py
-│   ├── direccion.py
-│   ├── carrito.py
-│   ├── carrito_item.py
+│   ├── alergeno.py
+│   ├── ingrediente.py
+│   ├── plato.py
+│   ├── plato_ingrediente.py
+│   ├── mesa.py
+│   ├── mozo.py
+│   ├── reserva.py
 │   ├── pedido.py
 │   ├── linea_pedido.py
 │   ├── pago.py
-│   ├── cupon.py
-│   ├── resena.py
-│   └── notificacion.py
+│   ├── proveedor.py
+│   ├── compra.py
+│   └── resena.py
 ```
 
 ---
@@ -103,23 +102,23 @@ menu/
 
 Debes implementar los siguientes 15 modelos. Cada uno vive en su propio archivo. La descripción es intencional: el código lo escribes tú, no se entrega el modelo hecho. Si flatan campos los debes agregar.
 
-| #   | Archivo           | Modelo         | Descripción breve                                         |
-| --- | ----------------- | -------------- | --------------------------------------------------------- |
-| 1   | `categoria.py`    | `Categoria`    | Nombre y descripción de la categoría de producto          |
-| 2   | `marca.py`        | `Marca`        | Nombre y país de origen de la marca                       |
-| 3   | `producto.py`     | `Producto`     | Nombre, precio, descripción, categoría (FK) y marca (FK)  |
-| 4   | `variante.py`     | `Variante`     | Talla, color y stock de cada variante de un producto (FK) |
-| 5   | `imagen.py`       | `Imagen`       | URL de imagen y producto al que pertenece (FK)            |
-| 6   | `cliente.py`      | `Cliente`      | Nombre, email y teléfono del cliente                      |
-| 7   | `direccion.py`    | `Direccion`    | Dirección de envío vinculada a un cliente (FK)            |
-| 8   | `carrito.py`      | `Carrito`      | Carrito de compras activo vinculado a un cliente (FK)     |
-| 9   | `carrito_item.py` | `CarritoItem`  | Producto y cantidad dentro de un carrito (FKs)            |
-| 10  | `pedido.py`       | `Pedido`       | Fecha, estado y total del pedido de un cliente (FK)       |
-| 11  | `linea_pedido.py` | `LineaPedido`  | Producto, precio unitario y cantidad en un pedido (FKs)   |
-| 12  | `pago.py`         | `Pago`         | Método, monto y estado del pago de un pedido (FK)         |
-| 13  | `cupon.py`        | `Cupon`        | Código, descuento y fecha de vencimiento                  |
-| 14  | `resena.py`       | `Resena`       | Calificación y comentario de un cliente sobre un producto |
-| 15  | `notificacion.py` | `Notificacion` | Mensaje y estado (leído/no leído) para un cliente (FK)    |
+| #   | Archivo               | Modelo             | Descripción breve                                                      |
+| --- | --------------------- | ------------------ | ----------------------------------------------------------------------- |
+| 1   | `categoria.py`        | `Categoria`        | Nombre y descripción de la categoría del plato (Entradas, Postres, etc.)|
+| 2   | `alergeno.py`         | `Alergeno`         | Nombre y descripción del alérgeno (gluten, lactosa, etc.)               |
+| 3   | `ingrediente.py`      | `Ingrediente`      | Nombre, unidad de medida y stock disponible del ingrediente             |
+| 4   | `plato.py`            | `Plato`            | Nombre, descripción, precio y disponibilidad del plato (FK Categoria)   |
+| 5   | `plato_ingrediente.py`| `PlatoIngrediente` | Tabla intermedia entre `Plato` y `Ingrediente` con cantidad utilizada   |
+| 6   | `mesa.py`             | `Mesa`             | Número de mesa, capacidad y estado (disponible/ocupada)                |
+| 7   | `mozo.py`             | `Mozo`             | Nombre, turno y zona de atención del mozo                              |
+| 8   | `reserva.py`          | `Reserva`          | Fecha, hora, nombre del cliente y mesa reservada (FK Mesa)              |
+| 9   | `pedido.py`           | `Pedido`           | Mesa, mozo, fecha, estado y total del pedido (FKs Mesa y Mozo)         |
+| 10  | `linea_pedido.py`     | `LineaPedido`      | Plato, cantidad y precio unitario dentro de un pedido (FKs)             |
+| 11  | `pago.py`             | `Pago`             | Método de pago, monto y estado del cobro de un pedido (FK Pedido)       |
+| 12  | `proveedor.py`        | `Proveedor`        | Nombre, telefono y correo del proveedor de ingredientes                |
+| 13  | `compra.py`           | `Compra`           | Proveedor, ingrediente, cantidad y fecha de la orden de compra (FKs)   |
+| 14  | `resena.py`           | `Resena`           | Calificación, comentario y plato evaluado por el cliente (FK Plato)    |
+| 15  | `alergeno.py` (M2M)   | *(en Plato)*       | Relación ManyToMany entre `Plato` y `Alergeno` dentro de `plato.py`    |
 
 ---
 
@@ -130,21 +129,20 @@ Para que el resto del proyecto pueda importar los modelos normalmente, el archiv
 ```python
 # menu/models/__init__.py
 
-from .categoria    import Categoria
-from .marca        import Marca
-from .producto     import Producto
-from .variante     import Variante
-from .imagen       import Imagen
-from .cliente      import Cliente
-from .direccion    import Direccion
-from .carrito      import Carrito
-from .carrito_item import CarritoItem
-from .pedido       import Pedido
-from .linea_pedido import LineaPedido
-from .pago         import Pago
-from .cupon        import Cupon
-from .resena       import Resena
-from .notificacion import Notificacion
+from .categoria         import Categoria
+from .alergeno          import Alergeno
+from .ingrediente       import Ingrediente
+from .plato             import Plato
+from .plato_ingrediente import PlatoIngrediente
+from .mesa              import Mesa
+from .mozo              import Mozo
+from .reserva           import Reserva
+from .pedido            import Pedido
+from .linea_pedido      import LineaPedido
+from .pago              import Pago
+from .proveedor         import Proveedor
+from .compra            import Compra
+from .resena            import Resena
 ```
 
 ---
