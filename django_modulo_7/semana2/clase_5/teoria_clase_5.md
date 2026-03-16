@@ -62,7 +62,7 @@ En la Clase 4 prometimos profundizar en `prefetch_related` y en `ManyToManyField
 
 Cuando definimos una relación `ManyToMany`, Django crea automáticamente una **tercera tabla** que conecta las dos entidades. Esta tabla intermedia solo tiene dos columnas: los IDs de cada lado.
 
-Sigamos con el proyecto ficticio **NebulaShop**. Imagina que un pedido puede tener muchos productos, y un producto puede estar en muchos pedidos:
+Imagina una tienda online donde un pedido puede tener muchos productos, y un producto puede estar en muchos pedidos:
 
 ```python
 # tienda/models.py
@@ -124,14 +124,14 @@ Una vez que tenemos la relación definida, Django nos da cuatro métodos para ma
 pedido = Pedido.objects.create(cliente=user)
 
 # Obtener algunos productos
-telescopio = Producto.objects.get(nombre='Telescopio Refractor')
-mapa       = Producto.objects.get(nombre='Mapa Estelar')
-poster     = Producto.objects.get(nombre='Póster Galaxia')
+audifonos = Producto.objects.get(nombre='Audífonos Bluetooth')
+teclado   = Producto.objects.get(nombre='Teclado Mecánico')
+mouse     = Producto.objects.get(nombre='Mouse Inalámbrico')
 ```
 
 ### `.add()` — Agregar productos al pedido
 ```python
-pedido.productos.add(telescopio, mapa)
+pedido.productos.add(audifonos, teclado)
 # SQL: INSERT INTO tienda_pedido_productos (pedido_id, producto_id)
 #      VALUES (1, 1), (1, 2)
 # Ahora el pedido tiene 2 productos.
@@ -139,17 +139,17 @@ pedido.productos.add(telescopio, mapa)
 
 ### `.remove()` — Quitar un producto del pedido
 ```python
-pedido.productos.remove(mapa)
+pedido.productos.remove(teclado)
 # SQL: DELETE FROM tienda_pedido_productos
 #      WHERE pedido_id=1 AND producto_id=2
-# El Mapa Estelar ya no está en el pedido. El producto sigue existiendo en la BD.
+# El Teclado ya no está en el pedido. El producto sigue existiendo en la BD.
 ```
 
 ### `.set()` — Reemplazar todos los productos de golpe
 ```python
-pedido.productos.set([telescopio, poster])
+pedido.productos.set([audifonos, mouse])
 # Django hace un diff: quita lo que sobra, agrega lo que falta.
-# El pedido ahora tiene EXACTAMENTE telescopio y poster. Nada más.
+# El pedido ahora tiene EXACTAMENTE audífonos y mouse. Nada más.
 ```
 
 ### `.clear()` — Vaciar el pedido
@@ -159,7 +159,7 @@ pedido.productos.clear()
 # El pedido queda sin productos. Los productos siguen existiendo.
 ```
 
-> ⚠️ **Importante:** Ninguna de estas operaciones elimina los productos reales. Solo eliminan o crean filas en la **tabla intermedia**. El telescopio sigue existiendo en `tienda_producto`.
+> ⚠️ **Importante:** Ninguna de estas operaciones elimina los productos reales. Solo eliminan o crean filas en la **tabla intermedia**. Los audífonos siguen existiendo en `tienda_producto`.
 
 ---
 
@@ -169,11 +169,11 @@ Las consultas M2M funcionan igual que las de `ForeignKey`, usando el doble guió
 
 ```python
 # Desde el Pedido → buscar pedidos que contengan un producto específico
-Pedido.objects.filter(productos__nombre='Telescopio Refractor')
+Pedido.objects.filter(productos__nombre='Audífonos Bluetooth')
 # SQL: SELECT * FROM tienda_pedido
 #      INNER JOIN tienda_pedido_productos ON ...
 #      INNER JOIN tienda_producto ON ...
-#      WHERE tienda_producto.nombre = 'Telescopio Refractor'
+#      WHERE tienda_producto.nombre = 'Audífonos Bluetooth'
 
 # Desde el Producto → buscar productos que estén en pedidos completados
 Producto.objects.filter(pedidos__completado=True).distinct()
@@ -184,7 +184,7 @@ pedido.productos.count()
 # SQL: SELECT COUNT(*) FROM tienda_pedido_productos WHERE pedido_id=1
 
 # Verificar si un producto está en el pedido
-pedido.productos.filter(id=telescopio.id).exists()
+pedido.productos.filter(id=audifonos.id).exists()
 # Devuelve True o False — sin cargar el objeto
 ```
 
@@ -238,7 +238,7 @@ class ItemPedido(models.Model):
     class Meta:
         unique_together = ('pedido', 'producto')
         # ↑ Un mismo producto no puede repetirse en el mismo pedido.
-        #   Si se quieren 3 telescopios, se modifica la cantidad, no se crean 3 filas.
+        #   Si se quieren 3 unidades, se modifica la cantidad, no se crean 3 filas.
 
     def subtotal(self):
         return self.cantidad * self.precio_unidad
@@ -267,14 +267,14 @@ class Pedido(models.Model):
 
 ```python
 # ❌ Ya NO funciona:
-pedido.productos.add(telescopio)
+pedido.productos.add(audifonos)
 
 # ✅ Forma correcta con through:
 ItemPedido.objects.create(
     pedido=pedido,
-    producto=telescopio,
+    producto=audifonos,
     cantidad=2,
-    precio_unidad=telescopio.precio,   # Guardamos el precio actual
+    precio_unidad=audifonos.precio,   # Guardamos el precio actual
 )
 ```
 
@@ -312,99 +312,248 @@ Producto.objects.annotate(
 
 ---
 
-## 4.1 El problema: N+1 en relaciones ManyToMany
+## 4.1 Primero: ¿Qué problema resolvemos?
 
-En la Clase 4 vimos cómo `select_related` resuelve el N+1 para `ForeignKey` y `OneToOneField`. Pero `select_related` **no funciona con ManyToMany**. ¿Por qué?
+Antes de ver herramientas, entendamos el problema con una analogía.
 
-`select_related` hace un `JOIN` SQL. Un JOIN funciona bien cuando la relación es 1:1 o N:1 (cada fila del resultado tiene exactamente un padre). Pero en M2M, un pedido puede tener 10 productos y un producto puede estar en 50 pedidos. Un JOIN produciría filas duplicadas y resultados inconsistentes.
+### 🍕 La Analogía de la Pizzería
 
-Para M2M, Django usa una estrategia diferente: `prefetch_related`.
+Imagina que tienes una pizzería y necesitas entregar 50 pedidos. Cada pedido tiene un **cliente** (quién lo pidó) y **varios productos** (las pizzas que pidió).
+
+**Sin optimizar (Problema N+1):**
+```
+Entregas el pedido 1 → vas a buscar el nombre del cliente 1 → vuelves
+Entregas el pedido 2 → vas a buscar el nombre del cliente 2 → vuelves
+Entregas el pedido 3 → vas a buscar el nombre del cliente 3 → vuelves
+... (50 veces)
+```
+Hiciste **51 viajes**: 1 para cargar los pedidos + 50 para buscar cada cliente. Eso es terriblemente ineficiente.
+
+**La misma ineficiencia en Django:**
+```python
+pedidos = Pedido.objects.all()          # 1 viaje a la BD: trae los 50 pedidos
+for p in pedidos:
+    print(p.cliente.username)           # 50 viajes más: 1 por cada cliente
+# Total: 51 consultas SQL a la base de datos
+```
+
+Cada vez que accedemos a `p.cliente` dentro del loop, Django va a la base de datos a buscar ESE cliente específico. Con 50 pedidos, son 50 viajes extras. Con 1000 pedidos, son 1000 viajes extras. Eso se llama **problema N+1**.
 
 ---
 
-## 4.2 `select_related` — Un JOIN, una consulta
+## 4.2 Solución 1: `select_related` (para ForeignKey y OneToOne)
 
-Funciona con `ForeignKey` y `OneToOneField`. Django hace un solo `SELECT` con `JOIN`:
+### La idea en simple
+
+En vez de hacer 51 viajes, hacemos **1 solo viaje** que trae TODO junto: los pedidos Y los datos de sus clientes en una sola consulta.
+
+### ¿Cómo lo visualizamos?
+
+```
+SIN select_related:
+┌──────────────────────────────────┐
+│ Viaje 1: Dame todos los pedidos  │ → 50 pedidos (pero sin datos del cliente)
+│ Viaje 2: ¿Quién es el cliente 1?│ → "Ana"
+│ Viaje 3: ¿Quién es el cliente 2?│ → "Carlos"
+│ Viaje 4: ¿Quién es el cliente 3?│ → "María"
+│ ...                              │
+│ Viaje 51: ¿Quién es el cliente 50?│ → "Pedro"
+└──────────────────────────────────┘
+Total: 51 viajes a la base de datos
+
+CON select_related:
+┌────────────────────────────────────────────────┐
+│ Viaje 1: Dame todos los pedidos CON su cliente │ → 50 pedidos + 50 clientes
+└────────────────────────────────────────────────┘
+Total: 1 viaje a la base de datos
+```
+
+### El código
 
 ```python
-# SIN select_related → N+1 (1 consulta por pedido + 1 por cada cliente)
+# ❌ SIN select_related → 51 viajes (1 + 50 clientes)
 pedidos = Pedido.objects.all()
 for p in pedidos:
-    print(p.cliente.username)   # ← Cada iteración dispara una consulta extra
-# Total: 1 + N consultas (si hay 100 pedidos = 101 consultas)
+    print(p.cliente.username)
+    # ↑ Django piensa: "No tengo los datos de este cliente en memoria.
+    #   Voy a ir a la BD a buscarlos." (repite esto 50 veces)
 
-# CON select_related → 1 sola consulta con JOIN
+# ✅ CON select_related → 1 solo viaje
 pedidos = Pedido.objects.select_related('cliente').all()
 for p in pedidos:
-    print(p.cliente.username)   # ← Ya está en memoria, cero consultas extra
-# SQL: SELECT pedido.*, auth_user.*
-#      FROM tienda_pedido
-#      INNER JOIN auth_user ON pedido.cliente_id = auth_user.id
-# Total: 1 consulta
+    print(p.cliente.username)
+    # ↑ Django piensa: "Ya tengo a todos los clientes en memoria
+    #   porque los traje juntos. No necesito ir a la BD."
 ```
+
+### ¿Qué hace por debajo?
+
+Django añade un `JOIN` en la consulta SQL. Un JOIN pega dos tablas en una sola respuesta:
+
+```sql
+-- Lo que Django envía a la BD (1 sola consulta):
+SELECT pedido.*, auth_user.*
+FROM tienda_pedido
+INNER JOIN auth_user ON pedido.cliente_id = auth_user.id
+```
+
+La base de datos responde con UNA tabla que tiene las columnas del pedido Y las columnas del cliente. Todo en un solo viaje.
+
+### ⚠️ Limitación
+
+`select_related` solo funciona con relaciones donde **cada registro tiene exactamente un resultado**: `ForeignKey` (un pedido tiene UN cliente) y `OneToOneField` (un usuario tiene UN perfil). No funciona con ManyToMany, porque un pedido tiene MUCHOS productos y un JOIN generaría filas duplicadas.
 
 ---
 
-## 4.3 `prefetch_related` — Dos consultas inteligentes
+## 4.3 Solución 2: `prefetch_related` (para ManyToMany y relaciones inversas)
 
-Funciona con `ManyToManyField` y relaciones inversas. Django hace **dos consultas separadas** y las junta en Python:
+### ¿Por qué no podemos usar `select_related` con ManyToMany?
+
+Si un pedido tiene 5 productos y hacemos un JOIN, la base de datos repite los datos del pedido 5 veces (una por cada producto). Si tenemos 50 pedidos con 5 productos cada uno, el resultado tiene 250 filas en vez de 50. Eso es ineficiente y confuso.
+
+### La idea de `prefetch_related` en simple
+
+En vez de pegar las tablas (JOIN), Django hace **dos viajes separados pero inteligentes**:
+
+```
+Viaje 1: "Dame todos los pedidos"
+         → La BD responde: 50 pedidos
+
+Viaje 2: "Dame todos los productos que estén en ALGUNO de estos 50 pedidos"
+         → La BD responde: todos los productos relevantes
+
+Después, en Python (sin ir a la BD):
+Django junta los resultados usando un diccionario interno.
+Pedido 1 → [Audífonos, Teclado]
+Pedido 2 → [Mouse]
+Pedido 3 → [Audífonos, Mouse, Teclado]
+...
+```
+
+### ¿Cómo lo visualizamos?
+
+```
+SIN prefetch_related:
+┌──────────────────────────────────────────┐
+│ Viaje 1: Dame todos los pedidos          │ → 50 pedidos
+│ Viaje 2: ¿Qué productos tiene pedido 1? │ → [Audífonos, Teclado]
+│ Viaje 3: ¿Qué productos tiene pedido 2? │ → [Mouse]
+│ Viaje 4: ¿Qué productos tiene pedido 3? │ → [Audífonos, Mouse, Teclado]
+│ ...                                      │
+│ Viaje 51: ¿Qué productos tiene pedido 50?│ → [Teclado]
+└──────────────────────────────────────────┘
+Total: 51 viajes
+
+CON prefetch_related:
+┌──────────────────────────────────────────────────────────┐
+│ Viaje 1: Dame todos los pedidos                          │ → 50 pedidos
+│ Viaje 2: Dame los productos de los pedidos 1,2,3,...,50  │ → todos los productos
+└──────────────────────────────────────────────────────────┘
+Total: 2 viajes (siempre 2, sin importar si son 50 o 5000 pedidos)
+```
+
+### El código
 
 ```python
-# SIN prefetch_related → N+1
+# ❌ SIN prefetch_related → 51 viajes
 pedidos = Pedido.objects.all()
 for p in pedidos:
-    for prod in p.productos.all():  # ← Cada pedido dispara una consulta
+    for prod in p.productos.all():
+        # ↑ Cada vez que entramos a este loop, Django va a la BD
+        #   a buscar los productos de ESE pedido específico.
         print(prod.nombre)
-# Total: 1 + N consultas
 
-# CON prefetch_related → exactamente 2 consultas
+# ✅ CON prefetch_related → 2 viajes (siempre)
 pedidos = Pedido.objects.prefetch_related('productos').all()
 for p in pedidos:
-    for prod in p.productos.all():  # ← Ya está en memoria
+    for prod in p.productos.all():
+        # ↑ Django ya tiene todos los productos en memoria.
+        #   No necesita ir a la BD.
         print(prod.nombre)
-# Consulta 1: SELECT * FROM tienda_pedido
-# Consulta 2: SELECT * FROM tienda_producto
-#             INNER JOIN tienda_pedido_productos ON ...
-#             WHERE tienda_pedido_productos.pedido_id IN (1, 2, 3, ...)
-# Total: 2 consultas (siempre 2, sin importar cuántos pedidos haya)
 ```
 
-### ¿Cómo funciona internamente?
+### ¿Qué hace por debajo?
 
-1. Django ejecuta la primera consulta y obtiene todos los pedidos.
-2. Toma los IDs de esos pedidos y hace UNA segunda consulta con `WHERE pedido_id IN (...)`.
-3. En Python, asigna los productos a cada pedido usando un diccionario.
+Django NO hace un JOIN. Hace dos consultas separadas:
 
-El resultado es que en lugar de 101 consultas, siempre son exactamente 2.
+```sql
+-- Consulta 1: Trae todos los pedidos
+SELECT * FROM tienda_pedido
+
+-- Consulta 2: Trae todos los productos que están en alguno de esos pedidos
+SELECT tienda_producto.*, tienda_pedido_productos.pedido_id
+FROM tienda_producto
+INNER JOIN tienda_pedido_productos ON ...
+WHERE tienda_pedido_productos.pedido_id IN (1, 2, 3, 4, ..., 50)
+```
+
+Después, **en Python** (no en SQL), Django arma un diccionario:
+```python
+# Django hace esto internamente:
+{
+    1: [Audífonos, Teclado],      # Pedido 1 tiene estos productos
+    2: [Mouse],                    # Pedido 2 tiene este producto
+    3: [Audífonos, Mouse, Teclado], # Pedido 3 tiene estos
+    # ...
+}
+```
+
+Cuando accedes a `pedido.productos.all()`, Django busca en este diccionario en vez de ir a la base de datos.
 
 ---
 
-## 4.4 Tabla de decisión
+## 4.4 ¿Cuál uso? Guía rápida
 
-| Tipo de relación | Herramienta | Estrategia SQL | Consultas |
-|:-----------------|:------------|:---------------|:----------|
-| `ForeignKey` (de hijo a padre) | `select_related` | JOIN | 1 |
-| `OneToOneField` | `select_related` | JOIN | 1 |
-| `ManyToManyField` | `prefetch_related` | IN (...) | 2 |
-| Relación inversa (de padre a hijos) | `prefetch_related` | IN (...) | 2 |
+La regla es muy simple:
 
-### Combinando ambas
+| Situación | ¿Qué usar? | ¿Por qué? |
+|:-|:-|:-|
+| Accedo al **cliente** de un pedido (FK) | `select_related` | Es una relación 1:1, un JOIN funciona perfecto |
+| Accedo al **perfil** de un usuario (OneToOne) | `select_related` | Lo mismo: siempre hay exactamente 1 perfil por usuario |
+| Accedo a los **productos** de un pedido (M2M) | `prefetch_related` | Son muchos productos, un JOIN duplicaría filas |
+| Accedo a los **pedidos** de un cliente (relación inversa) | `prefetch_related` | Un cliente tiene muchos pedidos |
+| **No sé cuál usar** | `prefetch_related` | Funciona con todo (FK, M2M, inversas). Solo es ligeramente menos eficiente que `select_related` para FK |
 
-Puedes usar las dos al mismo tiempo cuando una vista necesita datos de múltiples niveles:
+### ¿Se pueden combinar?
+
+Sí. Y en la vida real, casi siempre se combinan:
 
 ```python
-# Traer pedidos con su cliente (FK) Y sus productos (M2M) en solo 2 consultas
+# Traer pedidos con su cliente (FK) Y sus productos (M2M)
 pedidos = Pedido.objects.select_related('cliente').prefetch_related('productos').all()
 
 for p in pedidos:
-    print(p.cliente.username)         # ← Ya en memoria (select_related)
-    for prod in p.productos.all():
-        print(f"  - {prod.nombre}")   # ← Ya en memoria (prefetch_related)
+    # El cliente ya está en memoria gracias a select_related
+    print(f"Cliente: {p.cliente.username}")
 
-# Total: 2 consultas en lugar de potencialmente cientos
+    # Los productos ya están en memoria gracias a prefetch_related
+    for prod in p.productos.all():
+        print(f"  - {prod.nombre}")
+
+# Total: 2 consultas SQL para TODO. Sin importar si hay 10 o 10,000 pedidos.
 ```
 
-> 💡 **Regla profesional:** Si en tu template o vista haces un loop sobre objetos y dentro accedes a relaciones, SIEMPRE debes usar `select_related` o `prefetch_related`. De lo contrario, cada iteración golpea la base de datos.
+### Resumen visual
+
+```
+                    ¿Qué tipo de relación es?
+                            │
+              ┌─────────────┴─────────────┐
+              │                           │
+        FK o OneToOne              M2M o Inversa
+              │                           │
+       select_related              prefetch_related
+       (1 consulta)                (2 consultas)
+              │                           │
+              └─────────────┬─────────────┘
+                            │
+                   ¿Necesito ambos?
+                            │
+                    Sí → Combínalos:
+            .select_related().prefetch_related()
+```
+
+> 💡 **Regla de oro:** Si haces un loop en una vista o template y dentro del loop accedes a datos de otro modelo, necesitas `select_related` o `prefetch_related`. De lo contrario, cada iteración golpea la base de datos. Esto es lo primero que un desarrollador senior revisa en un pull request.
 
 ---
 
