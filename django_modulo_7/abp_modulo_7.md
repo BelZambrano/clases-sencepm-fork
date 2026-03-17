@@ -24,7 +24,7 @@ La empresa fintech ficticia **Alke Financial** necesita una aplicación web para
 | --- | ------------------------------------------- | ------------------------------------------------ |
 | 1   | Proyecto Django completo                    | Carpeta comprimida `.zip` o `.rar`               |
 | 2   | Documento explicativo de tu modelo de datos | `.md` (dentro del zip) o `.pdf` (archivo aparte) |
-| 3   | Capturas de pantalla de la app funcionando  | Dentro del documento                             |
+| 3   | Capturas de pantalla de la app funcionando  | Dentro del documento (2 capturas 1 terminal con runserver y otra del inicio de la web)                         |
 
 > ⚠️ Si entregas un `.pdf` debe ir **fuera** del zip como archivo aparte. Los `.md` van **dentro** del mismo `.zip` que representa el repositorio. Si no se entrega dentro de un `.zip` o `.rar`, no se puede revisar por la naturaleza del entorno de evaluación.
 
