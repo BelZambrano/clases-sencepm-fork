@@ -8,20 +8,20 @@
 
 ## 🗺️ Índice
 
-| #     | Tema                                                                                          |
-| :---- | :-------------------------------------------------------------------------------------------- |
-| **1** | Recap: Conexión con lo anterior                                                               |
-| **2** | Proyecto vs. Aplicación en Django                                                             |
-| **3** | Inicialización del Proyecto y la Aplicación                                                   |
-| **4** | Registro de la Aplicación en `settings.py`                                                    |
-| **5** | Definición del Modelo con el ORM                                                              |
-| **6** | Creación de la Base de Datos: Migraciones                                                     |
-| **7** | Vistas Basadas en Clases para CRUD                                                            |
-| **8** | CSRF y Formularios Seguros                                                                    |
-| **9** | Enrutamiento y Configuración de URLs                                                          |
-| **10** | Operaciones CRUD con el ORM                                                                  |
-| **11** | Integración en el Patrón MTV (Modelo-Template-Vista)                                         |
-| **12** | Demo: Creación del Proyecto CRUD desde Cero                                                  |
+| #      | Tema                                                 |
+| :----- | :--------------------------------------------------- |
+| **1**  | Recap: Conexión con lo anterior                      |
+| **2**  | Proyecto vs. Aplicación en Django                    |
+| **3**  | Inicialización del Proyecto y la Aplicación          |
+| **4**  | Registro de la Aplicación en `settings.py`           |
+| **5**  | Definición del Modelo con el ORM                     |
+| **6**  | Creación de la Base de Datos: Migraciones            |
+| **7**  | Vistas Basadas en Clases para CRUD                   |
+| **8**  | CSRF y Formularios Seguros                           |
+| **9**  | Enrutamiento y Configuración de URLs                 |
+| **10** | Operaciones CRUD con el ORM                          |
+| **11** | Integración en el Patrón MTV (Modelo-Template-Vista) |
+| **12** | Demo: Creación del Proyecto CRUD desde Cero          |
 
 ---
 
@@ -33,12 +33,12 @@
 
 En las clases anteriores trabajamos con herramientas avanzadas de consulta del ORM. Hoy damos un giro: pasamos de **consultar datos** a **construir aplicaciones completas** que permiten crear, leer, actualizar y eliminar registros desde el navegador.
 
-| Clase anterior                                      | Esta clase                                           |
-| :-------------------------------------------------- | :--------------------------------------------------- |
-| Consultas con `raw()` y cursores                    | Crear vistas que **escriben** en la base de datos    |
-| Parámetros seguros contra inyección SQL             | Formularios protegidos con token CSRF                |
-| `select_related()` y `prefetch_related()`           | Vistas genéricas que **automatizan** el CRUD         |
-| Procedimientos almacenados                          | Proyecto Django completo desde cero                  |
+| Clase anterior                            | Esta clase                                        |
+| :---------------------------------------- | :------------------------------------------------ |
+| Consultas con `raw()` y cursores          | Crear vistas que **escriben** en la base de datos |
+| Parámetros seguros contra inyección SQL   | Formularios protegidos con token CSRF             |
+| `select_related()` y `prefetch_related()` | Vistas genéricas que **automatizan** el CRUD      |
+| Procedimientos almacenados                | Proyecto Django completo desde cero               |
 
 > 💡 Todo lo que aprendimos sobre consultas **sigue vigente**. Las vistas CRUD usan el ORM por debajo — solo que ahora lo conectamos con formularios HTML y URLs.
 
@@ -130,6 +130,18 @@ mi_proyecto_crud/
     ├── urls.py                ← Rutas principales
     ├── asgi.py
     └── wsgi.py
+└── templates/                 ← Plantillas HTML
+    └── base.html
+    └── clientes
+        └── base_cliente.html
+        └── cliente_list.html
+    └── otra_app
+        └── base_otra_app.html
+└── static/                    ← Archivos estáticos de la app
+    └── css/
+    └── js/
+    └── img/
+
 ```
 
 ## Paso 2: Crear la aplicación
@@ -151,6 +163,19 @@ clientes/
 ├── models.py                  ← Definición de modelos (ORM)
 ├── tests.py                   ← Tests
 └── views.py                   ← Lógica de las vistas
+└── templates/                 ← Plantillas HTML
+    └── clientes/
+        └── base_cliente.html
+        └── cliente_list.html
+└── static/
+    └── clientes/           ← Archivos estáticos de la app
+        └── css/
+            └── style.css
+        └── js/
+        └── img/
+
+Link para importar archivos estáticos:
+{% static 'clientes/css/style.css' %}
 ```
 
 ## Paso 3: Verificar que funciona
@@ -199,6 +224,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #Librerias externas
 
     # Apps propias ← AQUÍ se registran
     'clientes',
@@ -269,13 +295,14 @@ from django.db import models
 
 class Cliente(models.Model):
     nombre         = models.CharField(max_length=100)
+    apellido       = models.CharField(max_length=100)
     email          = models.EmailField(unique=True)
     telefono       = models.CharField(max_length=20, blank=True)
     direccion      = models.TextField(blank=True)
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.nombre} ({self.email})"
+        return f"{self.nombre} {self.apellido} "
 
     class Meta:
         ordering = ['-fecha_registro']
@@ -285,13 +312,13 @@ class Cliente(models.Model):
 
 ### Desglose de cada campo
 
-| Campo            | Tipo                  | ¿Qué hace?                                              |
-| :--------------- | :-------------------- | :------------------------------------------------------- |
-| `nombre`         | `CharField`           | Texto corto, máximo 100 caracteres                       |
-| `email`          | `EmailField`          | Texto que Django valida como email válido                 |
-| `telefono`       | `CharField`           | Texto libre para teléfono, `blank=True` → puede ser vacío|
-| `direccion`      | `TextField`           | Texto largo sin límite de caracteres                     |
-| `fecha_registro` | `DateTimeField`       | Se llena automáticamente al crear el registro             |
+| Campo            | Tipo            | ¿Qué hace?                                                |
+| :--------------- | :-------------- | :-------------------------------------------------------- |
+| `nombre`         | `CharField`     | Texto corto, máximo 100 caracteres                        |
+| `email`          | `EmailField`    | Texto que Django valida como email válido                 |
+| `telefono`       | `CharField`     | Texto libre para teléfono, `blank=True` → puede ser vacío |
+| `direccion`      | `TextField`     | Texto largo sin límite de caracteres                      |
+| `fecha_registro` | `DateTimeField` | Se llena automáticamente al crear el registro             |
 
 ### ¿Y el `__str__`?
 
@@ -430,13 +457,13 @@ Buena para lógica muy personalizada      Perfecta para operaciones estándar
 
 ## Las 5 vistas genéricas del CRUD
 
-| Vista                | Operación  | ¿Qué hace?                                | Template esperado         |
-| :------------------- | :--------- | :----------------------------------------- | :------------------------ |
-| `ListView`           | **Read**   | Lista todos los registros                  | `cliente_list.html`       |
-| `DetailView`         | **Read**   | Muestra un registro individual             | `cliente_detail.html`     |
-| `CreateView`         | **Create** | Muestra formulario y guarda nuevo registro | `cliente_form.html`       |
-| `UpdateView`         | **Update** | Muestra formulario con datos y actualiza   | `cliente_form.html`       |
-| `DeleteView`         | **Delete** | Confirma y elimina un registro             | `cliente_confirm_delete.html` |
+| Vista        | Operación  | ¿Qué hace?                                 | Template esperado             |
+| :----------- | :--------- | :----------------------------------------- | :---------------------------- |
+| `ListView`   | **Read**   | Lista todos los registros                  | `cliente_list.html`           |
+| `DetailView` | **Read**   | Muestra un registro individual             | `cliente_detail.html`         |
+| `CreateView` | **Create** | Muestra formulario y guarda nuevo registro | `cliente_form.html`           |
+| `UpdateView` | **Update** | Muestra formulario con datos y actualiza   | `cliente_form.html`           |
+| `DeleteView` | **Delete** | Confirma y elimina un registro             | `cliente_confirm_delete.html` |
 
 ## Implementación completa
 
@@ -559,19 +586,19 @@ El sitio malicioso no puede adivinar ese token.
 ```html
 <!-- En CADA formulario con method="POST" -->
 <form method="POST">
-    {% csrf_token %}
+  {% csrf_token %}
 
-    <!-- Campos del formulario -->
-    {{ form.as_p }}
+  <!-- Campos del formulario -->
+  {{ form.as_p }}
 
-    <button type="submit">Guardar</button>
+  <button type="submit">Guardar</button>
 </form>
 ```
 
 El `{% csrf_token %}` genera un campo oculto tipo:
 
 ```html
-<input type="hidden" name="csrfmiddlewaretoken" value="abc123xyz789...">
+<input type="hidden" name="csrfmiddlewaretoken" value="abc123xyz789..." />
 ```
 
 > ⚠️ **Regla obligatoria:** Todo formulario que use `method="POST"` en Django debe incluir `{% csrf_token %}`. Sin él, Django devuelve un error **403 Forbidden**.
@@ -777,12 +804,12 @@ Cliente.objects.filter(fecha_registro__year=2023).delete()
 
 ## Tabla resumen
 
-| Operación   | Método del ORM              | SQL equivalente                |
-| :---------- | :-------------------------- | :----------------------------- |
-| **Create**  | `.objects.create()`         | `INSERT INTO ... VALUES`       |
-| **Read**    | `.objects.all()` / `.get()` | `SELECT * FROM ...`            |
-| **Update**  | `.save()` / `.update()`     | `UPDATE ... SET ... WHERE`     |
-| **Delete**  | `.delete()`                 | `DELETE FROM ... WHERE`        |
+| Operación  | Método del ORM              | SQL equivalente            |
+| :--------- | :-------------------------- | :------------------------- |
+| **Create** | `.objects.create()`         | `INSERT INTO ... VALUES`   |
+| **Read**   | `.objects.all()` / `.get()` | `SELECT * FROM ...`        |
+| **Update** | `.save()` / `.update()`     | `UPDATE ... SET ... WHERE` |
+| **Delete** | `.delete()`                 | `DELETE FROM ... WHERE`    |
 
 > 💡 **Importante:** Las vistas genéricas (`CreateView`, `UpdateView`, `DeleteView`) ejecutan estas mismas operaciones del ORM por debajo. La diferencia es que las vistas las conectan con formularios HTML y la navegación del usuario.
 
@@ -966,18 +993,18 @@ mi_proyecto_crud/
 
 ---
 
-| Concepto                   | Herramienta / Archivo             | Para qué sirve                                          |
-| :------------------------- | :-------------------------------- | :------------------------------------------------------ |
-| **Proyecto Django**        | `django-admin startproject`       | Crear la estructura base con configuración              |
-| **Aplicación (App)**       | `python manage.py startapp`       | Módulo funcional independiente dentro del proyecto       |
-| **Registro de App**        | `INSTALLED_APPS` en `settings.py` | Que Django reconozca la app y sus modelos                |
-| **Modelo**                 | `models.py`                       | Definir la estructura de datos (tablas)                  |
-| **Migraciones**            | `makemigrations` + `migrate`      | Crear las tablas en la base de datos                     |
-| **Vistas genéricas**       | `ListView`, `CreateView`, etc.    | CRUD automático con mínimo código                       |
-| **Token CSRF**             | `{% csrf_token %}`                | Proteger formularios contra ataques                      |
-| **URLs con nombre**        | `path(..., name='nombre')`        | Navegación flexible y mantenible                        |
-| **Operaciones ORM**        | `.create()`, `.get()`, `.save()`, `.delete()` | Interactuar con la BD sin SQL                |
-| **Patrón MTV**             | Modelo + Template + Vista         | Separación de responsabilidades                         |
+| Concepto             | Herramienta / Archivo                         | Para qué sirve                                     |
+| :------------------- | :-------------------------------------------- | :------------------------------------------------- |
+| **Proyecto Django**  | `django-admin startproject`                   | Crear la estructura base con configuración         |
+| **Aplicación (App)** | `python manage.py startapp`                   | Módulo funcional independiente dentro del proyecto |
+| **Registro de App**  | `INSTALLED_APPS` en `settings.py`             | Que Django reconozca la app y sus modelos          |
+| **Modelo**           | `models.py`                                   | Definir la estructura de datos (tablas)            |
+| **Migraciones**      | `makemigrations` + `migrate`                  | Crear las tablas en la base de datos               |
+| **Vistas genéricas** | `ListView`, `CreateView`, etc.                | CRUD automático con mínimo código                  |
+| **Token CSRF**       | `{% csrf_token %}`                            | Proteger formularios contra ataques                |
+| **URLs con nombre**  | `path(..., name='nombre')`                    | Navegación flexible y mantenible                   |
+| **Operaciones ORM**  | `.create()`, `.get()`, `.save()`, `.delete()` | Interactuar con la BD sin SQL                      |
+| **Patrón MTV**       | Modelo + Template + Vista                     | Separación de responsabilidades                    |
 
 ---
 
@@ -992,5 +1019,3 @@ mi_proyecto_crud/
 - Django Software Foundation. (2024). _URL dispatcher_. https://docs.djangoproject.com/en/stable/topics/http/urls/
 - Django Software Foundation. (2024). _Making queries_. https://docs.djangoproject.com/en/stable/topics/db/queries/
 - OWASP Foundation. (2024). _Cross-Site Request Forgery Prevention Cheat Sheet_. https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
-
-

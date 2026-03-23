@@ -1,4 +1,4 @@
-# 🏁 Módulo 7 — Clase 8b
+# 🏁 Módulo 7 — Clase 9
 
 ## Tu Proyecto Terminado: Todo lo que Debe Tener Antes del Día de Deploy
 
@@ -10,26 +10,26 @@
 
 ## 🗺️ Índice
 
-| #      | Tema                                                                   |
-| ------ | ---------------------------------------------------------------------- |
-| **1**  | La Mentalidad: ¿Qué Significa "Proyecto Terminado"?                    |
-| **2**  | Estructura del Proyecto: Orden y Convenciones                          |
-| **3**  | Modelos y Base de Datos: Todo Migrado y Funcional                      |
-| **4**  | Vistas y URLs: Todo Conectado y Protegido                              |
-| **5**  | Templates y Frontend: Completo, Responsive, Profesional                |
-| **6**  | Formularios: Validados y Seguros                                       |
-| **7**  | Autenticación y Permisos: ¿Quién Puede Hacer Qué?                     |
-| **8**  | Archivos Estáticos y Media: CSS, JS, Imágenes                         |
-| **9**  | Settings: Preparado para Dos Mundos                                    |
-| **10** | Variables de Entorno: El `.env` Listo                                  |
-| **11** | Git y `.gitignore`: Repositorio Limpio                                 |
-| **12** | Dependencias: `requirements.txt` Actualizado                           |
-| **13** | Datos Iniciales: ¿Qué Hay en la Base al Arrancar?                     |
-| **14** | Testing: ¿Funciona Todo lo que Crees que Funciona?                     |
-| **15** | Calidad de Código: Los Detalles Profesionales                          |
-| **16** | README: El Manual de Tu Proyecto                                       |
-| **17** | El Mega-Checklist: Todo en Una Página                                  |
-| **18** | Los 10 Problemas que Siempre Aparecen el Día de Deploy                 |
+| #      | Tema                                                    |
+| ------ | ------------------------------------------------------- |
+| **1**  | La Mentalidad: ¿Qué Significa "Proyecto Terminado"?     |
+| **2**  | Estructura del Proyecto: Orden y Convenciones           |
+| **3**  | Modelos y Base de Datos: Todo Migrado y Funcional       |
+| **4**  | Vistas y URLs: Todo Conectado y Protegido               |
+| **5**  | Templates y Frontend: Completo, Responsive, Profesional |
+| **6**  | Formularios: Validados y Seguros                        |
+| **7**  | Autenticación y Permisos: ¿Quién Puede Hacer Qué?       |
+| **8**  | Archivos Estáticos y Media: CSS, JS, Imágenes           |
+| **9**  | Settings: Preparado para Dos Mundos                     |
+| **10** | Variables de Entorno: El `.env` Listo                   |
+| **11** | Git y `.gitignore`: Repositorio Limpio                  |
+| **12** | Dependencias: `requirements.txt` Actualizado            |
+| **13** | Datos Iniciales: ¿Qué Hay en la Base al Arrancar?       |
+| **14** | Testing: ¿Funciona Todo lo que Crees que Funciona?      |
+| **15** | Calidad de Código: Los Detalles Profesionales           |
+| **16** | README: El Manual de Tu Proyecto                        |
+| **17** | El Mega-Checklist: Todo en Una Página                   |
+| **18** | Los 10 Problemas que Siempre Aparecen el Día de Deploy  |
 
 ---
 
@@ -357,41 +357,39 @@ Esto es lo que el usuario **ve**. Puede que tu backend sea perfecto, pero si el 
 <!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Mi Sitio{% endblock %}</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <!-- Bootstrap, Tailwind, o tu CSS -->
-</head>
-<body>
+  </head>
+  <body>
     <!-- Navbar -->
     {% include 'components/navbar.html' %}
 
     <!-- Contenido principal -->
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <main>{% block content %}{% endblock %}</main>
 
     <!-- Footer -->
     {% include 'components/footer.html' %}
 
     <!-- Scripts -->
     {% block scripts %}{% endblock %}
-</body>
+  </body>
 </html>
 ```
 
 ### Los 5 puntos que NO pueden fallar en el frontend
 
-| #   | Punto                    | ¿Qué verificar?                                                                     |
-| :-- | :----------------------- | :----------------------------------------------------------------------------------- |
-| 1   | **Responsive**           | ¿Se ve bien en celular (360px)? ¿Y en tablet? ¿Y en escritorio? ¿Y en TV?           |
+| #   | Punto                    | ¿Qué verificar?                                                                         |
+| :-- | :----------------------- | :-------------------------------------------------------------------------------------- |
+| 1   | **Responsive**           | ¿Se ve bien en celular (360px)? ¿Y en tablet? ¿Y en escritorio? ¿Y en TV?               |
 | 2   | **Contenido real**       | ¿Hay Lorem Ipsum en algún lado? ¿Hay imágenes placeholder? Todo debe ser contenido real |
-| 3   | **Links funcionales**    | ¿TODOS los links del navbar, footer y botones llevan a algún lado?                   |
-| 4   | **Diseño consistente**   | ¿Todas las páginas tienen el mismo estilo? ¿Mismos colores, tipografía, espaciado?   |
-| 5   | **Sin errores visuales** | ¿Hay textos cortados? ¿Imágenes que no cargan? ¿Elementos encimados?                |
+| 3   | **Links funcionales**    | ¿TODOS los links del navbar, footer y botones llevan a algún lado?                      |
+| 4   | **Diseño consistente**   | ¿Todas las páginas tienen el mismo estilo? ¿Mismos colores, tipografía, espaciado?      |
+| 5   | **Sin errores visuales** | ¿Hay textos cortados? ¿Imágenes que no cargan? ¿Elementos encimados?                    |
 
 ### Responsive: la prueba obligatoria
 
@@ -420,7 +418,7 @@ PRUEBA EN ESTOS ANCHOS:
 | Tablas se salen de la pantalla    | `overflow-x: auto` en el contenedor de la tabla                  |
 | Texto demasiado grande en móvil   | Usar unidades relativas (`rem`, `%`, `vw`) no `px` fijos         |
 | Imágenes se salen del ancho       | `img { max-width: 100%; height: auto; }`                         |
-| Formularios muy anchos en móvil   | `input { width: 100%; box-sizing: border-box; }`                |
+| Formularios muy anchos en móvil   | `input { width: 100%; box-sizing: border-box; }`                 |
 | Columnas lado a lado en móvil     | Usar flexbox/grid con `flex-wrap` o media queries                |
 
 ## Checklist de templates y frontend
@@ -509,36 +507,28 @@ def crear_cliente(request):
 ```html
 <!-- En el template -->
 <form method="POST">
-    {% csrf_token %}
+  {% csrf_token %} {% if form.errors %}
+  <div class="alert alert-danger">Por favor corrige los errores indicados.</div>
+  {% endif %} {{ form.as_p }}
 
-    {% if form.errors %}
-    <div class="alert alert-danger">
-        Por favor corrige los errores indicados.
-    </div>
-    {% endif %}
-
-    {{ form.as_p }}
-
-    <button type="submit">Guardar</button>
+  <button type="submit">Guardar</button>
 </form>
 
 <!-- Mostrar mensajes de éxito -->
 {% for message in messages %}
-<div class="alert alert-{{ message.tags }}">
-    {{ message }}
-</div>
+<div class="alert alert-{{ message.tags }}">{{ message }}</div>
 {% endfor %}
 ```
 
 ### La prueba de cada formulario
 
-| Prueba                               | Qué debe pasar                                |
-| :----------------------------------- | :--------------------------------------------- |
-| Enviar con todos los campos llenos   | Guarda y muestra mensaje de éxito              |
-| Enviar con campos vacíos             | Muestra error, NO guarda                       |
-| Enviar con datos inválidos (email malo) | Muestra error específico                    |
-| Enviar el mismo formulario 2 veces   | No crea duplicados (o maneja el caso)          |
-| Enviar con caracteres especiales     | No rompe la página (protección contra XSS)     |
+| Prueba                                  | Qué debe pasar                             |
+| :-------------------------------------- | :----------------------------------------- |
+| Enviar con todos los campos llenos      | Guarda y muestra mensaje de éxito          |
+| Enviar con campos vacíos                | Muestra error, NO guarda                   |
+| Enviar con datos inválidos (email malo) | Muestra error específico                   |
+| Enviar el mismo formulario 2 veces      | No crea duplicados (o maneja el caso)      |
+| Enviar con caracteres especiales        | No rompe la página (protección contra XSS) |
 
 ## Checklist de formularios
 
@@ -630,12 +620,12 @@ mi_app/
 ```html
 <!-- ✅ CORRECTO: usa {% static %} -->
 {% load static %}
-<link rel="stylesheet" href="{% static 'mi_app/css/styles.css' %}">
-<img src="{% static 'mi_app/img/logo.png' %}" alt="Logo">
+<link rel="stylesheet" href="{% static 'mi_app/css/styles.css' %}" />
+<img src="{% static 'mi_app/img/logo.png' %}" alt="Logo" />
 <script src="{% static 'mi_app/js/main.js' %}"></script>
 
 <!-- ❌ INCORRECTO: ruta hardcodeada -->
-<link rel="stylesheet" href="/static/mi_app/css/styles.css">
+<link rel="stylesheet" href="/static/mi_app/css/styles.css" />
 <!-- Esto puede romper si cambia la configuración de STATIC_URL -->
 ```
 
@@ -693,16 +683,16 @@ Tu settings.py tiene que estar **preparado** para funcionar en desarrollo y en p
 
 El problema es que desarrollo y producción necesitan configuraciones **opuestas**:
 
-| Setting                   | En desarrollo                | En producción                        |
-| :------------------------ | :--------------------------- | :----------------------------------- |
-| `DEBUG`                   | `True`                       | `False`                              |
-| `SECRET_KEY`              | Cualquier string             | Clave única generada aleatoriamente  |
-| `ALLOWED_HOSTS`           | `['localhost', '127.0.0.1']` | `['midominio.com']`                  |
-| `DATABASES`               | SQLite                       | PostgreSQL                           |
-| `SESSION_COOKIE_SECURE`   | `False`                      | `True`                               |
-| `CSRF_COOKIE_SECURE`      | `False`                      | `True`                               |
-| `SECURE_SSL_REDIRECT`     | `False`                      | `True`                               |
-| Archivos estáticos        | Django los sirve             | Nginx o WhiteNoise los sirve         |
+| Setting                 | En desarrollo                | En producción                       |
+| :---------------------- | :--------------------------- | :---------------------------------- |
+| `DEBUG`                 | `True`                       | `False`                             |
+| `SECRET_KEY`            | Cualquier string             | Clave única generada aleatoriamente |
+| `ALLOWED_HOSTS`         | `['localhost', '127.0.0.1']` | `['midominio.com']`                 |
+| `DATABASES`             | SQLite                       | PostgreSQL                          |
+| `SESSION_COOKIE_SECURE` | `False`                      | `True`                              |
+| `CSRF_COOKIE_SECURE`    | `False`                      | `True`                              |
+| `SECURE_SSL_REDIRECT`   | `False`                      | `True`                              |
+| Archivos estáticos      | Django los sirve             | Nginx o WhiteNoise los sirve        |
 
 > ⚠️ **El problema:** si tienes todo en un solo `settings.py`, tendrías que estar cambiando valores cada vez que pasas de desarrollo a producción. Eso es un error esperando a pasar.
 
@@ -1226,9 +1216,9 @@ if not DEBUG:
 
 > 💡 **¿Cuál elegir?** Para proyectos pequeños, un solo `settings.py` con `if DEBUG` es suficiente. Para proyectos profesionales o con equipo, la carpeta `settings/` es el estándar de la industria.
 
-| Enfoque                        | Cuándo usarlo                          |
-| :----------------------------- | :------------------------------------- |
-| Un solo `settings.py` con `if` | Proyectos personales, práctica, MVPs   |
+| Enfoque                        | Cuándo usarlo                              |
+| :----------------------------- | :----------------------------------------- |
+| Un solo `settings.py` con `if` | Proyectos personales, práctica, MVPs       |
 | Carpeta `settings/`            | Proyectos profesionales, trabajo en equipo |
 
 ---
@@ -1271,12 +1261,9 @@ tu_proyecto/
 SECRET_KEY=django-insecure-clave-local-de-desarrollo
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
-
-DB_POSTGRES_NAME=mi_base_datos_postgres
-DB_POSTGRES_USER=mi_usuario_postgres
-DB_POSTGRES_PASSWORD=mi_password_postgres
-
-
+DB_NAME=mi_base_datos
+DB_USER=mi_usuario
+DB_PASSWORD=mi_password
 ```
 
 ### `.env.example` (plantilla para el equipo)
@@ -1398,13 +1385,13 @@ gunicorn==21.2.0
 
 ### Puntos clave
 
-| Regla                              | ¿Por qué?                                                           |
-| :--------------------------------- | :------------------------------------------------------------------- |
-| Versiones fijadas con `==`         | Para que en el servidor se instale **exactamente** lo mismo          |
-| Sin librerías de desarrollo        | `django-debug-toolbar` NO debe estar en producción                   |
-| `python-dotenv` incluido           | Si usas `.env`, la librería que lo lee debe estar                    |
-| `gunicorn` incluido                | Es el servidor WSGI de producción (reemplaza `runserver`)            |
-| `psycopg2-binary` incluido         | Si usarás PostgreSQL                                                 |
+| Regla                       | ¿Por qué?                                                   |
+| :-------------------------- | :---------------------------------------------------------- |
+| Versiones fijadas con `==`  | Para que en el servidor se instale **exactamente** lo mismo |
+| Sin librerías de desarrollo | `django-debug-toolbar` NO debe estar en producción          |
+| `python-dotenv` incluido    | Si usas `.env`, la librería que lo lee debe estar           |
+| `gunicorn` incluido         | Es el servidor WSGI de producción (reemplaza `runserver`)   |
+| `psycopg2-binary` incluido  | Si usarás PostgreSQL                                        |
 
 ## Checklist de dependencias
 
@@ -1451,10 +1438,10 @@ OPCIÓN 2: Management command personalizado
           → Ideal para datos que siempre son los mismos
 ```
 
-| Opción              | Cuándo usarla                                   |
-| :------------------ | :---------------------------------------------- |
-| Admin manual        | Pocos datos, datos que cambian según el proyecto |
-| Management command  | Muchos datos, o datos que siempre son iguales    |
+| Opción             | Cuándo usarla                                    |
+| :----------------- | :----------------------------------------------- |
+| Admin manual       | Pocos datos, datos que cambian según el proyecto |
+| Management command | Muchos datos, o datos que siempre son iguales    |
 
 ## Checklist de datos
 
@@ -1581,8 +1568,8 @@ Descripción breve de qué hace el proyecto.
 
 2. Crear y activar entorno virtual
    python -m venv venv
-   source venv/bin/activate  (Linux/Mac)
-   venv\Scripts\activate     (Windows)
+   source venv/bin/activate (Linux/Mac)
+   venv\Scripts\activate (Windows)
 
 3. Instalar dependencias
    pip install -r requirements.txt
@@ -1791,23 +1778,23 @@ Estos son los problemas que aparecen **cada vez**. Si los resuelves antes, el d�
 
 ## ✅ Lo que cubrimos hoy
 
-| Área                     | La pregunta clave                                         |
-| :----------------------- | :-------------------------------------------------------- |
-| **Estructura**           | ¿Mi proyecto está organizado de forma predecible?         |
-| **Modelos / BD**         | ¿Las migraciones están al día? ¿Los datos existen?       |
-| **Vistas / URLs**        | ¿Todo está conectado y protegido?                         |
-| **Templates / Frontend** | ¿Se ve completo, responsive y profesional?                |
-| **Formularios**          | ¿Validan, guardan, y muestran errores?                    |
+| Área                     | La pregunta clave                                              |
+| :----------------------- | :------------------------------------------------------------- |
+| **Estructura**           | ¿Mi proyecto está organizado de forma predecible?              |
+| **Modelos / BD**         | ¿Las migraciones están al día? ¿Los datos existen?             |
+| **Vistas / URLs**        | ¿Todo está conectado y protegido?                              |
+| **Templates / Frontend** | ¿Se ve completo, responsive y profesional?                     |
+| **Formularios**          | ¿Validan, guardan, y muestran errores?                         |
 | **Autenticación**        | ¿Login/logout funciona? ¿Las vistas privadas están protegidas? |
-| **Archivos estáticos**   | ¿Usan {% static %}? ¿collectstatic funciona?              |
-| **Settings**             | ¿Lee de variables de entorno? ¿check --deploy da OK?      |
-| **Variables de entorno** | ¿.env existe, funciona, y está en .gitignore?             |
-| **Git**                  | ¿Repo limpio, .gitignore completo, subido a GitHub?       |
-| **Dependencias**         | ¿requirements.txt actualizado con versiones fijadas?      |
-| **Datos iniciales**      | ¿Hay plan para cargar datos en producción?                |
-| **Testing**              | ¿Probé todo manualmente, incluyendo responsive?           |
-| **Código limpio**        | ¿Sin prints, sin hardcodes, sin código muerto?            |
-| **README**               | ¿Alguien puede clonar e instalar siguiendo el README?     |
+| **Archivos estáticos**   | ¿Usan {% static %}? ¿collectstatic funciona?                   |
+| **Settings**             | ¿Lee de variables de entorno? ¿check --deploy da OK?           |
+| **Variables de entorno** | ¿.env existe, funciona, y está en .gitignore?                  |
+| **Git**                  | ¿Repo limpio, .gitignore completo, subido a GitHub?            |
+| **Dependencias**         | ¿requirements.txt actualizado con versiones fijadas?           |
+| **Datos iniciales**      | ¿Hay plan para cargar datos en producción?                     |
+| **Testing**              | ¿Probé todo manualmente, incluyendo responsive?                |
+| **Código limpio**        | ¿Sin prints, sin hardcodes, sin código muerto?                 |
+| **README**               | ¿Alguien puede clonar e instalar siguiendo el README?          |
 
 ---
 
