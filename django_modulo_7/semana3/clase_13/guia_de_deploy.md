@@ -614,14 +614,14 @@ Variables de entorno en Render:
 └─────────────────────┴────────────────────────────────────────────────┘
 ```
 
-Para generar un `SECRET_KEY` seguro:
+Para generar un `SECRET_KEY` seguro, ejecutar en la terminal:
 
-```python
-# Ejecutar en una terminal de Python
-from django.core.management.utils import get_random_secret_key
-print(get_random_secret_key())
-# Resultado: 'a3$k9#mz!p4q8r2v5w...'
+```bash
+openssl rand -base64 50
+# Resultado: algo como → K3xJ7m9pQ2rT5vW8yA1bC4dE6fG0hI+kL3nO5qR7sU9wX2zA4cE6g==
 ```
+
+> Copiar el resultado y pegarlo como valor de `SECRET_KEY` en las variables de entorno de Render.
 
 ### 3.4 Crear el servicio
 
