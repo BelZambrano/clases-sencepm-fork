@@ -872,33 +872,21 @@ Registro 2 (dominio raíz — sin www):
 
 ## Paso 5 — Actualizar Django para el dominio personalizado
 
-```python
-# settings.py — actualizar ALLOWED_HOSTS
+Como ya tenemos los settings divididos, solo es necesario actualizar la **variable de entorno** `ALLOWED_HOSTS` en el panel de Render para incluir el nuevo dominio:
 
-ALLOWED_HOSTS = config(
-    'ALLOWED_HOSTS',
-    default='localhost,127.0.0.1',
-    cast=lambda v: [s.strip() for s in v.split(',')]
-)
+```
+En Render → tu servicio → Environment → editar ALLOWED_HOSTS:
 
-# En Render, actualizar la variable de entorno:
-# ALLOWED_HOSTS = cuatro-patas.onrender.com,cuatropatas.cl,www.cuatropatas.cl
+Antes:
+  ALLOWED_HOSTS = cuatro-patas.onrender.com
+
+Después (agregar los dominios nuevos separados por coma):
+  ALLOWED_HOSTS = cuatro-patas.onrender.com,cuatropatas.cl,www.cuatropatas.cl
 ```
 
-```python
-# settings.py — configuraciones de seguridad para producción con HTTPS
+> ⚠️ **No tocar el código.** En nuestro `production.py` el `ALLOWED_HOSTS` ya lee desde la variable de entorno sin ningún default inseguro — exactamente como debe ser en producción. Solo se actualiza el valor en el panel de Render.
 
-# Redirigir todo el tráfico HTTP a HTTPS
-SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
-
-# Confiar en el header del proxy (Render/Cloudflare)
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Headers de seguridad HSTS
-SECURE_HSTS_SECONDS = 31536000     # 1 año
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
-```
+Las configuraciones de seguridad HTTPS (HSTS, SSL redirect, cookies seguras, proxy header) **ya están configuradas** en `settings/production.py` desde el Paso 1.4. No hace falta agregar nada más al código.
 
 ---
 
