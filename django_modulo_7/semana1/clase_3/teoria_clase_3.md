@@ -276,7 +276,7 @@ for p in Producto.objects.filter(categoria='vinilos'):
 # ✅ BIEN: 1 solo viaje, el cálculo lo hace la BD
 Producto.objects.filter(categoria='vinilos').update(
     # ↑ .update() genera UN SOLO SQL: UPDATE app_producto SET precio = precio * 1.1
-    #   WHERE categoria = 'vinilos'
+    #   WHERE ca<<<<<tegoria = 'vinilos'>>>>>
     precio=models.F('precio') * 1.1
     # ↑ F('precio') le dice a Django: "no traigas el precio a Python,
     #   dile a la BD que use el valor que ya tiene EN la tabla".

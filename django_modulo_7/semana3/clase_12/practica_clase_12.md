@@ -44,26 +44,26 @@ https://github.com/arielrosenmann94/django_ecommerce_optimization
 
 Un **documento breve** (máximo 2 páginas) que incluya:
 
-| Sección                  | Qué debe contener                                                  |
-| ------------------------ | ------------------------------------------------------------------ |
-| **Bug encontrado**       | Descripción del problema y en qué archivo está                     |
-| **Antes**                | Cantidad de queries y/o tiempo de carga antes de la corrección     |
-| **Solución aplicada**    | Qué técnica usaste (`select_related`, `count()`, índices, etc.)    |
-| **Después**              | Cantidad de queries y/o tiempo de carga después de la corrección   |
+| Sección               | Qué debe contener                                                |
+| --------------------- | ---------------------------------------------------------------- |
+| **Bug encontrado**    | Descripción del problema y en qué archivo está                   |
+| **Antes**             | Cantidad de queries y/o tiempo de carga antes de la corrección   |
+| **Solución aplicada** | Qué técnica usaste (`select_related`, `count()`, índices, etc.)  |
+| **Después**           | Cantidad de queries y/o tiempo de carga después de la corrección |
 
 ---
 
 ## 📊 Criterios de Evaluación
 
-| Criterio                                                 | Peso |
-| -------------------------------------------------------- | ---- |
-| Reducción de queries (medido con Django Debug Toolbar)   | 30%  |
-| Uso correcto de `select_related` / `prefetch_related`    | 20%  |
-| Uso de `aggregate()` / `annotate()`                      | 15%  |
-| Implementación de paginación                             | 10%  |
-| Añadir índices a modelos                                 | 10%  |
-| Uso de `.exists()`, `.count()`, `.only()`                | 10%  |
-| Documentación de cambios                                 | 5%   |
+| Criterio                                               | Peso |
+| ------------------------------------------------------ | ---- |
+| Reducción de queries (medido con Django Debug Toolbar) | 30%  |
+| Uso correcto de `select_related` / `prefetch_related`  | 20%  |
+| Uso de `aggregate()` / `annotate()`                    | 15%  |
+| Implementación de paginación                           | 10%  |
+| Añadir índices a modelos                               | 10%  |
+| Uso de `.exists()`, `.count()`, `.only()`              | 10%  |
+| Documentación de cambios                               | 5%   |
 
 ---
 
