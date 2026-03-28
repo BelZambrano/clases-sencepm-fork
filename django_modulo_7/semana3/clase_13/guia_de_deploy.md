@@ -695,6 +695,257 @@ python manage.py showmigrations
 
 ---
 
+## Paso 6 — Seguridad del deploy: variables de entorno, CSRF y buenas prácticas
+
+Este paso es **crítico**. Muchos proyectos de estudiantes (y hasta de empresas) exponen credenciales en el código o dejan agujeros de seguridad en producción. Aquí vamos a entender _por qué_ cada configuración importa.
+
+---
+
+### 6.1 Variables de entorno: qué NUNCA debe estar en el código
+
+```
+¿Qué es una variable de entorno?
+──────────────────────────────────
+
+Es un valor que vive FUERA de tu código, en el sistema operativo
+o en el panel de configuración del servidor (Render).
+
+Tu código PREGUNTA por el valor → no lo CONTIENE.
+```
+
+#### ¿Qué va como variable de entorno y qué puede ir hardcodeado?
+
+```
+NUNCA hardcodear (siempre variable de entorno):
+────────────────────────────────────────────────
+🔴  SECRET_KEY          → La clave criptográfica de Django
+🔴  DATABASE_URL        → Credenciales de tu base de datos
+🔴  EMAIL_HOST_PASSWORD → Contraseña del servidor de email
+🔴  API keys            → Tokens de servicios externos (Stripe, AWS, etc.)
+🔴  Contraseñas         → Cualquier credencial de cualquier servicio
+
+PUEDE ir hardcodeado en el código:
+────────────────────────────────────
+🟢  INSTALLED_APPS      → Lista de apps del proyecto (no es secreto)
+🟢  MIDDLEWARE          → Lista de middleware (no es secreto)
+🟢  LANGUAGE_CODE       → Idioma del proyecto
+🟢  TIME_ZONE           → Zona horaria
+🟢  AUTH_PASSWORD_VALIDATORS → Reglas de validación de contraseñas
+
+DEPENDE del entorno (variable de entorno recomendada):
+──────────────────────────────────────────────────────
+🟡  DEBUG               → True en local, False en producción
+🟡  ALLOWED_HOSTS       → localhost en local, dominio real en producción
+🟡  CSRF_TRUSTED_ORIGINS → cambia según el dominio del servidor
+```
+
+#### Ejemplo concreto: SECRET_KEY
+
+```python
+# ❌ MAL — la clave está visible en el código y en GitHub
+SECRET_KEY = 'django-insecure-a7_!vq*p0eru=c7*!3wtz&k1m4@#$=cx9o3j%x'
+
+# ✅ BIEN — se lee desde variable de entorno, nunca aparece en el código
+from decouple import config
+SECRET_KEY = config('SECRET_KEY')
+```
+
+```
+¿Qué pasa si alguien obtiene tu SECRET_KEY?
+─────────────────────────────────────────────
+
+Con tu SECRET_KEY, un atacante puede:
+  → Firmar cookies falsas y hacerse pasar por cualquier usuario
+  → Generar tokens CSRF válidos y ejecutar acciones a tu nombre
+  → Descifrar datos cifrados por Django (sessions, password reset tokens)
+  → Básicamente: TOMAR CONTROL TOTAL de tu aplicación
+
+Por eso NUNCA va en el código, ni siquiera en proyectos "de prueba".
+Si alguna vez se expuso en un commit de Git, debes:
+  1. Generar una nueva inmediatamente
+  2. Actualizar la variable en Render
+  3. Invalidar todas las sesiones activas
+```
+
+> ⚠️ **Regla de oro:** Si un dato cambia entre local y producción, o si es sensible, va como variable de entorno. Sin excepciones.
+
+---
+
+### 6.2 CSRF — ¿Qué es y por qué Django lo exige?
+
+```
+¿Qué es un ataque CSRF (Cross-Site Request Forgery)?
+──────────────────────────────────────────────────────
+
+Imagina este escenario:
+
+1. Estás logueado en tu banco online (banco.cl)
+2. Mientras tanto, visitas un sitio malicioso (hacker.com)
+3. hacker.com tiene un formulario oculto que hace POST a banco.cl
+   con una transferencia de dinero a la cuenta del hacker
+4. Como tu navegador envía automáticamente las cookies de banco.cl,
+   ¡la transferencia se ejecuta con tu sesión!
+
+Django previene esto usando tokens CSRF:
+
+  Navegador                        Django
+     │                               │
+     │  GET /formulario/             │
+     │  ─────────────────────────→   │
+     │                               │
+     │  ← HTML con token CSRF       │
+     │     oculto en el formulario   │
+     │                               │
+     │  POST /formulario/            │
+     │  + token CSRF ✅              │
+     │  ─────────────────────────→   │
+     │                               │
+     │  ← 200 OK (aceptado)         │
+     │                               │
+     │                               │
+  hacker.com                       Django
+     │                               │
+     │  POST /formulario/            │
+     │  SIN token CSRF ❌            │
+     │  ─────────────────────────→   │
+     │                               │
+     │  ← 403 Forbidden (rechazado) │
+```
+
+#### ¿Qué es `CSRF_TRUSTED_ORIGINS` y por qué falla en producción?
+
+A partir de Django 4.0, además del token CSRF, Django también verifica el **origen de la solicitud** (el dominio desde donde llega el formulario). Si el origen no está en la lista de confianza, rechaza la petición con error `403 Forbidden`.
+
+```python
+# ❌ Error si no se configura:
+# Forbidden (403) - CSRF verification failed. Request aborted.
+
+# ✅ Solución en production.py:
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    cast=lambda v: [s.strip() for s in v.split(',')]
+)
+```
+
+```
+Variable de entorno en Render:
+──────────────────────────────
+
+CSRF_TRUSTED_ORIGINS = https://mi-app.onrender.com
+
+Si tienes dominio personalizado, agregar todos separados por coma:
+CSRF_TRUSTED_ORIGINS = https://mi-app.onrender.com,https://midominio.cl,https://www.midominio.cl
+
+⚠️ IMPORTANTE:
+  → Siempre incluir el protocolo (https://)
+  → Sin barra al final (NO: https://midominio.cl/)
+  → Si falta algún dominio, los formularios de ESE dominio fallarán
+  → El admin de Django (/admin/) también necesita CSRF — si no configuras
+    esto, ni siquiera podrás iniciar sesión en el admin en producción
+```
+
+---
+
+### 6.3 Cabeceras de seguridad HTTP: qué hace cada una
+
+En `production.py` se configuran varias cabeceras de seguridad. Aquí se explica por qué cada una importa:
+
+```
+CABECERA                        QUÉ HACE                                      QUÉ PASA SI NO ESTÁ
+────────                        ────────                                       ────────────────────
+
+SECURE_SSL_REDIRECT = True      Redirige todo el tráfico HTTP → HTTPS          Los usuarios pueden navegar
+                                                                               sin cifrado y los datos
+                                                                               viajan en texto plano
+
+SECURE_PROXY_SSL_HEADER         Le dice a Django que confíe en el proxy        Django piensa que toda
+= ('HTTP_X_FORWARDED_PROTO',    (Render) cuando dice que la conexión           conexión es HTTP y genera
+   'https')                     original fue HTTPS                             URLs http:// en vez de https://
+
+SESSION_COOKIE_SECURE = True    La cookie de sesión solo viaja por HTTPS       Un atacante en la misma WiFi
+                                                                               puede interceptar la cookie
+                                                                               y robar la sesión del usuario
+
+CSRF_COOKIE_SECURE = True       La cookie CSRF solo viaja por HTTPS            Mismo riesgo: el token CSRF
+                                                                               puede ser interceptado
+
+SESSION_COOKIE_HTTPONLY = True   JavaScript no puede leer la cookie             Un ataque XSS podría leer
+                                de sesión (solo el servidor)                   la cookie y enviarla a un
+                                                                               servidor malicioso
+
+SECURE_CONTENT_TYPE_NOSNIFF     Envía X-Content-Type-Options: nosniff          El navegador podría "adivinar"
+= True                          (el navegador no adivina tipos de archivo)     que un archivo es JavaScript
+                                                                               y ejecutarlo como código
+```
+
+#### Configuración recomendada en `production.py`:
+
+```python
+# ─── HTTPS OBLIGATORIO ──────────────────────────────────────
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# ─── COOKIES SEGURAS ────────────────────────────────────────
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+
+# ─── PROTECCIÓN ADICIONAL ───────────────────────────────────
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+```
+
+> 💡 **En `local.py`** todas estas deben estar en `False` o no definirse, porque en desarrollo local no usamos HTTPS. Si se activan en local, el navegador no podrá cargar `http://localhost:8000`.
+
+---
+
+### 6.4 Auditoría rápida de seguridad: checklist antes del deploy
+
+```
+Checklist de seguridad para producción:
+────────────────────────────────────────
+
+Variables de entorno:
+  ✅ SECRET_KEY está como variable de entorno (NO en el código)
+  ✅ DATABASE_URL está como variable de entorno (NO en el código)
+  ✅ Ninguna contraseña está hardcodeada en ningún archivo .py
+  ✅ El archivo .env está en .gitignore
+  ✅ DEBUG = False en production.py
+
+CSRF:
+  ✅ CSRF_TRUSTED_ORIGINS incluye TODOS los dominios con https://
+  ✅ CSRF_COOKIE_SECURE = True en producción
+  ✅ Todos los formularios usan {% csrf_token %}
+
+HTTPS:
+  ✅ SECURE_SSL_REDIRECT = True
+  ✅ SECURE_PROXY_SSL_HEADER configurado para Render
+  ✅ SESSION_COOKIE_SECURE = True
+  ✅ SESSION_COOKIE_HTTPONLY = True
+
+Código:
+  ✅ No hay print() con datos sensibles
+  ✅ No hay contraseñas en comentarios del código
+  ✅ requirements.txt está actualizado
+  ✅ El .gitignore incluye: .env, db.sqlite3, staticfiles/, __pycache__/
+```
+
+> 🔥 **Prueba final:** Ejecutar `python manage.py check --deploy` en tu terminal. Django revisa automáticamente las configuraciones de seguridad y te avisa si falta algo.
+
+```bash
+# Ejecutar desde tu entorno virtual
+python manage.py check --deploy
+
+# Django mostrará warnings como:
+# WARNINGS:
+# ?: (security.W004) You have not set a value for SECURE_HSTS_SECONDS
+# ?: (security.W008) Your SECURE_SSL_REDIRECT is not set to True
+#
+# Si no hay warnings → ¡tu proyecto está seguro para producción! ✅
+```
+
+---
+
 ## Diagrama completo del flujo de deploy
 
 ```
